@@ -6,37 +6,42 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.anilist
-import nl.joery.animatedbottombar.AnimatedBottomBar
+import ani.saikou.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        initActivity(window,findViewById(R.id.navbar_container))
+        initActivity(window, binding.navbarContainer)
 
-        if (!isOnline(this)){
+        if (!isOnline(this)) {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, NoInternet::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+            startActivity(
+                Intent(
+                    this,
+                    NoInternet::class.java
+                ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
         }
 
-        if (anilist.getSavedToken(this)){
+        if (anilist.getSavedToken(this)) {
 
             //Load Data
-            val navbar = findViewById<AnimatedBottomBar>(R.id.navbar)
+            val navbar = binding.navbar
             bottomBar = navbar
-            val mainViewPager = findViewById<ViewPager2>(R.id.viewpager)
+            val mainViewPager = binding.viewpager
             mainViewPager.isUserInputEnabled = false
             mainViewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
             navbar.setupWithViewPager2(mainViewPager)
             navbar.selectTabAt(1)
             mainViewPager.post { mainViewPager.setCurrentItem(1, false) }
-        }
-        else{
+        } else {
             //Login
-            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,LoginFragment()).addToBackStack(null).commit()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, LoginFragment()).addToBackStack(null).commit()
         }
     }
 

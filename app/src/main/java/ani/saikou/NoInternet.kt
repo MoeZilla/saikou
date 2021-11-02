@@ -1,17 +1,19 @@
 package ani.saikou
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import ani.saikou.databinding.ActivityNoInternetBinding
 
 class NoInternet : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_no_internet)
 
-        viewInset(findViewById(R.id.refreshButtonContainer))
-        findViewById<Button>(R.id.refreshButton).setOnClickListener {
-            if (isOnline(this)){
+        val binding = ActivityNoInternetBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        viewInset(binding.refreshButtonContainer)
+        binding.refreshButton.setOnClickListener {
+            if (isOnline(this)) {
                 startMainActivity(this)
             }
         }

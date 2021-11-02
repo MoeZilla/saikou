@@ -21,14 +21,22 @@ import kotlinx.coroutines.launch
 
 
 @OptIn(DelicateCoroutinesApi::class)
-class HomeFragment : Fragment(){
-    private var _binding: FragmentHomeBinding?=null
+class HomeFragment : Fragment() {
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false);return binding.root
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
-    override fun onDestroyView() { super.onDestroyView();_binding = null }
+
+    override fun onDestroyView() {
+        super.onDestroyView();_binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -43,8 +51,8 @@ class HomeFragment : Fragment(){
         //UserData
         binding.homeUserDataProgressBar.visibility = View.VISIBLE
         binding.homeUserDataContainer.visibility = View.GONE
-        model.getUserData().observe(viewLifecycleOwner,{
-            if (it){
+        model.getUserData().observe(viewLifecycleOwner, {
+            if (it) {
                 binding.homeUserName.text = anilist.username
                 binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
                 binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
@@ -57,40 +65,57 @@ class HomeFragment : Fragment(){
 
         GlobalScope.launch {
             //Get userData First
-            if (anilist.userid==null) model.loadUserData()
+            if (anilist.userid == null) model.loadUserData()
             //get List Images in new Thread
-            launch { if (!listImagesLoaded) model.setListImages() }
+            launch {
+                if (!listImagesLoaded) model.setListImages()
+            }
             //get Continue in new Thread
-            launch { if (!watchingLoaded) model.setAnimeContinue();if (!readingLoaded) model.setMangaContinue() }
+            launch {
+                if (!watchingLoaded) model.setAnimeContinue()
+                if (!readingLoaded) model.setMangaContinue()
+            }
             //get Recommended in current Thread(idle)
             if (!recommendedLoaded) model.setRecommendation()
         }
 
         //List Images
-        model.getListImages().observe(viewLifecycleOwner,{
-            if (it.isNotEmpty()){
+        model.getListImages().observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
                 listImagesLoaded = true
-                Picasso.get().load(it[0]?:"https://bit.ly/31bsIHq").into(binding.homeAnimeListImage)
-                Picasso.get().load(it[1]?:"https://bit.ly/2ZGfcuG").into(binding.homeMangaListImage)
+                Picasso.get().load(it[0] ?: "https://bit.ly/31bsIHq")
+                    .into(binding.homeAnimeListImage)
+                Picasso.get().load(it[1] ?: "https://bit.ly/2ZGfcuG")
+                    .into(binding.homeMangaListImage)
             }
         })
 
         //Function For Recycler Views
-        fun initRecyclerView(mode: Int,recyclerView: RecyclerView,progress:View,empty: View){
-            lateinit var modelFunc : LiveData<ArrayList<Media>>
-            when (mode){0 -> modelFunc = model.getAnimeContinue();1 -> modelFunc = model.getMangaContinue();2 -> modelFunc = model.getRecommendation() }
+        fun initRecyclerView(mode: Int, recyclerView: RecyclerView, progress: View, empty: View) {
+            lateinit var modelFunc: LiveData<ArrayList<Media>>
+            when (mode) {
+                0 -> modelFunc = model.getAnimeContinue();1 -> modelFunc =
+                model.getMangaContinue();2 -> modelFunc = model.getRecommendation()
+            }
             progress.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
 
-            modelFunc.observe(viewLifecycleOwner,{
-                if (it!=null){
-                    when (mode){0 -> watchingLoaded = true;1 -> readingLoaded = true;2 -> recommendedLoaded = true }
-                    if (it.isNotEmpty()) {
-                        recyclerView.adapter= MediaAdaptor(it)
-                        recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-                        recyclerView.visibility = View.VISIBLE
+            modelFunc.observe(viewLifecycleOwner, {
+                if (it != null) {
+                    when (mode) {
+                        0 -> watchingLoaded = true
+                        1 -> readingLoaded = true
+                        2 -> recommendedLoaded = true
                     }
-                    else{
+                    if (it.isNotEmpty()) {
+                        recyclerView.adapter = MediaAdaptor(it)
+                        recyclerView.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        recyclerView.visibility = View.VISIBLE
+                    } else {
                         empty.visibility = View.VISIBLE
                     }
                     progress.visibility = View.GONE
@@ -99,8 +124,23 @@ class HomeFragment : Fragment(){
         }
 
         // Recycler Views
-        initRecyclerView(0,binding.homeWatchingRecyclerView,binding.homeWatchingProgressBar,binding.homeWatchingEmpty)
-        initRecyclerView(1,binding.homeReadingRecyclerView,binding.homeReadingProgressBar,binding.homeReadingEmpty)
-        initRecyclerView(2,binding.homeRecommendedRecyclerView,binding.homeRecommendedProgressBar,binding.homeRecommendedEmpty)
+        initRecyclerView(
+            0,
+            binding.homeWatchingRecyclerView,
+            binding.homeWatchingProgressBar,
+            binding.homeWatchingEmpty
+        )
+        initRecyclerView(
+            1,
+            binding.homeReadingRecyclerView,
+            binding.homeReadingProgressBar,
+            binding.homeReadingEmpty
+        )
+        initRecyclerView(
+            2,
+            binding.homeRecommendedRecyclerView,
+            binding.homeRecommendedProgressBar,
+            binding.homeRecommendedEmpty
+        )
     }
 }

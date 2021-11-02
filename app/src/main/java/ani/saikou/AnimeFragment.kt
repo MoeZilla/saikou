@@ -1,10 +1,11 @@
 package ani.saikou
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import ani.saikou.databinding.FragmentAnimeBinding
 
 class AnimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +13,12 @@ class AnimeFragment : Fragment() {
         logger("Anime")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_anime, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = FragmentAnimeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }
