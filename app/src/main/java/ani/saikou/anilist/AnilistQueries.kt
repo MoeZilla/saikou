@@ -1,6 +1,8 @@
 package ani.saikou.anilist
 
+import ani.saikou.media.Media
 import ani.saikou.anime.Anime
+import ani.saikou.logger
 import ani.saikou.manga.Manga
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -40,6 +42,7 @@ class AnilistQueries{
             anilist.chapterRead = response.jsonObject["statistics"]!!.jsonObject["manga"]!!.jsonObject["chaptersRead"].toString().toInt()
             true
         } catch (e: Exception){
+            logger(e)
             false
         }
     }
@@ -67,7 +70,8 @@ class AnilistQueries{
                         userProgress = it.jsonObject["progress"].toString().toInt(),
                         userScore = it.jsonObject["score"].toString().toInt(),
                         userStatus = it.jsonObject["status"].toString()
-                    )))
+                    ))
+                    )
                 }
                 else{
                     returnArray.add(
@@ -84,7 +88,8 @@ class AnilistQueries{
                         userProgress = it.jsonObject["progress"].toString().toInt(),
                         userScore = it.jsonObject["score"].toString().toInt(),
                         userStatus = it.jsonObject["status"].toString()
-                    )))
+                    ))
+                    )
                 }
             }
         }
@@ -97,7 +102,8 @@ class AnilistQueries{
             val responseArray = arrayListOf<Media>()
             Json.decodeFromString<JsonObject>(response)["data"]!!.jsonObject["Page"]!!.jsonObject["recommendations"]!!.jsonArray.reversed().forEach{
                 if(it.jsonObject["mediaRecommendation"]!!.jsonObject["type"].toString().trim('"') == "ANIME"){
-                    responseArray.add(Media(anime = Anime(
+                    responseArray.add(
+                        Media(anime = Anime(
                         id = it.jsonObject["mediaRecommendation"]!!.jsonObject["id"].toString().toInt(),
                         name = it.jsonObject["mediaRecommendation"]!!.jsonObject["title"]!!.jsonObject["romaji"].toString().trim('"'),
                         userPreferredName = it.jsonObject["mediaRecommendation"]!!.jsonObject["title"]!!.jsonObject["userPreferred"].toString().trim('"'),
@@ -109,10 +115,12 @@ class AnilistQueries{
                         totalEpisodes = if(it.jsonObject["mediaRecommendation"]!!.jsonObject["episodes"]!!.toString() != "null") it.jsonObject["mediaRecommendation"]!!.jsonObject["episodes"].toString().toInt() else null,
                         nextAiringEpisode = if (it.jsonObject["mediaRecommendation"]!!.jsonObject["nextAiringEpisode"].toString() != "null") it.jsonObject["mediaRecommendation"]!!.jsonObject["nextAiringEpisode"]!!.jsonObject["episode"].toString().toInt()-1 else null,
                         )
-                    ))
+                    )
+                    )
                 }
                 else {
-                    responseArray.add(Media(manga = Manga(
+                    responseArray.add(
+                        Media(manga = Manga(
                         id = it.jsonObject["mediaRecommendation"]!!.jsonObject["id"].toString().toInt(),
                         name = it.jsonObject["mediaRecommendation"]!!.jsonObject["title"]!!.jsonObject["romaji"].toString().trim('"'),
                         userPreferredName = it.jsonObject["mediaRecommendation"]!!.jsonObject["title"]!!.jsonObject["userPreferred"].toString().trim('"'),
@@ -123,7 +131,8 @@ class AnilistQueries{
 
                         totalChapters = if (it.jsonObject["mediaRecommendation"]!!.jsonObject["chapters"].toString() != "null") it.jsonObject["mediaRecommendation"]!!.jsonObject["chapters"].toString().toInt() else null,
                         )
-                    ))
+                    )
+                    )
                 }
             }
             return responseArray

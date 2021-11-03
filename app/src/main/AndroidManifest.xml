@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="ani.saikou">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ani.saikou" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,27 +13,42 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Saikou"
-        tools:ignore="AllowBackup">
-
-        <activity android:name=".NoInternet" android:exported="true" />
-
-        <activity android:name=".anilist.Login" android:exported="true">
-            <intent-filter android:label="filter_view_example_gizmos">
+        tools:ignore="AllowBackup" >
+        <activity
+            android:name=".media.MediaActivity"
+            android:exported="true"
+            android:label="@string/title_activity_media"
+            android:theme="@style/Theme.Saikou.NoActionBar" />
+        <activity
+            android:name=".NoInternet"
+            android:exported="true" />
+        <activity
+            android:name=".anilist.Login"
+            android:exported="true" >
+            <intent-filter android:label="filter_view_example_gizmos" >
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="anilist" android:scheme="saikou" />
+
+                <data
+                    android:host="anilist"
+                    android:scheme="saikou" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

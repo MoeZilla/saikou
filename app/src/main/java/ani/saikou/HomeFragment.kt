@@ -1,19 +1,22 @@
 package ani.saikou
 
+import ani.saikou.media.Media
+import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.anilist.AnilistViewModel
-import ani.saikou.anilist.Media
-import ani.saikou.anilist.MediaAdaptor
 import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentHomeBinding
+import ani.saikou.media.MediaAdaptor
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -25,11 +28,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,13 +45,31 @@ class HomeFragment : Fragment() {
         var readingLoaded = false
         var recommendedLoaded = false
 
-        viewInset(binding.fragmentHome)
+        binding.fragmentHome.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = statusBarHeight
+            bottomMargin = navBarHeight
+        }
+
+        var reached = false
+        binding.homeScroll.setOnScrollChangeListener { _, _, _, _, _ ->
+            if (!binding.homeScroll.canScrollVertically(1)) {
+                reached = true
+                bottomBar.animate().translationZ(0f).setDuration(200).start()
+                ObjectAnimator.ofFloat(bottomBar, "elevation", 4f, 0f).setDuration(200).start()
+            }
+            else{
+                if (reached){
+                    bottomBar.animate().translationZ(12f).setDuration(200).start()
+                    ObjectAnimator.ofFloat(bottomBar, "elevation", 0f, 4f).setDuration(200).start()
+                }
+            }
+        }
 
         //UserData
         binding.homeUserDataProgressBar.visibility = View.VISIBLE
         binding.homeUserDataContainer.visibility = View.GONE
-        model.getUserData().observe(viewLifecycleOwner, {
-            if (it) {
+        fun load(){
+            requireActivity().runOnUiThread {
                 binding.homeUserName.text = anilist.username
                 binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
                 binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
@@ -61,20 +78,29 @@ class HomeFragment : Fragment() {
                 binding.homeUserDataProgressBar.visibility = View.GONE
                 binding.homeUserDataContainer.visibility = View.VISIBLE
             }
-        })
-
+        }
         GlobalScope.launch {
             //Get userData First
-            if (anilist.userid == null) model.loadUserData()
-            //get List Images in new Thread
-            launch {
-                if (!listImagesLoaded) model.setListImages()
+            if (anilist.userid == null) {
+                if(anilist.query.getUserData()){
+                    load()
+                }
+                else{
+                    println("Error loading data")
+                }
             }
-            //get Continue in new Thread
+            else{load()}
+            //get Watching in new Thread
             launch {
                 if (!watchingLoaded) model.setAnimeContinue()
+            }
+            //get Reading in new Thread
+            launch {
                 if (!readingLoaded) model.setMangaContinue()
             }
+            //get List Images in current Thread(idle)
+            if (!listImagesLoaded) model.setListImages()
+
             //get Recommended in current Thread(idle)
             if (!recommendedLoaded) model.setRecommendation()
         }
@@ -108,7 +134,7 @@ class HomeFragment : Fragment() {
                         2 -> recommendedLoaded = true
                     }
                     if (it.isNotEmpty()) {
-                        recyclerView.adapter = MediaAdaptor(it)
+                        recyclerView.adapter = MediaAdaptor(it,requireContext())
                         recyclerView.layoutManager = LinearLayoutManager(
                             requireContext(),
                             LinearLayoutManager.HORIZONTAL,

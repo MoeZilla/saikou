@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentLoginBinding
@@ -25,7 +26,10 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewInset(binding.loginButtonContainer)
+        binding.loginButtonContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = statusBarHeight
+            bottomMargin = navBarHeight
+        }
         binding.loginButton.setOnClickListener { anilist.loginIntent(requireContext()) }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             requireActivity().finishAffinity()

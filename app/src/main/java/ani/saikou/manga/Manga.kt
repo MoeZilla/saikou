@@ -1,5 +1,7 @@
 package ani.saikou.manga
 
+import java.io.Serializable
+
 data class Manga (
     val name: String,
     val id: Int,
@@ -17,4 +19,4 @@ data class Manga (
     var userProgress: Int? = null,
     var userStatus: String? = null,
     var userScore: Int = 0,
-)
+):Serializable

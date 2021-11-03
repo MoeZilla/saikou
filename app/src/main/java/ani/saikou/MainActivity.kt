@@ -4,18 +4,30 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.saikou.anilist.anilist
 import ani.saikou.databinding.ActivityMainBinding
+import nl.joery.animatedbottombar.AnimatedBottomBar
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         initActivity(window, binding.navbarContainer)
+
+        binding.navbarContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            bottomMargin = navBarHeight
+        }
 
         if (!isOnline(this)) {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
@@ -36,6 +48,11 @@ class MainActivity : AppCompatActivity() {
             mainViewPager.isUserInputEnabled = false
             mainViewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
             navbar.setupWithViewPager2(mainViewPager)
+            navbar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
+                override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
+                    navbar.animate().translationZ(12f).setDuration(200).start()
+                }
+            })
             navbar.selectTabAt(1)
             mainViewPager.post { mainViewPager.setCurrentItem(1, false) }
         } else {
@@ -53,8 +70,25 @@ class MainActivity : AppCompatActivity() {
             return
         }
         this.doubleBackToExitPressedOnce = true
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, "Please click BACK again to exit", Snackbar.LENGTH_LONG).show()
         Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+    }
+
+    //ViewPager
+    private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
+        FragmentStateAdapter(fragmentManager, lifecycle) {
+
+        override fun getItemCount(): Int = 3
+
+        override fun createFragment(position: Int): Fragment {
+            when (position){
+                0-> return AnimeFragment()
+                1-> return HomeFragment()
+                2-> return MangaFragment()
+            }
+            return HomeFragment()
+        }
     }
 
 }
