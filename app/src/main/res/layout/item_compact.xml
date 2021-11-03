@@ -25,11 +25,13 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/itemCompactImage"
                 android:layout_width="108dp"
                 android:layout_height="160dp"
                 android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/roundedImageView"
+                android:transitionName="mediaCover"
                 tools:ignore="ContentDescription,ImageContrastCheck"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -105,7 +107,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:maxLines="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:transitionName="mediaTitle" />
 
         <LinearLayout
             android:layout_width="match_parent"

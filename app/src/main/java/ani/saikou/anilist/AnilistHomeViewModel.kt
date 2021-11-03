@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class AnilistViewModel : ViewModel() {
+class AnilistHomeViewModel : ViewModel() {
     private val listImages : MutableLiveData<ArrayList<String?>> = MutableLiveData<ArrayList<String?>>(arrayListOf())
     fun getListImages(): LiveData<ArrayList<String?>> = listImages
     fun setListImages() = listImages.postValue(anilist.query.getBannerImages())

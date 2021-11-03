@@ -1,8 +1,6 @@
 package ani.saikou
 
-import ani.saikou.media.Media
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ani.saikou.anilist.AnilistViewModel
+import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentHomeBinding
+import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -39,7 +38,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val model: AnilistViewModel by viewModels()
+        val model: AnilistHomeViewModel by viewModels()
         var listImagesLoaded = false
         var watchingLoaded = false
         var readingLoaded = false
@@ -134,7 +133,7 @@ class HomeFragment : Fragment() {
                         2 -> recommendedLoaded = true
                     }
                     if (it.isNotEmpty()) {
-                        recyclerView.adapter = MediaAdaptor(it,requireContext())
+                        recyclerView.adapter = MediaAdaptor(it,requireActivity())
                         recyclerView.layoutManager = LinearLayoutManager(
                             requireContext(),
                             LinearLayoutManager.HORIZONTAL,

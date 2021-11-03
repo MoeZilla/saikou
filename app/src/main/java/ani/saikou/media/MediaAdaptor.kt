@@ -1,12 +1,15 @@
 package ani.saikou.media
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.util.Pair
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.R
 import ani.saikou.databinding.ItemCompactBinding
@@ -14,7 +17,7 @@ import com.squareup.picasso.Picasso
 import java.io.Serializable
 
 class MediaAdaptor(
-    private val mediaList: ArrayList<Media>, private val context: Context
+    private val mediaList: ArrayList<Media>, private val activity: Activity
     ) : RecyclerView.Adapter<MediaAdaptor.MediaViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {
@@ -53,9 +56,12 @@ class MediaAdaptor(
             itemView.setOnClickListener {
                 val media = mediaList[bindingAdapterPosition]
                 ContextCompat.startActivity(
-                    context,
-                    Intent(context, MediaActivity::class.java).putExtra("media",media as Serializable),
-                    null
+                   activity,
+                    Intent(activity, MediaActivity::class.java).putExtra("media",media as Serializable),
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                        Pair.create(binding.itemCompactImage,ViewCompat.getTransitionName(binding.itemCompactImage)!!),
+//                        Pair.create(binding.itemCompactTitle,ViewCompat.getTransitionName(binding.itemCompactTitle)!!),
+                    ).toBundle()
                 )
             }
         }

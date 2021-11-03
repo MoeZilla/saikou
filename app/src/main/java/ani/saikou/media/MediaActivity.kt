@@ -2,6 +2,7 @@ package ani.saikou.media
 
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -20,6 +21,8 @@ import ani.saikou.statusBarHeight
 import ani.saikou.toPx
 import com.bartoszlipinski.viewpropertyobjectanimator.ViewPropertyObjectAnimator
 import com.google.android.material.appbar.AppBarLayout
+import com.squareup.picasso.Picasso
+import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
 
 class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
@@ -30,6 +33,7 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
     private var mMaxScrollSize = 0
     
     private lateinit var binding: ActivityMediaBinding
+    private lateinit var tabLayout: AnimatedBottomBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +48,29 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
         binding.mediaAppBar.addOnOffsetChangedListener(this)
 
-        val media: Media = intent.getSerializableExtra("Media") as Media
-        val tabLayout = binding.mediaTab
+        binding.mediaClose.setOnClickListener{
+            finish()
+        }
+
         val viewPager = binding.mediaViewPager
         viewPager.isUserInputEnabled = false
-        viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,media.anime!=null)
+
+        val media: Media = intent.getSerializableExtra("media") as Media
+        if (media.anime!=null){
+            Picasso.get().load(media.anime.cover).into(binding.mediaCoverImage)
+            Picasso.get().load(media.anime.banner).into(binding.mediaBanner)
+            binding.MediaTitle.text=media.anime.userPreferredName
+            tabLayout = binding.mediaAnimeTab
+            viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
+        }
+        else if (media.manga!=null){
+            Picasso.get().load(media.manga.cover).into(binding.mediaCoverImage)
+            Picasso.get().load(media.manga.banner).into(binding.mediaBanner)
+            binding.MediaTitle.text=media.manga.userPreferredName
+            tabLayout = binding.mediaMangaTab
+            viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
+        }
+        tabLayout.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
     }
 
