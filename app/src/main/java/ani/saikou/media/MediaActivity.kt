@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.saikou.R
+import ani.saikou.anilist.anilist
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.initActivity
@@ -22,9 +23,13 @@ import ani.saikou.toPx
 import com.bartoszlipinski.viewpropertyobjectanimator.ViewPropertyObjectAnimator
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
 
+@OptIn(DelicateCoroutinesApi::class)
 class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     
     private var isCollapsed = false
@@ -34,6 +39,7 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
     
     private lateinit var binding: ActivityMediaBinding
     private lateinit var tabLayout: AnimatedBottomBar
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +78,10 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         }
         tabLayout.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
+
+        GlobalScope.launch {
+            anilist.query.mediaDetails(media)
+        }
     }
 
     //ViewPager

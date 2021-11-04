@@ -110,6 +110,22 @@
             android:singleLine="true"
             android:transitionName="mediaTitle" />
 
+        <TextView
+            android:id="@+id/itemCompactRelation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.58"
+            android:ellipsize="marquee"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            android:transitionName="mediaTitle"
+            android:visibility="gone"
+            tools:text="SOURCE" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
