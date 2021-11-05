@@ -13,6 +13,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import nl.joery.animatedbottombar.AnimatedBottomBar
+import java.io.Serializable
+import java.util.*
 
 const val buildDebug = true
 var statusBarHeight  = 0
@@ -63,4 +65,18 @@ fun isOnline(context: Context): Boolean {
 fun startMainActivity(activity: Activity){
     activity.finishAffinity()
     activity.startActivity(Intent(activity, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+}
+
+data class FuzzyDate(
+    val year: Int?=null,
+    val month: Int?=null,
+    val day: Int?=null,
+): Serializable{
+    override fun toString():String{
+        return (if (day!=null) "$day / " else "")+(if (month!=null) "$month / " else "")+(year?.toString() ?: "")
+    }
+    fun get():FuzzyDate{
+        val cal = Calendar.getInstance()
+        return FuzzyDate(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
+    }
 }

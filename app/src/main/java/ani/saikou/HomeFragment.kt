@@ -5,27 +5,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor
+
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
-
-@OptIn(DelicateCoroutinesApi::class)
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -33,7 +34,9 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView();_binding = null
+        super.onDestroyView()
+        _binding = null
+        scope.cancel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,7 +81,7 @@ class HomeFragment : Fragment() {
                 binding.homeUserDataContainer.visibility = View.VISIBLE
             }
         }
-        GlobalScope.launch {
+        scope.launch {
             //Get userData First
             if (anilist.userid == null) {
                 if(anilist.query.getUserData()){

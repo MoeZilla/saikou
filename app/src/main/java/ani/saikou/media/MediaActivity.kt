@@ -4,12 +4,14 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.saikou.R
@@ -19,45 +21,52 @@ import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.initActivity
 import ani.saikou.manga.MangaSourceFragment
 import ani.saikou.statusBarHeight
-import ani.saikou.toPx
-import com.bartoszlipinski.viewpropertyobjectanimator.ViewPropertyObjectAnimator
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
+import androidx.lifecycle.ViewModelProvider
+import ani.saikou.anilist.AnilistHomeViewModel
 
-@OptIn(DelicateCoroutinesApi::class)
+
 class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     
     private var isCollapsed = false
-    private var bannerHeight :Int = 0
     private val percent = 50
     private var mMaxScrollSize = 0
-    
-    private lateinit var binding: ActivityMediaBinding
-    private lateinit var tabLayout: AnimatedBottomBar
+    private var screenWidth:Float = 0f
 
+    private lateinit var binding: ActivityMediaBinding
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private lateinit var tabLayout: AnimatedBottomBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        screenWidth = resources.displayMetrics.widthPixels.toFloat()
+
+        //Ui init
         initActivity(window)
-        bannerHeight = binding.mediaBanner.height
+
         binding.mediaBanner.updateLayoutParams{ height += statusBarHeight }
-        binding.mediaClose.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = statusBarHeight }
+        binding.mediaBannerStatus.updateLayoutParams{ height += statusBarHeight }
+        binding.mediaBanner.translationY = -statusBarHeight.toFloat()
+        binding.mediaClose.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
+        binding.mediaAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
         binding.mediaCover.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
-        binding.MediaTitle.isSelected = true
+        binding.mediaTitle.isSelected = true
+        binding.mediaTitleCollapse.isSelected = true
+        binding.mediaStatus.isSelected = true
+        binding.mediaAddToList.isSelected = true
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
+        binding.mediaFAB.hide()
         binding.mediaAppBar.addOnOffsetChangedListener(this)
 
         binding.mediaClose.setOnClickListener{
             finish()
         }
-
         val viewPager = binding.mediaViewPager
         viewPager.isUserInputEnabled = false
 
@@ -65,25 +74,36 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         if (media.anime!=null){
             Picasso.get().load(media.anime.cover).into(binding.mediaCoverImage)
             Picasso.get().load(media.anime.banner).into(binding.mediaBanner)
-            binding.MediaTitle.text=media.anime.userPreferredName
+            Picasso.get().load(media.anime.banner).into(binding.mediaBannerStatus)
+            binding.mediaTitle.text=media.anime.userPreferredName
+            binding.mediaTitleCollapse.text=media.anime.userPreferredName
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
         }
         else if (media.manga!=null){
             Picasso.get().load(media.manga.cover).into(binding.mediaCoverImage)
             Picasso.get().load(media.manga.banner).into(binding.mediaBanner)
-            binding.MediaTitle.text=media.manga.userPreferredName
+            Picasso.get().load(media.manga.banner).into(binding.mediaBannerStatus)
+            binding.mediaTitleCollapse.text=media.manga.userPreferredName
+            binding.mediaTitle.text=media.manga.userPreferredName
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
+        binding.mediaTitle.translationX = -screenWidth
         tabLayout.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
 
-        GlobalScope.launch {
-            anilist.query.mediaDetails(media)
+        val model: MediaDetailsViewModel by viewModels()
+
+        scope.launch {
+            model.loadMedia(media)
         }
     }
 
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
+    }
     //ViewPager
     private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle,private val anime:Boolean=true) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -106,6 +126,7 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
             return MediaInfoFragment()
         }
     }
+
     //Collapsing UI Stuff
     override fun onOffsetChanged(appBar: AppBarLayout, i: Int) {
         if (mMaxScrollSize == 0) mMaxScrollSize = appBar.totalScrollRange
@@ -115,26 +136,28 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         binding.mediaCover.scaleX = 1f*cap
         binding.mediaCover.scaleY = 1f*cap
         binding.mediaCover.cardElevation = 32f*cap
-        appBar.post{appBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = ((1f - cap) * statusBarHeight).toInt() }}
+//        appBar.post{appBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = ((1f - cap) * statusBarHeight).toInt() }}
 
 
         if (percentage >= percent && !isCollapsed) {
             isCollapsed = true
-            ObjectAnimator.ofArgb(binding.mediaClose,"ColorFilter", ContextCompat.getColor(this, R.color.bg_opp)).setDuration(200).start()
-            binding.MediaTitle.post{
-                ViewPropertyObjectAnimator.animate(binding.MediaTitle).leftMargin(24.toPx.toInt()).setDuration(200).start()
-                ViewPropertyObjectAnimator.animate(binding.MediaTitle).rightMargin(64.toPx.toInt()).setDuration(200).start()
-            }
+            binding.mediaFAB.show()
+            ObjectAnimator.ofFloat(binding.mediaTitle,"translationX",0f).setDuration(200).start()
+            ObjectAnimator.ofFloat(binding.mediaAccessContainer,"translationX",screenWidth).setDuration(200).start()
+            ObjectAnimator.ofFloat(binding.mediaTitleCollapse,"translationX",screenWidth).setDuration(200).start()
+            binding.mediaBannerStatus.visibility=View.GONE
             this.window.statusBarColor = ContextCompat.getColor(this, R.color.nav_bg)
         }
         if (percentage <= percent && isCollapsed) {
             isCollapsed = false
-            ObjectAnimator.ofArgb(binding.mediaClose,"ColorFilter", ContextCompat.getColor(this, R.color.nav_bg)).setDuration(200).start()
-            binding.MediaTitle.post{
-                ViewPropertyObjectAnimator.animate(binding.MediaTitle).leftMargin(148.toPx.toInt()).setDuration(200).start()
-                ViewPropertyObjectAnimator.animate(binding.MediaTitle).rightMargin(32.toPx.toInt()).setDuration(200).start()
-            }
+            binding.mediaFAB.hide()
+            ObjectAnimator.ofFloat(binding.mediaTitle,"translationX",-screenWidth).setDuration(200).start()
+            ObjectAnimator.ofFloat(binding.mediaAccessContainer,"translationX",0f).setDuration(200).start()
+            ObjectAnimator.ofFloat(binding.mediaTitleCollapse,"translationX",0f).setDuration(200).start()
+            binding.mediaBannerStatus.visibility=View.VISIBLE
             this.window.statusBarColor = ContextCompat.getColor(this, R.color.status)
         }
     }
+
+
 }

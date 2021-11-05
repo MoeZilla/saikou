@@ -6,13 +6,16 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+
 import ani.saikou.R
 import ani.saikou.databinding.ItemCompactBinding
+
 import com.squareup.picasso.Picasso
 import java.io.Serializable
 
@@ -36,7 +39,7 @@ class MediaAdaptor(
             b.itemCompactScore.text = ((if(anime.userScore==0) (anime.meanScore?:0) else anime.userScore)/10.0).toString()
             b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (anime.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
             b.itemCompactUserProgress.text = (anime.userProgress?:"~").toString()
-            b.itemCompactTotal.text = " / ${if (anime.nextAiringEpisode!=null) (anime.nextAiringEpisode.toString()+" / "+(anime.totalEpisodes?:"~").toString()) else (anime.totalEpisodes?:"~").toString()}"
+            b.itemCompactTotal.text = " | ${if (anime.nextAiringEpisode!=null) (anime.nextAiringEpisode.toString()+" | "+(anime.totalEpisodes?:"~").toString()) else (anime.totalEpisodes?:"~").toString()}"
         }
         else if(manga!=null){
             Picasso.get().load(manga.cover).into(b.itemCompactImage)
@@ -45,7 +48,7 @@ class MediaAdaptor(
             b.itemCompactScore.text = ((if(manga.userScore==0) (manga.meanScore?:0) else manga.userScore)/10.0).toString()
             b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (manga.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
             b.itemCompactUserProgress.text = (manga.userProgress?:"~").toString()
-            b.itemCompactTotal.text = " / ${manga.totalChapters?:"~"}"
+            b.itemCompactTotal.text = " | ${manga.totalChapters?:"~"}"
         }
     }
 

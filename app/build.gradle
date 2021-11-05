@@ -32,9 +32,6 @@ android {
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions.freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
-}
 dependencies {
 //    Core
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -50,15 +47,13 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
 //    Exoplayer
-//    implementation 'com.google.android.exoplayer:exoplayer-core:2.15.1'
-//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.15.1'
-//    implementation 'com.google.android.exoplayer:exoplayer-hls:2.15.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.16.0'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.16.0'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.16.0'
 
 //    UI
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
-//    implementation 'com.alexvasilkov:gesture-views:2.8.2'
+    implementation 'com.alexvasilkov:gesture-views:2.8.2'
     implementation 'com.github.ibrahimsn98:android-particles:2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-
 }

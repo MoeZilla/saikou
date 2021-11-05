@@ -12,6 +12,6 @@
 
     <item
         android:id="@+id/manga"
-        android:icon="@drawable/ic_round_menu_book_24"
+        android:icon="@drawable/ic_round_import_contacts_24"
         android:title="@string/manga"/>
 </menu>
