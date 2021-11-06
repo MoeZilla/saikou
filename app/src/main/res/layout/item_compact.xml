@@ -122,9 +122,10 @@
             android:textAlignment="textEnd"
             android:textAllCaps="true"
             android:textSize="12sp"
+            android:textStyle="italic"
             android:transitionName="mediaTitle"
             android:visibility="gone"
-            tools:text="SOURCE" />
+            tools:text="SOURCE " />
 
         <LinearLayout
             android:layout_width="match_parent"

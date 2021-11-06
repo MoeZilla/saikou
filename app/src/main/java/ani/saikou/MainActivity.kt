@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
         this.doubleBackToExitPressedOnce = true
-//        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
         Snackbar.make(binding.root, "Please click BACK again to exit", Snackbar.LENGTH_LONG).show()
         Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }

@@ -154,7 +154,8 @@
                     android:layout_margin="8dp"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_round_favorite_border_24"
-                    tools:ignore="ContentDescription" />
+                    app:tint="@color/nav_tab"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <ImageView
                     android:id="@+id/mediaNotify"
@@ -163,7 +164,8 @@
                     android:layout_marginStart="-16dp"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_round_notifications_none_24"
-                    tools:ignore="ContentDescription" />
+                    app:tint="@color/nav_tab"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
             </LinearLayout>
         </FrameLayout>

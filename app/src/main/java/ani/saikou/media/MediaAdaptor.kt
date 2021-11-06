@@ -30,25 +30,22 @@ class MediaAdaptor(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
         val b = holder.binding
-        val anime = mediaList[position].anime
-        val manga = mediaList[position].manga
-        if (anime!=null){
-            Picasso.get().load(anime.cover).into(b.itemCompactImage)
-            b.itemCompactOngoing.visibility = if (anime.status=="RELEASING")  View.VISIBLE else View.GONE
-            b.itemCompactTitle.text = anime.userPreferredName
-            b.itemCompactScore.text = ((if(anime.userScore==0) (anime.meanScore?:0) else anime.userScore)/10.0).toString()
-            b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (anime.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
-            b.itemCompactUserProgress.text = (anime.userProgress?:"~").toString()
-            b.itemCompactTotal.text = " | ${if (anime.nextAiringEpisode!=null) (anime.nextAiringEpisode.toString()+" | "+(anime.totalEpisodes?:"~").toString()) else (anime.totalEpisodes?:"~").toString()}"
+        val media = mediaList[position]
+        Picasso.get().load(media.cover).into(b.itemCompactImage)
+        b.itemCompactOngoing.visibility = if (media.status=="RELEASING")  View.VISIBLE else View.GONE
+        b.itemCompactTitle.text = media.userPreferredName
+        b.itemCompactScore.text = ((if(media.userScore==0) (media.meanScore?:0) else media.userScore)/10.0).toString()
+        b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (media.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
+        b.itemCompactUserProgress.text = (media.userProgress?:"~").toString()
+        if (media.relation!=null){
+            b.itemCompactRelation.text =  "${media.relation} "
+            b.itemCompactRelation.visibility = View.VISIBLE
         }
-        else if(manga!=null){
-            Picasso.get().load(manga.cover).into(b.itemCompactImage)
-            b.itemCompactOngoing.visibility = if (manga.status=="RELEASING")  View.VISIBLE else View.GONE
-            b.itemCompactTitle.text = manga.userPreferredName
-            b.itemCompactScore.text = ((if(manga.userScore==0) (manga.meanScore?:0) else manga.userScore)/10.0).toString()
-            b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (manga.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
-            b.itemCompactUserProgress.text = (manga.userProgress?:"~").toString()
-            b.itemCompactTotal.text = " | ${manga.totalChapters?:"~"}"
+        if (media.anime!=null){
+            b.itemCompactTotal.text = " | ${if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()}"
+        }
+        else if(media.manga!=null){
+            b.itemCompactTotal.text = " | ${media.manga.totalChapters?:"~"}"
         }
     }
 

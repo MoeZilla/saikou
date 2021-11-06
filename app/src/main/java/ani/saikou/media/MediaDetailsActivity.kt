@@ -66,29 +66,100 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         var tabLayout : AnimatedBottomBar? = null
 
         val media: Media = intent.getSerializableExtra("media") as Media
-        if (media.anime!=null){
-            Picasso.get().load(media.anime.cover).into(binding.mediaCoverImage)
-            Picasso.get().load(media.anime.banner).into(binding.mediaBanner)
-            Picasso.get().load(media.anime.banner).into(binding.mediaBannerStatus)
-            binding.mediaTitle.text=media.anime.userPreferredName
-            binding.mediaTitleCollapse.text=media.anime.userPreferredName
-            if (media.anime.isFav){
-                binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
-                binding.mediaFav.setColorFilter(ContextCompat.getColor(this, R.color.fav))
+        Picasso.get().load(media.cover).into(binding.mediaCoverImage)
+        Picasso.get().load(media.banner).into(binding.mediaBanner)
+        Picasso.get().load(media.banner).into(binding.mediaBannerStatus)
+        binding.mediaTitle.text=media.userPreferredName
+        binding.mediaTitleCollapse.text=media.userPreferredName
+
+
+        //Buttons could be done in a better way by making a class but uhh
+        //Fav Button
+        if (media.isFav){
+            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
+        }
+        var favPressable = true
+        binding.mediaFav.setOnClickListener {
+            if (favPressable){
+                favPressable = false
+                media.isFav = !media.isFav
+                ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",1f,0f).setDuration(69).start()
+                ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",1f,0f).setDuration(100).start()
+                scope.launch {
+                    delay(100)
+                    runOnUiThread {
+                        if (media.isFav) {
+                            ObjectAnimator.ofArgb(binding.mediaFav,"ColorFilter",ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab),ContextCompat.getColor(this@MediaDetailsActivity, R.color.fav)).setDuration(120).start()
+                            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity,R.drawable.ic_round_favorite_24))
+                        }
+                        else{
+                            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity,R.drawable.ic_round_favorite_border_24))
+                        }
+                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",0f,1.5f).setDuration(120).start()
+                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",0f,1.5f).setDuration(100).start()
+                    }
+                    delay(120)
+                    runOnUiThread {
+                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",1.5f,1f).setDuration(100).start()
+                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",1.5f,1f).setDuration(100).start()
+                    }
+                    delay(200)
+                    runOnUiThread{
+                        if (media.isFav) {
+                            ObjectAnimator.ofArgb(binding.mediaFav,"ColorFilter", ContextCompat.getColor(this@MediaDetailsActivity, R.color.fav), ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab)).setDuration(200).start()
+                        }
+                    }
+                    favPressable = true
+                }
             }
+        }
+
+        //Notify Button
+        var notify = false
+        if (notify){
+            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_notifications_active_24))
+        }
+        var notifyPressable = true
+        binding.mediaNotify.setOnClickListener {
+            if (notifyPressable){
+                notifyPressable = false
+                notify = !notify
+                ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",1f,0f).setDuration(69).start()
+                ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",1f,0f).setDuration(100).start()
+                scope.launch {
+                    delay(100)
+                    runOnUiThread {
+                        if (notify) {
+                            ObjectAnimator.ofArgb(binding.mediaNotify,"ColorFilter",ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab),ContextCompat.getColor(this@MediaDetailsActivity, R.color.violet_400)).setDuration(120).start()
+                            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity, R.drawable.ic_round_notifications_active_24))
+                        }
+                        else{
+                            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity, R.drawable.ic_round_notifications_none_24))
+                        }
+                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",0f,1.5f).setDuration(120).start()
+                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",0f,1.5f).setDuration(100).start()
+                    }
+                    delay(120)
+                    runOnUiThread {
+                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",1.5f,1f).setDuration(100).start()
+                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",1.5f,1f).setDuration(100).start()
+                    }
+                    delay(200)
+                    runOnUiThread{
+                        if (notify) {
+                            ObjectAnimator.ofArgb(binding.mediaNotify,"ColorFilter", ContextCompat.getColor(this@MediaDetailsActivity, R.color.violet_400), ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab)).setDuration(200).start()
+                        }
+                    }
+                    notifyPressable = true
+                }
+            }
+        }
+
+        if (media.anime!=null){
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
         }
         else if (media.manga!=null){
-            Picasso.get().load(media.manga.cover).into(binding.mediaCoverImage)
-            Picasso.get().load(media.manga.banner).into(binding.mediaBanner)
-            Picasso.get().load(media.manga.banner).into(binding.mediaBannerStatus)
-            binding.mediaTitleCollapse.text=media.manga.userPreferredName
-            binding.mediaTitle.text=media.manga.userPreferredName
-            if (media.manga.isFav){
-                binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
-                binding.mediaFav.setColorFilter(ContextCompat.getColor(this, R.color.fav))
-            }
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
@@ -111,7 +182,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle,private val anime:Boolean=true) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
 
-        override fun getItemCount(): Int = 3
+        override fun getItemCount(): Int = 2
 
         override fun createFragment(position: Int): Fragment {
             if (anime){
@@ -143,8 +214,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaCover.scaleX = 1f*cap
         binding.mediaCover.scaleY = 1f*cap
         binding.mediaCover.cardElevation = 32f*cap
-//        appBar.post{appBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = ((1f - cap) * statusBarHeight).toInt() }}
-
 
         if (percentage >= percent && !isCollapsed) {
             isCollapsed = true
@@ -165,6 +234,4 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             this.window.statusBarColor = ContextCompat.getColor(this, R.color.status)
         }
     }
-
-
 }
