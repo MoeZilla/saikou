@@ -60,7 +60,7 @@ class MediaAdaptor(
                 val media = mediaList[bindingAdapterPosition]
                 ContextCompat.startActivity(
                    activity,
-                    Intent(activity, MediaActivity::class.java).putExtra("media",media as Serializable),
+                    Intent(activity, MediaDetailsActivity::class.java).putExtra("media",media as Serializable),
                         ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         Pair.create(binding.itemCompactImage,ViewCompat.getTransitionName(binding.itemCompactImage)!!),
 //                        Pair.create(binding.itemCompactTitle,ViewCompat.getTransitionName(binding.itemCompactTitle)!!),

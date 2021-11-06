@@ -22,8 +22,8 @@ var navBarHeight = 0
 val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics)
 lateinit var bottomBar: AnimatedBottomBar
 
-fun logger(e:Any?){
-    if(buildDebug)
+fun logger(e:Any?,print:Boolean=true){
+    if(buildDebug && print)
         println(e)
 }
 

@@ -4,42 +4,36 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+
 import ani.saikou.R
-import ani.saikou.anilist.anilist
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.initActivity
 import ani.saikou.manga.MangaSourceFragment
 import ani.saikou.statusBarHeight
+
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
-import androidx.lifecycle.ViewModelProvider
-import ani.saikou.anilist.AnilistHomeViewModel
 
-
-class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
-    
-    private var isCollapsed = false
-    private val percent = 50
-    private var mMaxScrollSize = 0
-    private var screenWidth:Float = 0f
+class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
     private lateinit var binding: ActivityMediaBinding
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private lateinit var tabLayout: AnimatedBottomBar
+    private val scope = CoroutineScope(Dispatchers.Default)
+    private val model: MediaDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +63,7 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         }
         val viewPager = binding.mediaViewPager
         viewPager.isUserInputEnabled = false
+        var tabLayout : AnimatedBottomBar? = null
 
         val media: Media = intent.getSerializableExtra("media") as Media
         if (media.anime!=null){
@@ -77,6 +72,10 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
             Picasso.get().load(media.anime.banner).into(binding.mediaBannerStatus)
             binding.mediaTitle.text=media.anime.userPreferredName
             binding.mediaTitleCollapse.text=media.anime.userPreferredName
+            if (media.anime.isFav){
+                binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
+                binding.mediaFav.setColorFilter(ContextCompat.getColor(this, R.color.fav))
+            }
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
         }
@@ -86,16 +85,19 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
             Picasso.get().load(media.manga.banner).into(binding.mediaBannerStatus)
             binding.mediaTitleCollapse.text=media.manga.userPreferredName
             binding.mediaTitle.text=media.manga.userPreferredName
+            if (media.manga.isFav){
+                binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
+                binding.mediaFav.setColorFilter(ContextCompat.getColor(this, R.color.fav))
+            }
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
         binding.mediaTitle.translationX = -screenWidth
-        tabLayout.visibility = View.VISIBLE
+        tabLayout!!.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
 
-        val model: MediaDetailsViewModel by viewModels()
-
         scope.launch {
+            delay(2000)
             model.loadMedia(media)
         }
     }
@@ -104,6 +106,7 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
         scope.cancel()
         super.onDestroy()
     }
+
     //ViewPager
     private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle,private val anime:Boolean=true) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -126,8 +129,12 @@ class MediaActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener 
             return MediaInfoFragment()
         }
     }
-
     //Collapsing UI Stuff
+    private var isCollapsed = false
+    private val percent = 50
+    private var mMaxScrollSize = 0
+    private var screenWidth:Float = 0f
+
     override fun onOffsetChanged(appBar: AppBarLayout, i: Int) {
         if (mMaxScrollSize == 0) mMaxScrollSize = appBar.totalScrollRange
         val percentage = abs(i) * 100 / mMaxScrollSize

@@ -14,4 +14,5 @@
     <color name="nav_tab">#40000000</color>
     <color name="nav_tab_disabled">#19000000</color>
     <color name="status">#80E9E8F0</color>
+    <color name="fav">#E63956</color>
 </resources>

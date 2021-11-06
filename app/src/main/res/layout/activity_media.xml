@@ -108,7 +108,7 @@
                 <LinearLayout
                     android:id="@+id/mediaStatusContainer"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="64dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
@@ -148,7 +148,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/imageView4"
+                    android:id="@+id/mediaFav"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_margin="8dp"
@@ -157,9 +157,10 @@
                     tools:ignore="ContentDescription" />
 
                 <ImageView
-                    android:id="@+id/imageView5"
+                    android:id="@+id/mediaNotify"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_marginStart="-16dp"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_round_notifications_none_24"
                     tools:ignore="ContentDescription" />
