@@ -60,8 +60,7 @@ class MainActivity : AppCompatActivity() {
             mainViewPager.post { mainViewPager.setCurrentItem(1, false) }
         } else {
             //Login
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, LoginFragment()).addToBackStack(null).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, LoginFragment()).addToBackStack(null).commit()
         }
     }
 

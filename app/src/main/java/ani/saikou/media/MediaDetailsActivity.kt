@@ -1,10 +1,10 @@
 package ani.saikou.media
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -15,14 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-
 import ani.saikou.R
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.initActivity
 import ani.saikou.manga.MangaSourceFragment
 import ani.saikou.statusBarHeight
-
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
@@ -35,6 +33,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     private val scope = CoroutineScope(Dispatchers.Default)
     private val model: MediaDetailsViewModel by viewModels()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
@@ -52,7 +51,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaCover.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
         binding.mediaTitle.isSelected = true
         binding.mediaTitleCollapse.isSelected = true
-        binding.mediaStatus.isSelected = true
+        binding.mediaUserStatus.isSelected = true
         binding.mediaAddToList.isSelected = true
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
         binding.mediaFAB.hide()
@@ -154,7 +153,26 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 }
             }
         }
-
+        if(media.userStatus!=null) {
+            binding.mediaAddToList.visibility = View.GONE
+            binding.mediaUserStatus.visibility = View.VISIBLE
+            binding.mediaUserStatus.text = media.userStatus
+            binding.mediaUserProgressContainer.visibility = View.VISIBLE
+            binding.mediaUserProgress.text = (media.userProgress?:"~").toString()
+            if (media.anime!=null){
+                binding.mediaTotal.text = " | ${if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()}"
+            }
+            else if (media.manga!=null){
+                binding.mediaTotal.text = " | ${media.manga.totalChapters?:"~"}"
+            }
+        } else{
+            binding.mediaUserStatus.visibility = View.GONE
+            binding.mediaUserProgressContainer.visibility = View.GONE
+            binding.mediaAddToList.visibility = View.VISIBLE
+        }
+        binding.mediaAccessContainer.setOnClickListener{
+            MediaListDialogFragment().show(supportFragmentManager, "dialog")
+        }
         if (media.anime!=null){
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)

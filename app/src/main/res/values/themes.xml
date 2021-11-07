@@ -17,6 +17,7 @@
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textColor">@color/bg_black</item>
 
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearanceOverlay.Demo</item>
         <item name="android:ambientShadowAlpha">0.08</item>
         <item name="android:spotShadowAlpha">0.08</item>
     </style>

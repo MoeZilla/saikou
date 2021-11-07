@@ -8,5 +8,8 @@ import ani.saikou.anilist.anilist
 class MediaDetailsViewModel:ViewModel() {
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
     fun getMedia(): LiveData<Media> = media
-    fun loadMedia(m:Media) = media.postValue(anilist.query.mediaDetails(m))
+    fun loadMedia(m:Media) {
+        media.postValue(anilist.query.mediaDetails(m))
+        println("AAAAA : ${media.value}")
+    }
 }
