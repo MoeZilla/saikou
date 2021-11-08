@@ -17,6 +17,7 @@ class Anilist {
     var avatar : String? = null
     var episodesWatched : Int? = null
     var chapterRead : Int? = null
+    var genres:Map<String,String>?=null
 
     fun loginIntent(context: Context){
         val clientID = 6818

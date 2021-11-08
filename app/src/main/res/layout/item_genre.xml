@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeAnimeList"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp">
+
+    <ImageView
+        android:id="@+id/genreImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription"
+        tools:src="@tools:sample/backgrounds/scenic"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.6"
+        android:background="@color/bg_opp" />
+
+    <TextView
+        android:id="@+id/genreTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_bold"
+        android:textAllCaps="true"
+        android:textColor="@color/bg"
+        android:textSize="16sp"
+        tools:text="@string/genres" />
+</androidx.cardview.widget.CardView>

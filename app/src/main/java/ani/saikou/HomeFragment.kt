@@ -95,6 +95,7 @@ class HomeFragment : Fragment() {
             //get Watching in new Thread
             launch {
                 if (!watchingLoaded) model.setAnimeContinue()
+//                anilist.query.genreCollection()
             }
             //get Reading in new Thread
             launch {
