@@ -49,11 +49,11 @@ class AnilistQueries{
         }
     }
 
-    fun mediaDetails(media:Media):Media{
+    fun mediaDetails(media:Media):Media?{
         val response = getQuery("""{Media(id:${media.id}){mediaListEntry{id status score progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite nextAiringEpisode{episode airingAt}source duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:FAVOURITES_DESC,perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""")
         println(response)
         val json = Json.decodeFromString<JsonObject>(response)["data"]!!
-        if (json.toString()!="null") {
+        try {
             val it = json.jsonObject["Media"]!!
             media.source = it.jsonObject["source"]!!.toString().trim('"')
             media.startDate = FuzzyDate(
@@ -162,9 +162,12 @@ class AnilistQueries{
             else if (media.manga != null) {
                 logger ("Nothing Here lmao",false)
             }
+            return media
         }
-        println("BBBB : $media")
-        return media
+        catch (e:Exception){
+            logger ("Error : $e")
+        }
+        return null
     }
 
 

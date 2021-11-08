@@ -107,8 +107,9 @@
 
                 <LinearLayout
                     android:id="@+id/mediaStatusContainer"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="64dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
@@ -132,12 +133,13 @@
 
                     <TextView
                         android:id="@+id/mediaUserStatus"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:fontFamily="@font/poppins_bold"
                         android:marqueeRepeatLimit="marquee_forever"
-                        android:text="@string/status"
+                        android:singleLine="true"
+                        android:text="@string/recommended"
                         android:textColor="?attr/colorPrimary"
                         android:visibility="gone"
                         tools:visibility="visible" />
@@ -162,20 +164,19 @@
 
                         <TextView
                             android:id="@+id/mediaTotal"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:alpha="0.58"
+                            android:ellipsize="marquee"
                             android:fontFamily="@font/poppins_bold"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:singleLine="true"
                             android:textSize="16sp"
                             tools:text=" | ~" />
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
                 <ImageView
                     android:id="@+id/mediaFav"
                     android:layout_width="48dp"

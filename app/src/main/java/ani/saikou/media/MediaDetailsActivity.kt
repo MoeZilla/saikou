@@ -53,6 +53,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaTitleCollapse.isSelected = true
         binding.mediaUserStatus.isSelected = true
         binding.mediaAddToList.isSelected = true
+        binding.mediaTotal.isSelected = true
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
         binding.mediaFAB.hide()
         binding.mediaAppBar.addOnOffsetChangedListener(this)
@@ -186,7 +187,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         tabLayout.setupWithViewPager2(viewPager)
 
         scope.launch {
-            delay(2000)
             model.loadMedia(media)
         }
     }

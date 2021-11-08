@@ -1,5 +1,6 @@
 package ani.saikou
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
@@ -10,6 +11,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.view.View
 import android.view.Window
+import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -85,14 +87,13 @@ data class FuzzyDate(
     }
 }
 
-class DatePickerFragment( activity: Activity, defaultDate: FuzzyDate) : DialogFragment(), DatePickerDialog.OnDateSetListener {
-    var date:FuzzyDate?=null
+class DatePickerFragment(activity: Activity, var date: FuzzyDate=FuzzyDate().getToday()) : DialogFragment(), DatePickerDialog.OnDateSetListener {
     var dialog :DatePickerDialog
     init{
         val c = Calendar.getInstance()
-        val year = defaultDate.year?:c.get(Calendar.YEAR)
-        val month= if (defaultDate.month!=null) defaultDate.month-1 else c.get(Calendar.MONTH)
-        val day = defaultDate.day?:c.get(Calendar.DAY_OF_MONTH)
+        val year = date.year?:c.get(Calendar.YEAR)
+        val month= if (date.month!=null) date.month!! -1 else c.get(Calendar.MONTH)
+        val day = date.day?:c.get(Calendar.DAY_OF_MONTH)
         dialog = DatePickerDialog(activity, this, year, month, day)
     }
 
@@ -101,7 +102,7 @@ class DatePickerFragment( activity: Activity, defaultDate: FuzzyDate) : DialogFr
     }
 }
 
-class InputFilterMinMax(private val min: Double, private val max: Double) : InputFilter {
+class InputFilterMinMax(private val min: Double, private val max: Double,private val status:AutoCompleteTextView?=null) : InputFilter {
     override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
         try {
             val input = (dest.toString() + source.toString()).toDouble()
@@ -112,7 +113,12 @@ class InputFilterMinMax(private val min: Double, private val max: Double) : Inpu
         return ""
     }
 
+    @SuppressLint("SetTextI18n")
     private fun isInRange(a: Double, b: Double, c: Double): Boolean {
+        if (c==b) {
+            status?.setText("COMPLETED",false)
+            status?.parent?.requestLayout()
+        }
         return if (b > a) c in a..b else c in b..a
     }
 }

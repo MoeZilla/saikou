@@ -24,8 +24,8 @@ data class Media(
     var userScore: Int = 0,
     var userRepeat:Int = 0,
     var userUpdatedAt: Date?=null,
-    var userStartedAt : FuzzyDate?=null,
-    var userCompletedAt : FuzzyDate?=null,
+    var userStartedAt : FuzzyDate = FuzzyDate(),
+    var userCompletedAt : FuzzyDate=FuzzyDate(),
 
     val status : String? = null,
     var format:String?=null,
