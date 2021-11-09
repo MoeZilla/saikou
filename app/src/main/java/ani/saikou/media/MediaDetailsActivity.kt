@@ -2,9 +2,11 @@ package ani.saikou.media
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -55,6 +57,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaAddToList.isSelected = true
         binding.mediaTotal.isSelected = true
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
+        binding.mediaFAB.show()
         binding.mediaFAB.hide()
         binding.mediaAppBar.addOnOffsetChangedListener(this)
 
@@ -72,113 +75,46 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaTitle.text=media.userPreferredName
         binding.mediaTitleCollapse.text=media.userPreferredName
 
-
-        //Buttons could be done in a better way by making a class but uhh
         //Fav Button
-        if (media.isFav){
-            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
-        }
-        var favPressable = true
-        binding.mediaFav.setOnClickListener {
-            if (favPressable){
-                favPressable = false
-                media.isFav = !media.isFav
-                ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",1f,0f).setDuration(69).start()
-                ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",1f,0f).setDuration(100).start()
-                scope.launch {
-                    delay(100)
-                    runOnUiThread {
-                        if (media.isFav) {
-                            ObjectAnimator.ofArgb(binding.mediaFav,"ColorFilter",ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab),ContextCompat.getColor(this@MediaDetailsActivity, R.color.fav)).setDuration(120).start()
-                            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity,R.drawable.ic_round_favorite_24))
-                        }
-                        else{
-                            binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity,R.drawable.ic_round_favorite_border_24))
-                        }
-                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",0f,1.5f).setDuration(120).start()
-                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",0f,1.5f).setDuration(100).start()
-                    }
-                    delay(120)
-                    runOnUiThread {
-                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleX",1.5f,1f).setDuration(100).start()
-                        ObjectAnimator.ofFloat(binding.mediaFav,"scaleY",1.5f,1f).setDuration(100).start()
-                    }
-                    delay(200)
-                    runOnUiThread{
-                        if (media.isFav) {
-                            ObjectAnimator.ofArgb(binding.mediaFav,"ColorFilter", ContextCompat.getColor(this@MediaDetailsActivity, R.color.fav), ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab)).setDuration(200).start()
-                        }
-                    }
-                    favPressable = true
-                }
-            }
-        }
+        if (media.isFav) binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
+        binding.mediaFABFav.fabOptionIcon = AppCompatResources.getDrawable(this,if (media.isFav) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
+        val favButton = PopImageButton(scope,this,binding.mediaFav,media,R.drawable.ic_round_favorite_24,R.drawable.ic_round_favorite_border_24,R.color.nav_tab,R.color.fav,true)
+        binding.mediaFav.setOnClickListener { favButton.clicked() }
+        binding.mediaFABFav.setOnClickListener { favButton.clicked() }
 
         //Notify Button
-        var notify = false
-        if (notify){
-            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_notifications_active_24))
-        }
-        var notifyPressable = true
-        binding.mediaNotify.setOnClickListener {
-            if (notifyPressable){
-                notifyPressable = false
-                notify = !notify
-                ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",1f,0f).setDuration(69).start()
-                ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",1f,0f).setDuration(100).start()
-                scope.launch {
-                    delay(100)
-                    runOnUiThread {
-                        if (notify) {
-                            ObjectAnimator.ofArgb(binding.mediaNotify,"ColorFilter",ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab),ContextCompat.getColor(this@MediaDetailsActivity, R.color.violet_400)).setDuration(120).start()
-                            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity, R.drawable.ic_round_notifications_active_24))
-                        }
-                        else{
-                            binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this@MediaDetailsActivity, R.drawable.ic_round_notifications_none_24))
-                        }
-                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",0f,1.5f).setDuration(120).start()
-                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",0f,1.5f).setDuration(100).start()
-                    }
-                    delay(120)
-                    runOnUiThread {
-                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleX",1.5f,1f).setDuration(100).start()
-                        ObjectAnimator.ofFloat(binding.mediaNotify,"scaleY",1.5f,1f).setDuration(100).start()
-                    }
-                    delay(200)
-                    runOnUiThread{
-                        if (notify) {
-                            ObjectAnimator.ofArgb(binding.mediaNotify,"ColorFilter", ContextCompat.getColor(this@MediaDetailsActivity, R.color.violet_400), ContextCompat.getColor(this@MediaDetailsActivity, R.color.nav_tab)).setDuration(200).start()
-                        }
-                    }
-                    notifyPressable = true
-                }
-            }
-        }
+        if (media.notify) binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_notifications_active_24))
+        binding.mediaFABNotify.fabOptionIcon = AppCompatResources.getDrawable(this,if (media.notify) R.drawable.ic_round_notifications_active_24 else R.drawable.ic_round_notifications_none_24)
+        val notifyButton = PopImageButton(scope,this,binding.mediaNotify,media, R.drawable.ic_round_notifications_active_24, R.drawable.ic_round_notifications_none_24,R.color.nav_tab, R.color.violet_400,false)
+        binding.mediaNotify.setOnClickListener { notifyButton.clicked() }
+        binding.mediaFABNotify.setOnClickListener { notifyButton.clicked() }
+
+        //FAB
+        binding.mediaFABList.setOnClickListener{ MediaListDialogFragment().show(supportFragmentManager, "dialog") }
+
         if(media.userStatus!=null) {
             binding.mediaAddToList.visibility = View.GONE
             binding.mediaUserStatus.visibility = View.VISIBLE
             binding.mediaUserStatus.text = media.userStatus
-            binding.mediaUserProgressContainer.visibility = View.VISIBLE
+            binding.mediaUserProgress.visibility = View.VISIBLE
             binding.mediaUserProgress.text = (media.userProgress?:"~").toString()
-            if (media.anime!=null){
-                binding.mediaTotal.text = " | ${if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()}"
-            }
-            else if (media.manga!=null){
-                binding.mediaTotal.text = " | ${media.manga.totalChapters?:"~"}"
-            }
         } else{
             binding.mediaUserStatus.visibility = View.GONE
-            binding.mediaUserProgressContainer.visibility = View.GONE
+            binding.mediaUserProgress.visibility = View.GONE
             binding.mediaAddToList.visibility = View.VISIBLE
         }
+
         binding.mediaAccessContainer.setOnClickListener{
             MediaListDialogFragment().show(supportFragmentManager, "dialog")
         }
+        binding.mediaStatus.text = media.status
         if (media.anime!=null){
+            binding.mediaTotal.text = if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
         }
         else if (media.manga!=null){
+            binding.mediaTotal.text = (media.manga.totalChapters?:"~").toString()
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
@@ -220,7 +156,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     }
     //Collapsing UI Stuff
     private var isCollapsed = false
-    private val percent = 50
+    private val percent = 30
     private var mMaxScrollSize = 0
     private var screenWidth:Float = 0f
 
@@ -252,4 +188,55 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             this.window.statusBarColor = ContextCompat.getColor(this, R.color.status)
         }
     }
+    inner class PopImageButton(private val scope: CoroutineScope,private val activity: Activity,private val image:ImageView,private val media:Media,private val d1:Int,private val d2:Int,private val c1:Int,private val c2:Int,private val fav_or_not:Boolean? = null){
+        private var pressable = true
+        private var clicked = false
+        fun clicked(){
+            if (pressable){
+                pressable = false
+                if (fav_or_not!=null) {
+                    if (fav_or_not) {
+                        media.isFav = !media.isFav
+                        clicked = media.isFav
+                        binding.mediaFABFav.fabOptionIcon = AppCompatResources.getDrawable(activity,if (clicked) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
+                    }
+                    else {
+                        media.notify = !media.notify
+                        clicked = media.notify
+                        binding.mediaFABNotify.fabOptionIcon = AppCompatResources.getDrawable(activity,if (clicked) R.drawable.ic_round_notifications_active_24 else R.drawable.ic_round_notifications_none_24)
+                    }
+                }
+                else clicked = !clicked
+                ObjectAnimator.ofFloat(image,"scaleX",1f,0f).setDuration(69).start()
+                ObjectAnimator.ofFloat(image,"scaleY",1f,0f).setDuration(100).start()
+                scope.launch {
+                    delay(100)
+                    activity.runOnUiThread {
+                        if (clicked) {
+                            ObjectAnimator.ofArgb(image,"ColorFilter",ContextCompat.getColor(activity, c1),ContextCompat.getColor(activity, c2)).setDuration(120).start()
+                            image.setImageDrawable(AppCompatResources.getDrawable(activity,d1))
+                        }
+                        else{
+                            image.setImageDrawable(AppCompatResources.getDrawable(activity,d2))
+                        }
+                        ObjectAnimator.ofFloat(image,"scaleX",0f,1.5f).setDuration(120).start()
+                        ObjectAnimator.ofFloat(image,"scaleY",0f,1.5f).setDuration(100).start()
+                    }
+                    delay(120)
+                    activity.runOnUiThread {
+                        ObjectAnimator.ofFloat(image,"scaleX",1.5f,1f).setDuration(100).start()
+                        ObjectAnimator.ofFloat(image,"scaleY",1.5f,1f).setDuration(100).start()
+                    }
+                    delay(200)
+                    activity.runOnUiThread{
+                        if (clicked) {
+                            ObjectAnimator.ofArgb(image,"ColorFilter", ContextCompat.getColor(activity, c2), ContextCompat.getColor(activity, c1)).setDuration(200).start()
+                        }
+                    }
+                    pressable = true
+                }
+            }
+        }
+    }
 }
+

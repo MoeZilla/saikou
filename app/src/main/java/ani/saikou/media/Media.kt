@@ -18,6 +18,7 @@ data class Media(
     var relation: String? =null,
 
     var isFav: Boolean = false,
+    var notify: Boolean = false,
     val userPreferredName: String,
     var userProgress: Int? = null,
     var userStatus: String? = null,

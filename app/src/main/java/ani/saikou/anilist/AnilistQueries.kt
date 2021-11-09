@@ -155,8 +155,10 @@ class AnilistQueries{
                 media.anime.season = it.jsonObject["season"]!!.toString().trim('"')
                 media.anime.seasonYear = it.jsonObject["seasonYear"]!!.toString().toInt()
 
-                media.anime.mainStudioID = it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray[0].jsonObject["id"].toString().toInt()
-                media.anime.mainStudioName = it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray[0].jsonObject["name"].toString().trim('"')
+                if (it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray.isNotEmpty()) {
+                    media.anime.mainStudioID = it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray[0].jsonObject["id"].toString().toInt()
+                    media.anime.mainStudioName = it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray[0].jsonObject["name"].toString().trim('"')
+                }
                 media.anime.nextAiringEpisodeTime = if (it.jsonObject["nextAiringEpisode"].toString().trim('"')!="null") Date(it.jsonObject["nextAiringEpisode"]!!.jsonObject["airingAt"].toString().toLong()*1000) else null
 
                 it.jsonObject["externalLinks"]!!.jsonArray.forEach{ i->
@@ -306,22 +308,27 @@ class AnilistQueries{
         return returnArray
     }
 
-    fun genreCollection() = runBlocking{
+    fun genreCollection(){
         logger("GenreCollection started")
         val returnMap = mutableMapOf<String,String>()
         val query = "{GenreCollection}"
-        withContext(Dispatchers.Default) {
-            Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
-                launch {
-                    val genreQuery = """{Media(genre:${genre.toString().replace("\"", "\\\"")}, sort: POPULARITY_DESC) { bannerImage } }"""
-                    val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!
-                    if (response.jsonObject["Media"].toString() != "null"){
-                        returnMap[genre.toString().trim('"')] = response.jsonObject["Media"]!!.jsonObject["bannerImage"].toString().trim('"')
+        val ids = arrayListOf<String>()
+        Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
+            val genreQuery ="""{ Page(perPage: 10){media(genre:${genre.toString().replace("\"", "\\\"")}, sort: TRENDING_DESC, type: ANIME, countryOfOrigin:\"JP\") {id bannerImage } } }"""
+            val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Page"]!!
+            if (response.jsonObject["media"].toString() != "null"){
+                run next@{
+                    response.jsonObject["media"]!!.jsonArray.forEach {
+                        if (it.jsonObject["id"].toString() !in ids && it.jsonObject["bannerImage"].toString()!="null") {
+                            ids.add(it.jsonObject["id"].toString())
+                            returnMap[genre.toString().trim('"')] = it.jsonObject["bannerImage"].toString().trim('"')
+                            return@next
+                        }
                     }
                 }
             }
         }
         anilist.genres = returnMap
-        logger("GenreCollection finished")
+        logger("$returnMap \n finished")
     }
 }

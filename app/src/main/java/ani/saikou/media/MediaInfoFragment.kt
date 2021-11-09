@@ -28,6 +28,7 @@ class MediaInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val screenWidth = resources.displayMetrics.widthPixels.toFloat()
 
         binding.mediaInfoProgressBar.visibility = View.VISIBLE
         binding.mediaInfoContainer.visibility = View.GONE
@@ -37,7 +38,7 @@ class MediaInfoFragment : Fragment() {
             if(media!=null){
                 binding.mediaInfoProgressBar.visibility = View.GONE
                 binding.mediaInfoContainer.visibility = View.VISIBLE
-                binding.mediaInfoMeanScore.text = media.meanScore.toString()
+                binding.mediaInfoMeanScore.text = if(media.meanScore!=null) (media.meanScore/10.0).toString() else "??"
                 binding.mediaInfoStatus.text = media.status
                 binding.mediaInfoFormat.text = media.format
                 binding.mediaInfoSource.text = media.source
@@ -70,7 +71,7 @@ class MediaInfoFragment : Fragment() {
                 binding.mediaInfoRelationRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
                 binding.mediaInfoGenresRecyclerView.adapter = GenreAdapter(media.genres!!)
-                binding.mediaInfoGenresRecyclerView.layoutManager = GridLayoutManager(requireContext(), if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2)
+                binding.mediaInfoGenresRecyclerView.layoutManager = GridLayoutManager(requireContext(), (screenWidth/400f).toInt())
 
                 binding.mediaInfoCharacterRecyclerView.adapter = CharacterAdapter(media.characters!!)
                 binding.mediaInfoCharacterRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
