@@ -6,10 +6,7 @@ import ani.saikou.logger
 import ani.saikou.manga.Manga
 import ani.saikou.media.Character
 import ani.saikou.media.Media
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -309,18 +306,22 @@ class AnilistQueries{
         return returnArray
     }
 
-    fun genreCollection()= runBlocking{
+    fun genreCollection() = runBlocking{
+        logger("GenreCollection started")
         val returnMap = mutableMapOf<String,String>()
         val query = "{GenreCollection}"
         withContext(Dispatchers.Default) {
             Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
-                async {
+                launch {
                     val genreQuery = """{Media(genre:${genre.toString().replace("\"", "\\\"")}, sort: POPULARITY_DESC) { bannerImage } }"""
-                    val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Media"]!!.jsonObject["bannerImage"].toString()
-                    returnMap[genre.toString()] = response
+                    val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!
+                    if (response.jsonObject["Media"].toString() != "null"){
+                        returnMap[genre.toString().trim('"')] = response.jsonObject["Media"]!!.jsonObject["bannerImage"].toString().trim('"')
+                    }
                 }
             }
         }
         anilist.genres = returnMap
+        logger("GenreCollection finished")
     }
 }

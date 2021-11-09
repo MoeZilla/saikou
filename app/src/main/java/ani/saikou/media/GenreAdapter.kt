@@ -3,6 +3,7 @@ package ani.saikou.media
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ani.saikou.anilist.anilist
 import ani.saikou.databinding.ItemGenreBinding
 import com.squareup.picasso.Picasso
 
@@ -18,6 +19,7 @@ class GenreAdapter(
         val binding = holder.binding
         val genre = genres[position]
         binding.genreTitle.text = genre
+        Picasso.get().load(anilist.genres?.get(genre)).into(binding.genreImage)
     }
 
     override fun getItemCount(): Int = genres.size

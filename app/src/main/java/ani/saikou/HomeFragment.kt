@@ -101,6 +101,11 @@ class HomeFragment : Fragment() {
             launch {
                 if (!readingLoaded) model.setMangaContinue()
             }
+            // get genres and respective images
+            launch {
+                anilist.query.genreCollection()
+            }
+
             //get List Images in current Thread(idle)
             if (!listImagesLoaded) model.setListImages()
 
