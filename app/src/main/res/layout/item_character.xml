@@ -4,23 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
+    android:layout_marginStart="-12dp"
+    android:layout_marginTop="-12dp"
+    android:layout_marginEnd="-12dp"
     android:orientation="vertical">
 
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="23dp">
+        android:clipToPadding="false"
+        android:padding="24dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/itemCompactCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="28dp"
             android:translationZ="8dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
@@ -30,8 +29,8 @@
                 android:layout_width="108dp"
                 android:layout_height="160dp"
                 android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/roundedImageView"
                 android:transitionName="mediaCover"
+                app:shapeAppearanceOverlay="@style/roundedImageView"
                 tools:ignore="ContentDescription,ImageContrastCheck"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -42,9 +41,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical">
 

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Saikou</string>
-    <string name="slogan">The Best Anime &amp; Manga app for Android.</string>
+    <string name="slogan" translatable="false">The Best Anime &amp; Manga app for Android.</string>
     <string name="login">Login with Anilist</string>
 
     <string name="home">Home</string>
@@ -70,5 +70,26 @@
     <string name="characters">Characters</string>
     <string name="relations">Relations</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="play_yt">Play on Youtube</string>
+    <string name="eps">Episodes</string>
+    <string name="ep">Episode</string>
+    <string name="chaps">Chapters</string>
+    <string name="chap">Chapter</string>
+    <string name="wrong">Wrong Title?</string>
+    <string-array name="anime_sources">
+        <item>GOGO</item>
+        <item>GOGO-DUB</item>
+        <item>ANIMEPAHE</item>
+        <item>ZORO</item>
+        <item>TWIST MOE</item>
+    </string-array>
+    <string-array name="manga_sources">
+        <item>MANGAPILL</item>
+        <item>MANGABUDDY</item>
+        <item>MANGAREADER</item>
+    </string-array>
+    <string name="source_not_found">
+        Couldn\'t find anything X(
+        Try another source.
+    </string>
 </resources>

@@ -54,211 +54,201 @@
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:fontFamily="@font/poppins"
+                android:fontFamily="@font/poppins_bold"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="false"
-                android:singleLine="true"
+                android:singleLine="false"
                 android:text="@string/slogan"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:textSize="16sp"
                 android:transitionName="mediaTitle" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <FrameLayout
-            android:id="@+id/mediaTitleContainer"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:minHeight="64dp"
-            android:orientation="horizontal"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            android:orientation="vertical">
 
-
-            <TextView
-                android:id="@+id/mediaTitle"
+            <FrameLayout
+                android:id="@+id/mediaTitleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="64dp"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:fontFamily="@font/poppins"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="false"
-                android:singleLine="true"
-                android:text="@string/slogan"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:transitionName="mediaTitle"
-                tools:visibility="gone" />
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minHeight="64dp"
+                android:orientation="horizontal"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
 
-            <LinearLayout
-                android:id="@+id/mediaAccessContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:gravity="center_horizontal|center_vertical"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp">
+
+                <TextView
+                    android:id="@+id/mediaTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="64dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@string/slogan"
+                    android:textSize="16sp"
+                    android:transitionName="mediaTitle"
+                    tools:visibility="gone" />
 
                 <LinearLayout
-                    android:id="@+id/mediaStatusContainer"
-                    android:layout_width="108dp"
-                    android:layout_height="64dp"
-                    android:gravity="center_vertical|end"
-                    android:orientation="vertical">
+                    android:id="@+id/mediaAccessContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp">
 
                     <Button
                         android:id="@+id/mediaAddToList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
+                        android:layout_width="108dp"
+                        android:layout_height="64dp"
                         android:ellipsize="marquee"
-                        android:focusable="false"
                         android:fontFamily="@font/poppins_bold"
+                        android:insetTop="8dp"
+                        android:insetBottom="8dp"
                         android:marqueeRepeatLimit="marquee_forever"
                         android:padding="8dp"
                         android:singleLine="true"
                         android:text="@string/add"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:visibility="visible"
-                        app:cornerRadius="8dp"
-                        tools:ignore="SmallSp,TextContrastCheck"
-                        tools:visibility="gone" />
+                        app:cornerRadius="16dp"
+                        tools:ignore="SmallSp,TextContrastCheck" />
 
-                    <TextView
-                        android:id="@+id/mediaUserStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:fontFamily="@font/poppins_bold"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:singleLine="true"
-                        android:text="@string/recommended"
-                        android:textColor="?attr/colorSecondary"
-                        android:visibility="gone"
-                        tools:ignore="TextContrastCheck"
-                        tools:visibility="visible" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/mediaUserProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_bold"
-                        android:textSize="16sp"
-                        tools:ignore="TextContrastCheck"
-                        tools:text="0" />
+                        <TextView
+                            android:id="@+id/mediaUserStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:fontFamily="@font/poppins_bold"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:singleLine="true"
+                            android:text="@string/status"
+                            android:textColor="?attr/colorSecondary"
+                            tools:ignore="TextContrastCheck" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/mediaUserProgress"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textSize="16sp"
+                                tools:ignore="TextContrastCheck"
+                                tools:text="0" />
+
+                            <TextView
+                                android:id="@+id/mediaTotal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.58"
+                                android:ellipsize="marquee"
+                                android:fontFamily="@font/poppins_bold"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:singleLine="true"
+                                android:textSize="16sp"
+                                tools:text=" | ~" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/mediaFav"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:tintMode="src_atop"
+                        app:srcCompat="@drawable/ic_round_favorite_border_24"
+                        app:tint="@color/nav_tab"
+                        tools:ignore="ContentDescription,ImageContrastCheck" />
+
+                    <ImageView
+                        android:id="@+id/mediaNotify"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="-16dp"
+                        android:padding="8dp"
+                        app:srcCompat="@drawable/ic_round_notifications_none_24"
+                        app:tint="@color/nav_tab"
+                        app:tintMode="src_atop"
+                        tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 </LinearLayout>
+            </FrameLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
+            <nl.joery.animatedbottombar.AnimatedBottomBar
+                android:id="@+id/mediaAnimeTab"
+                android:layout_width="fill_parent"
+                android:layout_height="64dp"
 
-                    <TextView
-                        android:id="@+id/mediaStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:fontFamily="@font/poppins_bold"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:singleLine="true"
-                        android:text="@string/recommended"
-                        android:textColor="?attr/colorPrimary"
-                        tools:ignore="TextContrastCheck" />
+                android:paddingStart="32dp"
 
-                    <TextView
-                        android:id="@+id/mediaTotal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:alpha="0.58"
-                        android:ellipsize="marquee"
-                        android:fontFamily="@font/poppins_bold"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:singleLine="true"
-                        android:textSize="16sp"
-                        tools:text=" | ~" />
+                android:paddingEnd="32dp"
+                android:visibility="gone"
+                app:abb_animationDuration="300"
+                app:abb_animationInterpolator="@anim/over_shoot"
+                app:abb_badgeBackgroundColor="#F44336"
+                app:abb_indicatorColor="?attr/colorSecondary"
+                app:abb_indicatorLocation="bottom"
+                app:abb_indicatorMargin="28dp"
+                app:abb_selectedTabType="text"
+                app:abb_tabColor="@color/nav_tab"
+                app:abb_tabColorDisabled="@color/nav_tab_disabled"
+                app:abb_tabColorSelected="?attr/colorPrimary"
+                app:abb_tabs="@menu/anime_detail_menu"
+                app:abb_textAppearance="@style/NavBarText"
+                tools:ignore="SpeakableTextPresentCheck"
+                tools:visibility="visible" />
 
-                </LinearLayout>
+            <nl.joery.animatedbottombar.AnimatedBottomBar
+                android:id="@+id/mediaMangaTab"
+                android:layout_width="fill_parent"
+                android:layout_height="64dp"
 
-                <ImageView
-                    android:id="@+id/mediaFav"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="8dp"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_round_favorite_border_24"
-                    app:tint="@color/nav_tab"
-                    tools:ignore="ContentDescription,ImageContrastCheck" />
+                android:paddingStart="32dp"
 
-                <ImageView
-                    android:id="@+id/mediaNotify"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="-16dp"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_round_notifications_none_24"
-                    app:tint="@color/nav_tab"
-                    tools:ignore="ContentDescription,ImageContrastCheck" />
+                android:paddingEnd="32dp"
+                android:visibility="gone"
+                app:abb_animationDuration="300"
+                app:abb_animationInterpolator="@anim/over_shoot"
+                app:abb_badgeBackgroundColor="#F44336"
+                app:abb_indicatorColor="?attr/colorSecondary"
+                app:abb_indicatorLocation="bottom"
+                app:abb_indicatorMargin="28dp"
+                app:abb_selectedTabType="text"
+                app:abb_tabColor="@color/nav_tab"
+                app:abb_tabColorDisabled="@color/nav_tab_disabled"
+                app:abb_tabColorSelected="?attr/colorPrimary"
+                app:abb_tabs="@menu/manga_detail_menu"
+                app:abb_textAppearance="@style/NavBarText"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-            </LinearLayout>
-        </FrameLayout>
-
-        <nl.joery.animatedbottombar.AnimatedBottomBar
-            android:id="@+id/mediaAnimeTab"
-            android:layout_width="fill_parent"
-            android:layout_height="64dp"
-
-            android:paddingStart="32dp"
-
-            android:paddingEnd="32dp"
-            android:visibility="gone"
-            app:abb_animationDuration="300"
-            app:abb_animationInterpolator="@anim/over_shoot"
-            app:abb_badgeBackgroundColor="#F44336"
-            app:abb_indicatorColor="?attr/colorSecondary"
-            app:abb_indicatorLocation="bottom"
-            app:abb_indicatorMargin="28dp"
-            app:abb_selectedTabType="text"
-            app:abb_tabColor="@color/nav_tab"
-            app:abb_tabColorDisabled="@color/nav_tab_disabled"
-            app:abb_tabColorSelected="?attr/colorPrimary"
-            app:abb_tabs="@menu/anime_detail_menu"
-            app:abb_textAppearance="@style/NavBarText"
-            tools:ignore="SpeakableTextPresentCheck"
-            tools:visibility="visible" />
-
-        <nl.joery.animatedbottombar.AnimatedBottomBar
-            android:id="@+id/mediaMangaTab"
-            android:layout_width="fill_parent"
-            android:layout_height="64dp"
-
-            android:paddingStart="32dp"
-
-            android:paddingEnd="32dp"
-            android:visibility="gone"
-            app:abb_animationDuration="300"
-            app:abb_animationInterpolator="@anim/over_shoot"
-            app:abb_badgeBackgroundColor="#F44336"
-            app:abb_indicatorColor="?attr/colorSecondary"
-            app:abb_indicatorLocation="bottom"
-            app:abb_indicatorMargin="28dp"
-            app:abb_selectedTabType="text"
-            app:abb_tabColor="@color/nav_tab"
-            app:abb_tabColorDisabled="@color/nav_tab_disabled"
-            app:abb_tabColorSelected="?attr/colorPrimary"
-            app:abb_tabs="@menu/manga_detail_menu"
-            app:abb_textAppearance="@style/NavBarText"
-            tools:ignore="SpeakableTextPresentCheck" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
@@ -289,60 +279,6 @@
             tools:ignore="ContentDescription" />
     </androidx.cardview.widget.CardView>
 
-    <com.nambimobile.widgets.efab.ExpandableFabLayout
-        android:id="@+id/expandable_fab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.nambimobile.widgets.efab.ExpandableFab
-            android:id="@+id/mediaFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="32dp"
-            app:efab_closingAnticipateTension="0"
-            app:efab_color="?attr/colorPrimary"
-            app:efab_icon="@drawable/ic_plus_white_24dp"
-            app:efab_iconAnimationRotationDeg="-225"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <com.nambimobile.widgets.efab.Overlay
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:overlay_color="@color/bg_black"
-            app:overlay_alpha="0.33"/>
-
-        <com.nambimobile.widgets.efab.FabOption
-            android:id="@+id/mediaFABList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fabCustomSize="48dp"
-            app:fab_icon="@drawable/ic_round_playlist_add_24"
-            app:label_font="@font/poppins_bold"
-            app:label_text="List Editor"
-            tools:ignore="TouchTargetSizeCheck,DuplicateClickableBoundsCheck,ImageContrastCheck,SpeakableTextPresentCheck" />
-
-        <com.nambimobile.widgets.efab.FabOption
-            android:id="@+id/mediaFABFav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fabCustomSize="48dp"
-            app:fab_icon="@drawable/ic_round_favorite_24"
-            app:label_font="@font/poppins_bold"
-            app:label_text="Add to Favourite"
-            tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        <com.nambimobile.widgets.efab.FabOption
-            android:id="@+id/mediaFABNotify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fabCustomSize="48dp"
-            app:fab_icon="@drawable/ic_round_notifications_active_24"
-            app:label_font="@font/poppins_bold"
-            app:label_text="Notifications"
-            tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-    </com.nambimobile.widgets.efab.ExpandableFabLayout>
     <androidx.cardview.widget.CardView
         android:id="@+id/mediaCover"
         android:layout_width="wrap_content"

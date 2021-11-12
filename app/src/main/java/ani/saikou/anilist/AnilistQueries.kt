@@ -48,13 +48,14 @@ class AnilistQueries{
     }
 
     fun mediaDetails(media:Media): Media {
-        val response = getQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite nextAiringEpisode{episode airingAt}source format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""")
+        val response = getQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite idMal nextAiringEpisode{episode airingAt}source format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""")
         val json = Json.decodeFromString<JsonObject>(response)["data"]!!
 //        try {
             val it = json.jsonObject["Media"]!!
 
             media.source = it.jsonObject["source"]!!.toString().trim('"')
             media.format = it.jsonObject["format"]!!.toString().trim('"')
+            media.idMAL = if (it.jsonObject["idMal"]!!.toString()!="null") it.jsonObject["idMal"]!!.toString().toInt() else null
             media.startDate = FuzzyDate(
                 if(it.jsonObject["startDate"]!!.jsonObject["year"].toString()!="null") it.jsonObject["startDate"]!!.jsonObject["year"].toString().toInt() else null,
                 if(it.jsonObject["startDate"]!!.jsonObject["month"].toString()!="null") it.jsonObject["startDate"]!!.jsonObject["month"].toString().toInt() else null,
@@ -151,9 +152,9 @@ class AnilistQueries{
             }
 
             if (media.anime != null) {
-                media.anime.episodeDuration = it.jsonObject["duration"]!!.toString().toInt()
-                media.anime.season = it.jsonObject["season"]!!.toString().trim('"')
-                media.anime.seasonYear = it.jsonObject["seasonYear"]!!.toString().toInt()
+                media.anime.episodeDuration = if (it.jsonObject["duration"]!!.toString()!="null") it.jsonObject["duration"]!!.toString().toInt() else null
+                media.anime.season = if (it.jsonObject["season"]!!.toString()!="null") it.jsonObject["season"]!!.toString().trim('"') else null
+                media.anime.seasonYear = if (it.jsonObject["seasonYear"]!!.toString()!="null") it.jsonObject["seasonYear"]!!.toString().toInt() else null
 
                 if (it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray.isNotEmpty()) {
                     media.anime.mainStudioID = it.jsonObject["studios"]!!.jsonObject["nodes"]!!.jsonArray[0].jsonObject["id"].toString().toInt()

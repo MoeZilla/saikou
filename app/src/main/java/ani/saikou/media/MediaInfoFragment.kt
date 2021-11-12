@@ -1,7 +1,6 @@
 package ani.saikou.media
 
 import android.animation.ObjectAnimator
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,11 +29,12 @@ class MediaInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
 
-        binding.mediaInfoProgressBar.visibility = View.VISIBLE
-        binding.mediaInfoContainer.visibility = View.GONE
+
         val model : MediaDetailsViewModel by activityViewModels()
         model.getMedia().observe(this,{
             val media = it
+            binding.mediaInfoProgressBar.visibility = View.VISIBLE
+            binding.mediaInfoContainer.visibility = View.GONE
             if(media!=null){
                 binding.mediaInfoProgressBar.visibility = View.GONE
                 binding.mediaInfoContainer.visibility = View.VISIBLE
@@ -45,12 +45,12 @@ class MediaInfoFragment : Fragment() {
                 binding.mediaInfoStart.text = if (media.startDate.toString()!="") media.startDate.toString() else "??"
                 binding.mediaInfoEnd.text = if (media.endDate.toString()!="") media.endDate.toString() else "??"
                 if (media.anime!=null) {
-                    binding.mediaInfoDuration.text = media.anime.episodeDuration?.toString()
+                    binding.mediaInfoDuration.text = if (media.anime.episodeDuration!=null) media.anime.episodeDuration.toString() else "??"
                     binding.mediaInfoDurationContainer.visibility = View.VISIBLE
                     binding.mediaInfoSeasonContainer.visibility = View.VISIBLE
-                    binding.mediaInfoSeason.text = media.anime.season +" "+ media.anime.seasonYear
+                    binding.mediaInfoSeason.text = media.anime.season?:"??" +" "+ media.anime.seasonYear
                     binding.mediaInfoStudioContainer.visibility = View.VISIBLE
-                    binding.mediaInfoStudio.text = media.anime.mainStudioName
+                    binding.mediaInfoStudio.text = media.anime.mainStudioName?:"??"
                     binding.mediaInfoTotalTitle.setText(R.string.total_eps)
                     binding.mediaInfoTotal.text = if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()
                 }
@@ -58,7 +58,8 @@ class MediaInfoFragment : Fragment() {
                     binding.mediaInfoTotalTitle.setText(R.string.total_chaps)
                     binding.mediaInfoTotal.text = (media.manga.totalChapters?:"~").toString()
                 }
-                binding.mediaInfoDescription.text = "\t\t\t\t"+HtmlCompat.fromHtml((media.description?:"<i>No Description Available</i>").replace("\\n","<br>").replace("\\\"","\""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                val desc = HtmlCompat.fromHtml((media.description?:"null").replace("\\n","<br>").replace("\\\"","\""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.mediaInfoDescription.text = "\t\t\t"+if (desc.toString()!="null") desc  else "No Description Available"
                 binding.mediaInfoDescription.setOnClickListener{
                     if (binding.mediaInfoDescription.maxLines == 5){
                         ObjectAnimator.ofInt(binding.mediaInfoDescription,"maxLines",100).setDuration(950).start()

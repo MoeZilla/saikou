@@ -57,8 +57,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaAddToList.isSelected = true
         binding.mediaTotal.isSelected = true
         mMaxScrollSize = binding.mediaAppBar.totalScrollRange
-        binding.mediaFAB.show()
-        binding.mediaFAB.hide()
         binding.mediaAppBar.addOnOffsetChangedListener(this)
 
         binding.mediaClose.setOnClickListener{
@@ -77,44 +75,35 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         //Fav Button
         if (media.isFav) binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
-        binding.mediaFABFav.fabOptionIcon = AppCompatResources.getDrawable(this,if (media.isFav) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
         val favButton = PopImageButton(scope,this,binding.mediaFav,media,R.drawable.ic_round_favorite_24,R.drawable.ic_round_favorite_border_24,R.color.nav_tab,R.color.fav,true)
         binding.mediaFav.setOnClickListener { favButton.clicked() }
-        binding.mediaFABFav.setOnClickListener { favButton.clicked() }
 
         //Notify Button
         if (media.notify) binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_notifications_active_24))
-        binding.mediaFABNotify.fabOptionIcon = AppCompatResources.getDrawable(this,if (media.notify) R.drawable.ic_round_notifications_active_24 else R.drawable.ic_round_notifications_none_24)
         val notifyButton = PopImageButton(scope,this,binding.mediaNotify,media, R.drawable.ic_round_notifications_active_24, R.drawable.ic_round_notifications_none_24,R.color.nav_tab, R.color.violet_400,false)
         binding.mediaNotify.setOnClickListener { notifyButton.clicked() }
-        binding.mediaFABNotify.setOnClickListener { notifyButton.clicked() }
-
-        //FAB
-        binding.mediaFABList.setOnClickListener{ MediaListDialogFragment().show(supportFragmentManager, "dialog") }
 
         if(media.userStatus!=null) {
-            binding.mediaAddToList.visibility = View.GONE
-            binding.mediaUserStatus.visibility = View.VISIBLE
+            binding.mediaAddToList.setText(R.string.list_editor)
             binding.mediaUserStatus.text = media.userStatus
-            binding.mediaUserProgress.visibility = View.VISIBLE
-            binding.mediaUserProgress.text = (media.userProgress?:"~").toString()
+            binding.mediaUserProgress.text =(media.userProgress?:"~").toString()
         } else{
             binding.mediaUserStatus.visibility = View.GONE
             binding.mediaUserProgress.visibility = View.GONE
-            binding.mediaAddToList.visibility = View.VISIBLE
+            binding.mediaTotal.visibility = View.GONE
+            binding.mediaAddToList.setText(R.string.add)
         }
 
-        binding.mediaAccessContainer.setOnClickListener{
+        binding.mediaAddToList.setOnClickListener{
             MediaListDialogFragment().show(supportFragmentManager, "dialog")
         }
-        binding.mediaStatus.text = media.status
         if (media.anime!=null){
-            binding.mediaTotal.text = if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()
+            binding.mediaTotal.text = if (media.anime.nextAiringEpisode!=null) " | "+(media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else " | "+(media.anime.totalEpisodes?:"~").toString()
             tabLayout = binding.mediaAnimeTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,true)
         }
         else if (media.manga!=null){
-            binding.mediaTotal.text = (media.manga.totalChapters?:"~").toString()
+            binding.mediaTotal.text = " | "+(media.manga.totalChapters?:"~").toString()
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
@@ -171,7 +160,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         if (percentage >= percent && !isCollapsed) {
             isCollapsed = true
-            binding.mediaFAB.show()
             ObjectAnimator.ofFloat(binding.mediaTitle,"translationX",0f).setDuration(200).start()
             ObjectAnimator.ofFloat(binding.mediaAccessContainer,"translationX",screenWidth).setDuration(200).start()
             ObjectAnimator.ofFloat(binding.mediaTitleCollapse,"translationX",screenWidth).setDuration(200).start()
@@ -180,7 +168,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         }
         if (percentage <= percent && isCollapsed) {
             isCollapsed = false
-            binding.mediaFAB.hide()
             ObjectAnimator.ofFloat(binding.mediaTitle,"translationX",-screenWidth).setDuration(200).start()
             ObjectAnimator.ofFloat(binding.mediaAccessContainer,"translationX",0f).setDuration(200).start()
             ObjectAnimator.ofFloat(binding.mediaTitleCollapse,"translationX",0f).setDuration(200).start()
@@ -198,12 +185,10 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     if (fav_or_not) {
                         media.isFav = !media.isFav
                         clicked = media.isFav
-                        binding.mediaFABFav.fabOptionIcon = AppCompatResources.getDrawable(activity,if (clicked) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
                     }
                     else {
                         media.notify = !media.notify
                         clicked = media.notify
-                        binding.mediaFABNotify.fabOptionIcon = AppCompatResources.getDrawable(activity,if (clicked) R.drawable.ic_round_notifications_active_24 else R.drawable.ic_round_notifications_none_24)
                     }
                 }
                 else clicked = !clicked

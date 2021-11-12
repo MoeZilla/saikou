@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="108dp"
+    android:layout_margin="8dp"
+    android:translationZ="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <ImageView
+        android:id="@+id/itemEpisodeImage"
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription,ImageContrastCheck"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:background="@color/bg_black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/itemEpisodeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_light"
+            android:maxLines="3"
+            android:text="@string/slogan"
+            android:textColor="@color/bg_white"
+            android:textSize="14sp"
+            app:lineHeight="14dp" />
+
+        <TextView
+            android:id="@+id/itemEpisodeNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginTop="-14dp"
+            android:alpha="0.75"
+            android:ellipsize="start"
+            android:fontFamily="@font/poppins_bold"
+            android:singleLine="true"
+            android:textAlignment="textEnd"
+            android:textColor="@color/bg_white"
+            android:textSize="48sp"
+            tools:text="12" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
