@@ -17,6 +17,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
+import ani.saikou.anilist.Anilist
+import ani.saikou.kitsu.Kitsu
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.io.Serializable
 import java.util.*
@@ -27,6 +29,10 @@ var statusBarHeight  = 0
 var navBarHeight = 0
 //val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics)
 lateinit var bottomBar: AnimatedBottomBar
+
+var anilist : Anilist = Anilist()
+var kitsu : Kitsu = Kitsu()
+
 
 fun logger(e:Any?,print:Boolean=true){
     if(buildDebug && print)

@@ -3,7 +3,7 @@ package ani.saikou.media
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ani.saikou.anilist.anilist
+import ani.saikou.anilist
 import ani.saikou.databinding.ItemGenreBinding
 import com.squareup.picasso.Picasso
 

@@ -34,6 +34,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     private lateinit var binding: ActivityMediaBinding
     private val scope = CoroutineScope(Dispatchers.Default)
     private val model: MediaDetailsViewModel by viewModels()
+    var selected = 0
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +111,12 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaTitle.translationX = -screenWidth
         tabLayout!!.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
-
+        tabLayout.selectTabAt(selected,false)
+        tabLayout.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
+            override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
+                selected = newIndex
+            }
+        })
         scope.launch {
             model.loadMedia(media)
         }

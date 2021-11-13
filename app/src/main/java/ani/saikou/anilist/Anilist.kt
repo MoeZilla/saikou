@@ -5,9 +5,6 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import java.io.File
 
-
-var anilist : Anilist = Anilist()
-
 class Anilist {
     val query : AnilistQueries = AnilistQueries()
 

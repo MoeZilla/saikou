@@ -1,6 +1,7 @@
 package ani.saikou.anilist
 
 import ani.saikou.FuzzyDate
+import ani.saikou.anilist
 import ani.saikou.anime.Anime
 import ani.saikou.logger
 import ani.saikou.manga.Manga
@@ -196,7 +197,7 @@ class AnilistQueries{
                         cover = it.jsonObject["media"]!!.jsonObject["coverImage"]!!.jsonObject["large"].toString().trim('"'),
                         banner = it.jsonObject["media"]!!.jsonObject["bannerImage"].toString().trim('"'),
                         status = it.jsonObject["media"]!!.jsonObject["status"].toString().trim('"'),
-                        meanScore = it.jsonObject["media"]!!.jsonObject["meanScore"].toString().toInt(),
+                        meanScore = if(it.jsonObject["media"]!!.jsonObject["meanScore"].toString()!="null") it.jsonObject["media"]!!.jsonObject["meanScore"].toString().toInt() else null,
                         isFav = it.jsonObject["media"]!!.jsonObject["isFavourite"].toString() == "true",
                         userProgress = it.jsonObject["progress"].toString().toInt(),
                         userScore = it.jsonObject["score"].toString().toInt(),
@@ -227,7 +228,7 @@ class AnilistQueries{
                         status = it.jsonObject["mediaRecommendation"]!!.jsonObject["status"].toString().trim('"'),
                         cover = it.jsonObject["mediaRecommendation"]!!.jsonObject["coverImage"]!!.jsonObject["large"].toString().trim('"'),
                         banner = it.jsonObject["mediaRecommendation"]!!.jsonObject["bannerImage"].toString().trim('"'),
-                        meanScore = it.jsonObject["mediaRecommendation"]!!.jsonObject["meanScore"].toString().toInt(),
+                        meanScore = if(it.jsonObject["mediaRecommendation"]!!.jsonObject["meanScore"].toString()!="null") it.jsonObject["mediaRecommendation"]!!.jsonObject["meanScore"].toString().toInt() else null,
                         isFav = it.jsonObject["mediaRecommendation"]!!.jsonObject["isFavourite"].toString()=="true",
                         userProgress = if (it.jsonObject["mediaRecommendation"]!!.jsonObject["mediaListEntry"].toString()!="null") it.jsonObject["mediaRecommendation"]!!.jsonObject["mediaListEntry"]!!.jsonObject["progress"].toString().toInt() else null,
                         userScore = if (it.jsonObject["mediaRecommendation"]!!.jsonObject["mediaListEntry"].toString()!="null") it.jsonObject["mediaRecommendation"]!!.jsonObject["mediaListEntry"]!!.jsonObject["score"].toString().toInt() else 0,

@@ -16,4 +16,9 @@ data class Anime(
     var youtube: String?=null,
     var nextAiringEpisode: Int? = null,
     var nextAiringEpisodeTime: Date? = null,
+
+    var episodes: ArrayList<Episode>? = null,
+    var slug:String?=null,
+
+    var kitsuEpisodes : ArrayList<Episode>?=null
 ):Serializable

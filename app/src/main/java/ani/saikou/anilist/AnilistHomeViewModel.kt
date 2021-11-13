@@ -4,6 +4,7 @@ import ani.saikou.media.Media
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ani.saikou.anilist
 
 class AnilistHomeViewModel : ViewModel() {
     private val listImages : MutableLiveData<ArrayList<String?>> = MutableLiveData<ArrayList<String?>>(arrayListOf())

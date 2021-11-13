@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import ani.saikou.anilist
 import ani.saikou.logger
 import ani.saikou.startMainActivity
 

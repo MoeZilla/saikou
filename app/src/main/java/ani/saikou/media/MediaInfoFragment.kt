@@ -16,6 +16,7 @@ import ani.saikou.databinding.FragmentMediaInfoBinding
 class MediaInfoFragment : Fragment() {
     private var _binding: FragmentMediaInfoBinding? = null
     private val binding get() = _binding!!
+    private var loaded = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMediaInfoBinding.inflate(inflater, container, false)
@@ -28,14 +29,14 @@ class MediaInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
-
+        binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
+        binding.mediaInfoContainer.visibility = if (loaded) View.VISIBLE else View.GONE
 
         val model : MediaDetailsViewModel by activityViewModels()
         model.getMedia().observe(this,{
             val media = it
-            binding.mediaInfoProgressBar.visibility = View.VISIBLE
-            binding.mediaInfoContainer.visibility = View.GONE
             if(media!=null){
+                loaded=true
                 binding.mediaInfoProgressBar.visibility = View.GONE
                 binding.mediaInfoContainer.visibility = View.VISIBLE
                 binding.mediaInfoMeanScore.text = if(media.meanScore!=null) (media.meanScore/10.0).toString() else "??"
@@ -72,7 +73,7 @@ class MediaInfoFragment : Fragment() {
                 binding.mediaInfoRelationRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
                 binding.mediaInfoGenresRecyclerView.adapter = GenreAdapter(media.genres!!)
-                binding.mediaInfoGenresRecyclerView.layoutManager = GridLayoutManager(requireContext(), (screenWidth/400f).toInt())
+                binding.mediaInfoGenresRecyclerView.layoutManager = GridLayoutManager(requireContext(), (screenWidth/450f).toInt())
 
                 binding.mediaInfoCharacterRecyclerView.adapter = CharacterAdapter(media.characters!!)
                 binding.mediaInfoCharacterRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)

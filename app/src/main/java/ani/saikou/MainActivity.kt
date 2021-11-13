@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-import ani.saikou.anilist.anilist
 import ani.saikou.databinding.ActivityMainBinding
 
 import nl.joery.animatedbottombar.AnimatedBottomBar

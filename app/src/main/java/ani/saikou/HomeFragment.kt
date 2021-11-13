@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import ani.saikou.anilist.AnilistHomeViewModel
-import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor

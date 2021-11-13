@@ -96,12 +96,12 @@
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_round_grid_view_24"
                     app:tint="@color/bg_opp"
-                    tools:ignore="ContentDescription" />
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="0.33"
+                    android:alpha="1"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_round_view_list_24"
                     app:tint="@color/bg_opp"
@@ -110,11 +110,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="1"
+                    android:alpha="0.33"
                     android:padding="8dp"
                     app:tint="@color/bg_opp"
                     tools:ignore="ContentDescription,ImageContrastCheck"
-                    tools:srcCompat="@drawable/ic_round_view_comfy_24" />
+                    app:srcCompat="@drawable/ic_round_view_comfy_24" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -123,8 +123,8 @@
                     android:padding="8dp"
                     android:rotation="90"
                     app:tint="@color/bg_opp"
-                    tools:ignore="ContentDescription"
-                    tools:srcCompat="@drawable/ic_round_arrow_back_ios_new_24" />
+                    tools:ignore="ContentDescription,ImageContrastCheck"
+                    app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24" />
             </LinearLayout>
 
             <com.google.android.material.chip.ChipGroup

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import ani.saikou.anilist.anilist
 import ani.saikou.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
