@@ -60,7 +60,7 @@ class EpisodeGridAdapter(
     override fun onBindViewHolder(holder: EpisodeGridViewHolder, position: Int) {
         val binding = holder.binding
         val ep = media.anime!!.episodes!!.values.elementAt(position)
-        Picasso.get().load(ep.thumb?:media.cover).into(binding.itemEpisodeImage)
+        Picasso.get().load("https://image-compression-api.herokuapp.com/?q="+(ep.thumb?:media.cover)).into(binding.itemEpisodeImage)
         binding.itemEpisodeNumber.text = ep.number
         binding.itemEpisodeTitle.text = ep.title?:media.name
     }
