@@ -49,7 +49,7 @@
                 app:startIconDrawable="@drawable/ic_round_playlist_play_24">
 
                 <AutoCompleteTextView
-                    android:id="@+id/mediaListStatus"
+                    android:id="@+id/animeSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -134,7 +134,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/animeSourceRecycler"
+            android:id="@+id/animeEpisodesRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"

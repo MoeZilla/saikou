@@ -3,7 +3,7 @@ package ani.saikou.anime
 import java.io.Serializable
 
 data class Episode (
-    val number: Int,
+    val number: String,
     var title : String?=null,
     var desc : String?=null,
     var thumb : String?=null,

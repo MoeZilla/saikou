@@ -1,4 +1,4 @@
-package ani.saikou.anime.source.animeparsers
+package ani.saikou.anime.source.parsers
 
 
 import ani.saikou.anime.Episode

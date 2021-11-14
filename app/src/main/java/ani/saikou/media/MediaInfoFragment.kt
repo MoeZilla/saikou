@@ -27,7 +27,6 @@ class MediaInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
         binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
         binding.mediaInfoContainer.visibility = if (loaded) View.VISIBLE else View.GONE
@@ -82,5 +81,17 @@ class MediaInfoFragment : Fragment() {
                 binding.mediaInfoRecommendedRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
         })
+        super.onViewCreated(view, null)
+    }
+
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
+//        println("aaaaaaaaaaaaaaaaa ${binding.mediaInfoProgressBar.visibility}")
+//        super.onViewStateRestored(savedInstanceState)D
+//    }
+
+    override fun onResume() {
+        binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
+        super.onResume()
     }
 }

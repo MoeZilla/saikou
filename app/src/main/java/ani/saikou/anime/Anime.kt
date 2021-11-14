@@ -7,8 +7,8 @@ data class Anime(
     var totalEpisodes: Int? = null,
 
     var episodeDuration: Int? = null,
-    var season:String? = null,
-    var seasonYear:Int? = null,
+    var season: String? = null,
+    var seasonYear: Int? = null,
 
     var mainStudioID: Int? = null,
     var mainStudioName: String? =null,
@@ -17,8 +17,8 @@ data class Anime(
     var nextAiringEpisode: Int? = null,
     var nextAiringEpisodeTime: Date? = null,
 
-    var episodes: ArrayList<Episode>? = null,
+    var episodes: MutableMap<String,Episode>? = null,
     var slug:String?=null,
-
-    var kitsuEpisodes : ArrayList<Episode>?=null
+    var source:Int=0,
+    var kitsuEpisodes: MutableMap<String,Episode>? = null
 ):Serializable
