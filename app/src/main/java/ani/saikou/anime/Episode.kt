@@ -9,12 +9,12 @@ data class Episode (
     var thumb : String?=null,
     var filler : Boolean = false,
     var link : String? = null,
-    var streamLinks : ArrayList<StreamLinks>?=null,
+    var streamLinks : ArrayList<StreamLinks?>?=null,
 ):Serializable{
     data class Quality(
         val url: String,
         val quality: String,
-        val size: Int
+        val size: Int?
     ):Serializable
 
     data class StreamLinks(
