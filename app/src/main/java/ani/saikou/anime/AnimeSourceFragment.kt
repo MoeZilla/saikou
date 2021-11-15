@@ -12,10 +12,13 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.GridLayoutManager
 import ani.saikou.R
 import ani.saikou.anime.source.parsers.getGogoStream
 import ani.saikou.media.Media
+import ani.saikou.navBarHeight
+import ani.saikou.statusBarHeight
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +32,7 @@ class AnimeSourceFragment : Fragment() {
     private var gridCount = 1
     private var reversed = false
     private var selected:ImageView?=null
-    private var started = 0
+    private var start = 0
     private var end:Int?=null
     private var loading = true
 
@@ -42,6 +45,7 @@ class AnimeSourceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val screenWidth = resources.displayMetrics.run { widthPixels / density }
+        binding.animeSourceContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         super.onViewCreated(view, savedInstanceState)
         val model : MediaDetailsViewModel by activityViewModels()
         if (selected==null){
@@ -68,7 +72,7 @@ class AnimeSourceFragment : Fragment() {
                     }
                 }
                 fun updateRecycler(){
-                    binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, started, end)
+                    binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
                     binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
                     loading = false
                     binding.animeSourceProgressBar.visibility=View.GONE
