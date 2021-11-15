@@ -62,7 +62,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         binding.mediaAppBar.addOnOffsetChangedListener(this)
 
         binding.mediaClose.setOnClickListener{
-            finish()
+            onBackPressed()
         }
         val viewPager = binding.mediaViewPager
         viewPager.isUserInputEnabled = false

@@ -89,16 +89,7 @@
                     android:textSize="16sp" />
 
                 <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.33"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_round_grid_view_24"
-                    app:tint="@color/bg_opp"
-                    tools:ignore="ContentDescription,ImageContrastCheck" />
-
-                <ImageView
+                    android:id="@+id/animeSourceList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="1"
@@ -108,30 +99,49 @@
                     tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <ImageView
+                    android:id="@+id/animeSourceGrid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.33"
                     android:padding="8dp"
+                    app:srcCompat="@drawable/ic_round_grid_view_24"
                     app:tint="@color/bg_opp"
-                    tools:ignore="ContentDescription,ImageContrastCheck"
-                    app:srcCompat="@drawable/ic_round_view_comfy_24" />
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <ImageView
+                    android:id="@+id/animeSourceCompact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.33"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_round_view_comfy_24"
+                    app:tint="@color/bg_opp"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
+
+                <ImageView
+                    android:id="@+id/animeSourceTop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="1"
                     android:padding="8dp"
                     android:rotation="90"
+                    app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
                     app:tint="@color/bg_opp"
-                    tools:ignore="ContentDescription,ImageContrastCheck"
-                    app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24" />
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
             </LinearLayout>
 
             <com.google.android.material.chip.ChipGroup
+                android:id="@+id/animeSouceChip"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/animeSourceProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/animeEpisodesRecycler"
@@ -141,12 +151,12 @@
             android:nestedScrollingEnabled="true"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            app:spanCount="4"
             tools:itemCount="12"
             tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:listitem="@layout/item_episode_compact"
             tools:orientation="vertical"
-            tools:scrollbars="vertical"
-            app:spanCount="4"/>
+            tools:scrollbars="vertical" />
 
     </LinearLayout>
 

@@ -84,12 +84,6 @@ class MediaInfoFragment : Fragment() {
         super.onViewCreated(view, null)
     }
 
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
-//        println("aaaaaaaaaaaaaaaaa ${binding.mediaInfoProgressBar.visibility}")
-//        super.onViewStateRestored(savedInstanceState)D
-//    }
-
     override fun onResume() {
         binding.mediaInfoProgressBar.visibility = if (!loaded) View.VISIBLE else View.GONE
         super.onResume()

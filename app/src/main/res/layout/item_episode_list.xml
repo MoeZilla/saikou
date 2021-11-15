@@ -7,20 +7,6 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp">
 
-    <ImageView
-        android:id="@+id/itemEpisodeImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0.6"
-        android:background="@color/bg_black" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,16 +14,40 @@
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/itemEpisodeNumber"
+            <ImageView
+                android:id="@+id/itemEpisodeImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="12dp"
-                android:fontFamily="@font/poppins_bold" />
+                android:layout_gravity="bottom"
+                android:layout_marginStart="-12dp"
+                android:layout_marginBottom="-20dp"
+                app:cardBackgroundColor="@color/bg_opp"
+                app:cardCornerRadius="16dp">
+
+                <TextView
+                    android:id="@+id/itemEpisodeNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@color/bg"
+                    android:textSize="20sp"
+                    tools:text="12" />
+            </androidx.cardview.widget.CardView>
+
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
@@ -51,14 +61,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="@color/bg_white" />
+                android:text="@string/empty"
+                app:lineHeight="14dp" />
 
             <TextView
                 android:id="@+id/itemEpisodeDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/bg_white"
+                android:alpha="0.58"
+                android:ellipsize="end"
                 android:textStyle="italic"
+                app:lineHeight="14dp"
                 tools:ignore="TextContrastCheck"
                 tools:text="@string/get_recommendations" />
         </LinearLayout>
