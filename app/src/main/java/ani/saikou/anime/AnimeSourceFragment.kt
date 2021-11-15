@@ -18,10 +18,11 @@ import ani.saikou.R
 import ani.saikou.anime.source.parsers.getGogoStream
 import ani.saikou.media.Media
 import ani.saikou.navBarHeight
-import ani.saikou.statusBarHeight
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 
 class AnimeSourceFragment : Fragment() {
@@ -71,16 +72,11 @@ class AnimeSourceFragment : Fragment() {
                         model.loadEpisodes(media,i)
                     }
                 }
-                fun updateRecycler(){
-                    binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
-                    binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
-                    loading = false
-                    binding.animeSourceProgressBar.visibility=View.GONE
-                }
+
                 binding.animeSourceTop.setOnClickListener {
                     binding.animeSourceTop.rotation = if (reversed) 90f else -90f
                     reversed=!reversed
-                    updateRecycler()
+                    updateRecycler(media)
                 }
                 binding.animeSourceList.setOnClickListener {
                     style=0
@@ -88,7 +84,7 @@ class AnimeSourceFragment : Fragment() {
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceList
                     selected?.alpha = 1f
-                    updateRecycler()
+                    updateRecycler(media)
                 }
                 binding.animeSourceGrid.setOnClickListener {
                     style=1
@@ -96,7 +92,7 @@ class AnimeSourceFragment : Fragment() {
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceGrid
                     selected?.alpha = 1f
-                    updateRecycler()
+                    updateRecycler(media)
                 }
                 binding.animeSourceCompact.setOnClickListener {
                     style=2
@@ -104,10 +100,13 @@ class AnimeSourceFragment : Fragment() {
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceCompact
                     selected?.alpha = 1f
-                    updateRecycler()
+                    updateRecycler(media)
                 }
+
                 model.getEpisodes().observe(this,{episodes->
 //                    println("Ow : $episodes")
+                    binding.animeSouceChipGroup.removeAllViews()
+
                     if (episodes!=null) {
 //                        println("Episodes Loaded : $episodes")
                         episodes.forEach { (i, episode) ->
@@ -121,7 +120,9 @@ class AnimeSourceFragment : Fragment() {
                         }
 //                        println("Episodes Kitsu : $episodes")
                         media.anime.episodes = episodes
-                        updateRecycler()
+                        //CHIP GROUP
+                        addPageChips(media,episodes.size)
+                        updateRecycler(media)
                     }
                 })
                 model.getKitsuEpisodes().observe(this,{ i->
@@ -138,6 +139,12 @@ class AnimeSourceFragment : Fragment() {
             }
         })
     }
+    fun updateRecycler(media: Media){
+        binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
+        binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
+        loading = false
+        binding.animeSourceProgressBar.visibility=View.GONE
+    }
     fun onEpisodeClick(media: Media, i:String){
         if (media.anime?.episodes?.get(i)!=null) {
             media.anime.episodes!![i] = when (media.anime.source) {
@@ -148,4 +155,43 @@ class AnimeSourceFragment : Fragment() {
         }
         println("Episode $i : ${media.anime?.episodes!![i]}")
     }
+
+
+    fun addPageChips(media: Media,episode: Int){
+        val divisions = episode.toDouble() / 10
+        val limit = when{
+            (divisions < 25) -> 25
+            (divisions < 50) -> 50
+            else -> 100
+        }
+
+        val stored = ceil((episode).toDouble() / limit).toInt()
+        println(stored)
+        (1..stored).forEach {
+            if (end == null){end = limit * it}
+            val chip = Chip(requireContext())
+            if (it == stored) {
+//                logger("${limit * (it - 1) + 1} - $episode")
+                chip.text = "${limit * (it - 1) + 1} - $episode"
+                chip.setOnClickListener{ _ ->
+                    start = limit * (it - 1) + 1
+                    end = episode
+                    updateRecycler(media)
+                }
+            }
+            else {
+//                logger("${limit * (it - 1) + 1} - ${limit * it}")
+                chip.text = "${limit * (it - 1) + 1} - ${limit * it}"
+                chip.setOnClickListener{ _ ->
+                    start = limit * (it - 1) + 1
+                    end = limit * it
+                    updateRecycler(media)
+                }
+            }
+
+            binding.animeSouceChipGroup.addView(chip)
+
+        }
+    }
+
 }
