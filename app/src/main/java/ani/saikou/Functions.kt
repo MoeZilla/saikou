@@ -13,9 +13,11 @@ import android.view.View
 import android.view.Window
 import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.DialogFragment
 import ani.saikou.anilist.Anilist
 import ani.saikou.kitsu.Kitsu

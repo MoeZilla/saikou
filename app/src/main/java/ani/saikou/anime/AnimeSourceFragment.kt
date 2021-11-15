@@ -33,6 +33,7 @@ class AnimeSourceFragment : Fragment() {
     private var gridCount = 1
     private var reversed = false
     private var selected:ImageView?=null
+    private var selectedChip:Chip?= null
     private var start = 0
     private var end:Int?=null
     private var loading = true
@@ -139,11 +140,13 @@ class AnimeSourceFragment : Fragment() {
             }
         })
     }
-    fun updateRecycler(media: Media){
-        binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
-        binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
-        loading = false
-        binding.animeSourceProgressBar.visibility=View.GONE
+    private fun updateRecycler(media: Media){
+        if(media.anime?.episodes!=null) {
+            binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
+            binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
+            loading = false
+            binding.animeSourceProgressBar.visibility = View.GONE
+        }
     }
     fun onEpisodeClick(media: Media, i:String){
         if (media.anime?.episodes?.get(i)!=null) {
@@ -157,40 +160,51 @@ class AnimeSourceFragment : Fragment() {
     }
 
 
-    fun addPageChips(media: Media,episode: Int){
+    private fun addPageChips(media: Media, episode: Int){
         val divisions = episode.toDouble() / 10
         val limit = when{
             (divisions < 25) -> 25
             (divisions < 50) -> 50
             else -> 100
         }
+        if (episode>limit) {
+            val stored = ceil((episode).toDouble() / limit).toInt()
+            println(stored)
+            (1..stored).forEach {
+                val chip = Chip(requireContext())
+                chip.isCheckable = true
 
-        val stored = ceil((episode).toDouble() / limit).toInt()
-        println(stored)
-        (1..stored).forEach {
-            if (end == null){end = limit * it}
-            val chip = Chip(requireContext())
-            if (it == stored) {
-//                logger("${limit * (it - 1) + 1} - $episode")
-                chip.text = "${limit * (it - 1) + 1} - $episode"
-                chip.setOnClickListener{ _ ->
-                    start = limit * (it - 1) + 1
-                    end = episode
-                    updateRecycler(media)
+                if(it==1 && selectedChip==null){
+                    selectedChip=chip
+                    chip.isChecked = true
                 }
-            }
-            else {
-//                logger("${limit * (it - 1) + 1} - ${limit * it}")
-                chip.text = "${limit * (it - 1) + 1} - ${limit * it}"
-                chip.setOnClickListener{ _ ->
-                    start = limit * (it - 1) + 1
-                    end = limit * it
-                    updateRecycler(media)
+                if (end == null) { end = limit * it - 1 }
+                if (it == stored) {
+                    chip.text = "${limit * (it - 1) + 1} - $episode"
+                    chip.setOnClickListener { _ ->
+                        selectedChip?.isChecked = false
+                        selectedChip = chip
+                        selectedChip!!.isChecked = true
+                        start = limit * (it - 1)
+                        end = episode - 1
+                        updateRecycler(media)
+                    }
+                } else {
+                    chip.text = "${limit * (it - 1) + 1} - ${limit * it}"
+                    chip.setOnClickListener { _ ->
+                        selectedChip?.isChecked = false
+                        selectedChip = chip
+                        selectedChip!!.isChecked = true
+                        start = limit * (it - 1)
+                        end = limit * it - 1
+                        updateRecycler(media)
+                    }
                 }
+                binding.animeSouceChipGroup.addView(chip)
             }
-
-            binding.animeSouceChipGroup.addView(chip)
-
+        }
+        else{
+            updateRecycler(media)
         }
     }
 

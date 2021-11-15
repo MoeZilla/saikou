@@ -34,7 +34,7 @@ fun getGogoSlugEpisodes(slug: String): MutableMap<String, Episode> {
     val responseArray = mutableMapOf<String,Episode>()
     val a = Jsoup.connect("https://ajax.gogo-load.com/ajax/load-list-episode?ep_start=0&ep_end=$lastEpisode&id=$movieId").get().body()
         .select("ul > li > a").reversed()
-    println("Slug Episodes : $a")
+//    println("Slug Episodes : $a")
         a.forEach{
             val num = it.select(".name").text().replace("EP","").trim()
             responseArray[num] = Episode(number = num,link = host[0]+it.attr("href").trim())
@@ -45,9 +45,10 @@ fun getGogoSlugEpisodes(slug: String): MutableMap<String, Episode> {
 
 fun searchGogo(name: String): ArrayList<String> {
     // make search and get all links
-    println("Searching for : $name")
+    val search= Regex("[^A-Za-z0-9 ]").replace(name,"")
+    println("Searching for : $search")
     val responseArray = arrayListOf<String>()
-    val a = Jsoup.connect("${host[0]}/search.html?keyword=${name}").get().body()
+    val a = Jsoup.connect("${host[0]}/search.html?keyword=$search").get().body()
         .select(".last_episodes > ul > li div.img > a")
     println("$a")
         a.forEach {
@@ -76,7 +77,7 @@ fun getGogoStream(episode: Episode) : Episode{
 }
 
 fun getGogoEpisodes(media: Media,dub:Boolean=false):MutableMap<String,Episode>{
-    arrayOf(media.name,media.nameRomaji).forEach {
+    arrayOf(media.nameRomaji,media.name).forEach {
         val search = searchGogo(it + if (dub) " (Dub)" else "")
         println("Search : $search")
         if (search.isNotEmpty()) {

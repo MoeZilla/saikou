@@ -32,7 +32,7 @@ class Kitsu {
                     arr[it.jsonObject["number"]?.toString()?.replace("\"","")!!] = Episode(
                         number = it.jsonObject["number"]?.toString()?.replace("\"","")!!,
                         title = if (it.jsonObject["titles"]!!.jsonObject["canonical"]?.toString()!="null") it.jsonObject["titles"]!!.jsonObject["canonical"]?.toString()?.replace("\"","") else null,
-                        desc = if (it.jsonObject["description"]!!.jsonObject["en"]?.toString()!="null") it.jsonObject["description"]!!.jsonObject["en"]?.toString()?.replace("\"","") else null,
+                        desc = if (it.jsonObject["description"]!!.jsonObject["en"]?.toString()!="null") it.jsonObject["description"]!!.jsonObject["en"]?.toString()?.replace("\"","")?.replace("\\n","\n") else null,
                         thumb =  if (it.jsonObject["thumbnail"].toString()!="null") "https://image-compression-api.herokuapp.com/?q="+it.jsonObject["thumbnail"]!!.jsonObject["original"]!!.jsonObject["url"]?.toString()?.replace("\"","") else null,
                     )
                 }

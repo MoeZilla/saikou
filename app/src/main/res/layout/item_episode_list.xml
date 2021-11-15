@@ -2,20 +2,24 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item"
     android:layout_width="match_parent"
-    android:layout_height="108dp"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="180dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:minHeight="108dp"
+            app:cardCornerRadius="16dp">
 
             <ImageView
                 android:id="@+id/itemEpisodeImage"
@@ -52,28 +56,31 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:gravity="center"
+            android:minHeight="92dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/itemEpisodeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
                 android:fontFamily="@font/poppins_bold"
+                android:maxLines="2"
                 android:text="@string/empty"
-                app:lineHeight="14dp" />
+                app:lineHeight="15dp" />
 
             <TextView
                 android:id="@+id/itemEpisodeDesc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:alpha="0.58"
                 android:ellipsize="end"
                 android:textStyle="italic"
-                app:lineHeight="14dp"
-                tools:ignore="TextContrastCheck"
-                tools:text="@string/get_recommendations" />
+                app:lineHeight="16dp"
+                tools:ignore="TextContrastCheck" />
         </LinearLayout>
 
     </LinearLayout>
