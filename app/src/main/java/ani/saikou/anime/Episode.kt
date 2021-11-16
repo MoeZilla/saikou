@@ -9,6 +9,8 @@ data class Episode (
     var thumb : String?=null,
     var filler : Boolean = false,
     var link : String? = null,
+    var selectedStream : Int = 0,
+    var selectedQuality: Int = 0,
     var streamLinks : ArrayList<StreamLinks?>?=null,
 ):Serializable{
     data class Quality(

@@ -18,11 +18,15 @@
         <activity
             android:name=".media.MediaDetailsActivity"
             android:exported="true"
-            android:label="@string/title_activity_media"
             android:theme="@style/Theme.Saikou.NoActionBar" />
         <activity
             android:name=".NoInternet"
             android:exported="true" />
+        <activity
+            android:name=".anime.ExoplayerView"
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:theme="@style/Theme.Saikou.Exoplayer"
+            android:keepScreenOn="true" />
         <activity
             android:name=".anilist.Login"
             android:exported="true" >

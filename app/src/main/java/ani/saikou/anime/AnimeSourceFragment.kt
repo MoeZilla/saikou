@@ -1,22 +1,21 @@
 package ani.saikou.anime
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import ani.saikou.databinding.FragmentAnimeSourceBinding
-import ani.saikou.media.MediaDetailsViewModel
-import android.content.Intent
-import android.net.Uri
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import ani.saikou.R
-import ani.saikou.anime.source.parsers.getGogoStream
+import ani.saikou.databinding.FragmentAnimeSourceBinding
 import ani.saikou.media.Media
+import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.navBarHeight
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
@@ -105,11 +104,9 @@ class AnimeSourceFragment : Fragment() {
                 }
 
                 model.getEpisodes().observe(this,{episodes->
-//                    println("Ow : $episodes")
                     binding.animeSouceChipGroup.removeAllViews()
 
                     if (episodes!=null) {
-//                        println("Episodes Loaded : $episodes")
                         episodes.forEach { (i, episode) ->
                             if (media.anime.kitsuEpisodes!=null) {
                                 if (media.anime.kitsuEpisodes!!.containsKey(i)) {
@@ -119,7 +116,6 @@ class AnimeSourceFragment : Fragment() {
                                 }
                             }
                         }
-//                        println("Episodes Kitsu : $episodes")
                         media.anime.episodes = episodes
                         //CHIP GROUP
                         addPageChips(media,episodes.size)
@@ -128,7 +124,6 @@ class AnimeSourceFragment : Fragment() {
                 })
                 model.getKitsuEpisodes().observe(this,{ i->
                     if (i!=null) {
-//                        println("Kitsu Loaded : $i")
                         media.anime.kitsuEpisodes = i
                     }
                 })
@@ -146,19 +141,17 @@ class AnimeSourceFragment : Fragment() {
             binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
             loading = false
             binding.animeSourceProgressBar.visibility = View.GONE
+            if(media.anime.episodes!!.isNotEmpty())
+                binding.animeSourceNotFound.visibility = View.GONE
+            else
+                binding.animeSourceNotFound.visibility = View.VISIBLE
         }
     }
     fun onEpisodeClick(media: Media, i:String){
-        if (media.anime?.episodes?.get(i)!=null) {
-            media.anime.episodes!![i] = when (media.anime.source) {
-                0 -> getGogoStream(media.anime.episodes!![i]!!)
-                1 -> getGogoStream(media.anime.episodes!![i]!!)
-                else -> media.anime.episodes!![i]!!
-            }
-        }
-        println("Episode $i : ${media.anime?.episodes!![i]}")
+        if (media.anime?.episodes?.get(i)!=null)
+            media.anime.selectedEpisode = i
+            SelectorDialogFragment.newInstance(media).show(requireActivity().supportFragmentManager,"dialog")
     }
-
 
     private fun addPageChips(media: Media, episode: Int){
         val divisions = episode.toDouble() / 10

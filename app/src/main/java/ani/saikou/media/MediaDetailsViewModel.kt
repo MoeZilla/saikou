@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import ani.saikou.anilist
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.parsers.getGogoEpisodes
+import ani.saikou.anime.source.parsers.getGogoStream
 import ani.saikou.kitsu
 
 class MediaDetailsViewModel:ViewModel() {
@@ -30,5 +31,14 @@ class MediaDetailsViewModel:ViewModel() {
             }
         }
         episodes.postValue(loaded[i])
+    }
+    private val streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
+    fun getStreams() : LiveData<Episode> = streams
+    fun loadStreams(episode: Episode,i:Int){
+        streams.postValue(when (i) {
+            0 -> getGogoStream(episode)
+            1 -> getGogoStream(episode)
+            else -> episode
+        })
     }
 }

@@ -17,6 +17,7 @@ data class Anime(
     var nextAiringEpisode: Int? = null,
     var nextAiringEpisodeTime: Date? = null,
 
+    var selectedEpisode: String?=null,
     var episodes: MutableMap<String,Episode>? = null,
     var slug:String?=null,
     var source:Int=0,

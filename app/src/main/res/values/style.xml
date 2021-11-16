@@ -14,6 +14,7 @@
     </style>
     <style name="ShapeAppearanceOverlay.Demo" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="cornerSize">20dp</item>
+        <item name="background">@id/bg</item>
         <item name="cornerFamily">rounded</item>
     </style>
     <style name="roundedImageView" parent="">

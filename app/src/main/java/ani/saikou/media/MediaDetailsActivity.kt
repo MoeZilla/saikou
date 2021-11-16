@@ -32,7 +32,7 @@ import kotlin.math.abs
 class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
     private lateinit var binding: ActivityMediaBinding
-    private val scope = CoroutineScope(Dispatchers.Default)
+    val scope = CoroutineScope(Dispatchers.Default)
     private val model: MediaDetailsViewModel by viewModels()
     private lateinit var tabLayout : AnimatedBottomBar
     var selected = 0

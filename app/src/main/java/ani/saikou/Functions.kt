@@ -25,8 +25,14 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.io.Serializable
 import java.util.*
 
-
+const val STATE_RESUME_WINDOW = "resumeWindow"
+const val STATE_RESUME_POSITION = "resumePosition"
+const val STATE_PLAYER_FULLSCREEN = "playerFullscreen"
+const val STATE_PLAYER_PLAYING = "playerOnPlay"
+const val MAX_HEIGHT = 500
+const val MAX_WIDTH = 900
 const val buildDebug = true
+
 var statusBarHeight  = 0
 var navBarHeight = 0
 //val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics)

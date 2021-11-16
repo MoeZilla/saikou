@@ -3,7 +3,6 @@ package ani.saikou.anime
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.databinding.ItemEpisodeCompactBinding
 import ani.saikou.databinding.ItemEpisodeGridBinding
