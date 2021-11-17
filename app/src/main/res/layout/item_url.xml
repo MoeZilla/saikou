@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="78dp"
+        android:minHeight="64dp"
         android:orientation="vertical"
         android:padding="10dp"
         android:paddingStart="20dp"
@@ -23,7 +23,7 @@
             android:fontFamily="@font/poppins_bold"
             android:gravity="center_vertical"
             android:textColor="?attr/colorSecondary"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/urlSize"
@@ -31,7 +31,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:fontFamily="@font/poppins"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:visibility="gone" />
 
     </LinearLayout>

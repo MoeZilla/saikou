@@ -13,17 +13,18 @@ import android.view.View
 import android.view.Window
 import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
-import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.DialogFragment
+import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.Anilist
 import ani.saikou.kitsu.Kitsu
 import nl.joery.animatedbottombar.AnimatedBottomBar
+import org.jsoup.Jsoup
 import java.io.Serializable
 import java.util.*
+import kotlin.math.abs
 
 const val STATE_RESUME_WINDOW = "resumeWindow"
 const val STATE_RESUME_POSITION = "resumePosition"
@@ -134,5 +135,35 @@ class InputFilterMinMax(private val min: Double, private val max: Double,private
             status?.parent?.requestLayout()
         }
         return if (b > a) c in a..b else c in b..a
+    }
+}
+
+fun getMalTitle(id:Int) : String{
+    return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-name").text()
+}
+
+private const val MIN_SCALE = 0.33f
+private const val MIN_ALPHA = 0f
+
+class ZoomOutPageTransformer : ViewPager2.PageTransformer {
+
+    override fun transformPage(view: View, position: Float) {
+        view.apply {
+            when {
+                position < -1 -> {
+                    alpha = 0f
+                }
+                position <= 1 -> {
+                    val scaleFactor = MIN_SCALE.coerceAtLeast(1 - abs(position))
+                    scaleX = scaleFactor
+                    scaleY = scaleFactor
+                    alpha = (MIN_ALPHA +
+                            (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
+                }
+                else -> {
+                    alpha = 0f
+                }
+            }
+        }
     }
 }

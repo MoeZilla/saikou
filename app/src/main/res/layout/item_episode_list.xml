@@ -70,7 +70,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:maxLines="2"
                 android:text="@string/empty"
-                app:lineHeight="15dp" />
+                app:lineHeight="15sp" />
 
             <TextView
                 android:id="@+id/itemEpisodeDesc"
@@ -79,7 +79,7 @@
                 android:alpha="0.58"
                 android:ellipsize="end"
                 android:textStyle="italic"
-                app:lineHeight="16dp"
+                app:lineHeight="16sp"
                 tools:ignore="TextContrastCheck" />
         </LinearLayout>
 

@@ -2,6 +2,7 @@ package ani.saikou.anime.source.parsers
 
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.extractors.*
+import ani.saikou.getMalTitle
 import ani.saikou.media.Media
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
@@ -27,7 +28,7 @@ private fun directLinkify(name: String,url: String): Episode.StreamLinks? {
 }
 
 fun getGogoSlugEpisodes(slug: String): MutableMap<String, Episode> {
-    val pageBody = Jsoup.connect("https://gogoanime.pe/category/$slug").get().body()
+    val pageBody = Jsoup.connect("${host[0]}/category/$slug").get().body()
     val lastEpisode = pageBody.select("ul#episode_page > li:last-child > a").attr("ep_end").toString()
     val movieId = pageBody.select("input#movie_id").attr("value").toString()
 
@@ -45,13 +46,11 @@ fun getGogoSlugEpisodes(slug: String): MutableMap<String, Episode> {
 
 fun searchGogo(name: String): ArrayList<String> {
     // make search and get all links
-    val search= Regex("[^A-Za-z0-9 ]").replace(name,"")
+    val search= Regex("[^A-Za-z0-9 ]").replace(name," ")
     println("Searching for : $search")
     val responseArray = arrayListOf<String>()
-    val a = Jsoup.connect("${host[0]}/search.html?keyword=$search").get().body()
-        .select(".last_episodes > ul > li div.img > a")
-    println("$a")
-        a.forEach {
+    Jsoup.connect("${host[0]}/search.html?keyword=$search").get().body()
+        .select(".last_episodes > ul > li div.img > a").forEach {
             responseArray.add(it.attr("href").toString().replace("/category/", ""))
         }
     return responseArray
@@ -77,13 +76,12 @@ fun getGogoStream(episode: Episode) : Episode{
 }
 
 fun getGogoEpisodes(media: Media,dub:Boolean=false):MutableMap<String,Episode>{
-    arrayOf(media.nameRomaji,media.name).forEach {
-        val search = searchGogo(it + if (dub) " (Dub)" else "")
-        println("Search : $search")
-        if (search.isNotEmpty()) {
-            println("Slugged : ${search[0]}")
-            return getGogoSlugEpisodes(search[0])
-        }
+    val it = if (media.idMAL!=null) getMalTitle(media.idMAL!!) else media.nameRomaji
+    val search = searchGogo(it + if (dub) " (Dub)" else "")
+    println("Search : $search")
+    if (search.isNotEmpty()) {
+        println("Slugged : ${search[0]}")
+        return getGogoSlugEpisodes(search[0])
     }
     return mutableMapOf()
 }

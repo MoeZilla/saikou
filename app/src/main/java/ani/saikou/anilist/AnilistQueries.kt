@@ -9,10 +9,7 @@ import ani.saikou.media.Character
 import ani.saikou.media.Media
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.*
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -315,16 +312,18 @@ class AnilistQueries{
         val returnMap = mutableMapOf<String,String>()
         val query = "{GenreCollection}"
         val ids = arrayListOf<String>()
-        Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
-            val genreQuery ="""{ Page(perPage: 10){media(genre:${genre.toString().replace("\"", "\\\"")}, sort: TRENDING_DESC, type: ANIME, countryOfOrigin:\"JP\") {id bannerImage } } }"""
-            val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Page"]!!
-            if (response.jsonObject["media"].toString() != "null"){
-                run next@{
-                    response.jsonObject["media"]!!.jsonArray.forEach {
-                        if (it.jsonObject["id"].toString() !in ids && it.jsonObject["bannerImage"].toString()!="null") {
-                            ids.add(it.jsonObject["id"].toString())
-                            returnMap[genre.toString().trim('"')] = it.jsonObject["bannerImage"].toString().trim('"')
-                            return@next
+        if(Json.decodeFromString<JsonObject>(getQuery(query))["data"]!=JsonNull) {
+            Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
+                val genreQuery = """{ Page(perPage: 10){media(genre:${genre.toString().replace("\"", "\\\"")}, sort: TRENDING_DESC, type: ANIME, countryOfOrigin:\"JP\") {id bannerImage } } }"""
+                val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Page"]!!
+                if (response.jsonObject["media"].toString() != "null") {
+                    run next@{
+                        response.jsonObject["media"]!!.jsonArray.forEach {
+                            if (it.jsonObject["id"].toString() !in ids && it.jsonObject["bannerImage"].toString() != "null") {
+                                ids.add(it.jsonObject["id"].toString())
+                                returnMap[genre.toString().trim('"')] = it.jsonObject["bannerImage"].toString().trim('"')
+                                return@next
+                            }
                         }
                     }
                 }

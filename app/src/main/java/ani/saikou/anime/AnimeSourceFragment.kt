@@ -68,6 +68,7 @@ class AnimeSourceFragment : Fragment() {
                 binding.animeSource.setOnItemClickListener { _, _, i, _ ->
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
+                    media.anime.source = i
                     scope.launch{
                         model.loadEpisodes(media,i)
                     }

@@ -63,6 +63,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
             if (episode.streamLinks!![episode.selectedStream]!!.referer!=null) dataSource.setRequestProperty("referer", episode.streamLinks!![episode.selectedStream]!!.referer!!)
             dataSource
         }
+        println("$episode")
         println(episode.streamLinks!![episode.selectedStream]!!.quality[episode.selectedQuality].url)
         mediaItem = MediaItem.Builder()
             .setUri(episode.streamLinks!![episode.selectedStream]!!.quality[episode.selectedQuality].url)

@@ -2,6 +2,7 @@ package ani.saikou.anime.source.parsers
 
 
 import ani.saikou.anime.Episode
+import ani.saikou.media.Media
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import org.jsoup.Jsoup
@@ -53,20 +54,17 @@ object DecodeTwistSources{
     }
 }
 
-fun twistSearchQuery(malId:String,ep:String): List<Episode.StreamLinks?> {
-    val animeJson = Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()
-    val answer = Regex(""""mal_id": $malId,(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
-        ?: return listOf(null)
-    val episode = Json.decodeFromString<JsonArray>(
-        Jsoup.connect("https://api.twist.moe/api/anime/$answer/sources").ignoreContentType(true).get().body().text()
-    )[ep.toInt()].jsonObject["source"].toString().trim('"')
+fun getTwistStream(episode: Episode): Episode {
+    val url = Json.decodeFromString<JsonArray>(
+        Jsoup.connect(episode.link!!).ignoreContentType(true).get().body().text()
+    )[episode.number.toInt()-1].jsonObject["source"].toString().trim('"')
 
-    return mutableListOf(
+    episode.streamLinks =  arrayListOf(
         Episode.StreamLinks(
-            "twist",
+            "Twist",
             listOf(
                 Episode.Quality(
-                    url = "https://cdn.twist.moe${DecodeTwistSources.decryptSource(episode)}",
+                    url = "https://cdn.twist.moe${DecodeTwistSources.decryptSource(url)}",
                     quality = "unknown",
                     size = 0
                 )
@@ -74,26 +72,24 @@ fun twistSearchQuery(malId:String,ep:String): List<Episode.StreamLinks?> {
             "https://twist.moe/"
         )
     )
+    return episode
 }
 
-fun allEpisdoesTwist(malId:String): MutableList<Episode> {
-    val responseList = mutableListOf<Episode>()
+fun getTwistEpisodes(media: Media): MutableMap<String,Episode> {
+    val responseList = mutableMapOf<String,Episode>()
     val animeJson = Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()
-    val slug = Regex(""""mal_id": $malId,(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
-
-    val slugURL = "https://api.twist.moe/api/anime/$slug/sources"
-
-    (1 .. Json.decodeFromString<JsonArray>(
-        Jsoup.connect(slugURL).ignoreContentType(true).get().body().text()
-    ).size).forEach{
-        responseList.add(Episode(
-            number = it.toString(),
-            link = slugURL
-        ))
+    if (media.idMAL!=null) {
+        val slug = Regex(""""mal_id": ${media.idMAL},(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
+        if (slug!=null) {
+            val slugURL = "https://api.twist.moe/api/anime/$slug/sources"
+            (1..Json.decodeFromString<JsonArray>(
+                Jsoup.connect(slugURL).ignoreContentType(true).get().body().text()
+            ).size).forEach {
+                responseList[it.toString()] = Episode(number = it.toString(), link = slugURL)
+            }
+            println("Response Episodes : $responseList")
+            return responseList
+        }
     }
-    return responseList
+    return mutableMapOf()
 }
-
-//fun testTwist(){
-//    println(twistSearchQuery("5525","3"))
-//}

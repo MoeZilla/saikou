@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.saikou.R
+import ani.saikou.ZoomOutPageTransformer
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.initActivity
@@ -108,6 +109,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
+        viewPager.setPageTransformer(ZoomOutPageTransformer())
         binding.mediaTitle.translationX = -screenWidth
         tabLayout.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)

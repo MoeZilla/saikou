@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             val mainViewPager = binding.viewpager
             mainViewPager.isUserInputEnabled = false
             mainViewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
+            mainViewPager.setPageTransformer(ZoomOutPageTransformer())
             navbar.setupWithViewPager2(mainViewPager)
             navbar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
                 override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
