@@ -25,11 +25,13 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
     private var _binding: BottomSheetSelectorBinding? = null
     private val binding get() = _binding!!
     private lateinit var media:Media
+    private lateinit var episode:Episode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             media = it.getSerializable("media") as Media
+            episode = it.getSerializable("ep") as Episode
         }
     }
 
@@ -40,8 +42,9 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.selectorContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
-        val episode = media.anime!!.episodes!![media.anime!!.selectedEpisode]!!
-
+        binding.selectorRecyclerView.adapter = null
+        binding.selectorProgressBar.visibility = View.VISIBLE
+        println("CHeck : ${binding.selectorProgressBar.visibility} & ${binding.selectorRecyclerView.adapter}")
         val model : MediaDetailsViewModel by activityViewModels()
         model.getStreams().observe(this,{
             if (it!=null){
@@ -56,6 +59,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
                 model.loadStreams(episode, media.anime!!.source)
             }
         }
+        super.onViewCreated(view, savedInstanceState)
     }
 
     fun startExoplayer(media: Media){
@@ -107,10 +111,11 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
         }
     }
     companion object {
-        fun newInstance(media: Media): SelectorDialogFragment =
+        fun newInstance(media: Media,episode: Episode): SelectorDialogFragment =
             SelectorDialogFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("media", media)
+                    putSerializable("ep", episode)
                 }
             }
     }

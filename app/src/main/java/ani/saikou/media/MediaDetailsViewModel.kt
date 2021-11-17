@@ -20,9 +20,9 @@ class MediaDetailsViewModel:ViewModel() {
     fun getKitsuEpisodes() : LiveData<MutableMap<String,Episode>> = kitsuEpisodes
     fun loadKitsuEpisodes(s:String){ if (kitsuEpisodes.value==null) kitsuEpisodes.postValue(kitsu.getKitsuEpisodesDetails(s))}
 
-    private val episodes: MutableLiveData<MutableMap<String,Episode>> = MutableLiveData<MutableMap<String,Episode>>(null)
+    private val episodes: MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>> = MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>>(null)
     private val loaded = mutableMapOf<Int,MutableMap<String,Episode>>()
-    fun getEpisodes() : LiveData<MutableMap<String,Episode>> = episodes
+    fun getEpisodes() : LiveData<MutableMap<Int,MutableMap<String,Episode>>> = episodes
     fun loadEpisodes(media: Media,i:Int){
         println("Loading Episodes : $loaded")
         if(!loaded.containsKey(i)) {
@@ -33,9 +33,9 @@ class MediaDetailsViewModel:ViewModel() {
                 else -> getGogoEpisodes(media)
             }
         }
-        episodes.postValue(loaded[i])
+        episodes.postValue(loaded)
     }
-    private val streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
+    private var streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
     fun getStreams() : LiveData<Episode> = streams
     fun loadStreams(episode: Episode,i:Int){
         println("AAAAAAAAAA : $i")
@@ -45,5 +45,6 @@ class MediaDetailsViewModel:ViewModel() {
             2 -> getTwistStream(episode)
             else -> episode
         })
+        streams = MutableLiveData<Episode>(null)
     }
 }

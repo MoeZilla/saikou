@@ -104,23 +104,26 @@ class AnimeSourceFragment : Fragment() {
                     updateRecycler(media)
                 }
 
-                model.getEpisodes().observe(viewLifecycleOwner,{episodes->
-                    binding.animeSouceChipGroup.removeAllViews()
-
-                    if (episodes!=null) {
-                        episodes.forEach { (i, episode) ->
-                            if (media.anime.kitsuEpisodes!=null) {
-                                if (media.anime.kitsuEpisodes!!.containsKey(i)) {
-                                    episode.desc = media.anime.kitsuEpisodes!![i]?.desc
-                                    episode.title = media.anime.kitsuEpisodes!![i]?.title
-                                    episode.thumb = media.anime.kitsuEpisodes!![i]?.thumb?:media.cover
+                model.getEpisodes().observe(viewLifecycleOwner,{loadedEpisodes->
+                    if(loadedEpisodes!=null) {
+                        binding.animeSouceChipGroup.removeAllViews()
+                        val episodes = loadedEpisodes[media.anime.source]
+                        if (episodes != null) {
+                            episodes.forEach { (i, episode) ->
+                                if (media.anime.kitsuEpisodes != null) {
+                                    if (media.anime.kitsuEpisodes!!.containsKey(i)) {
+                                        episode.desc = media.anime.kitsuEpisodes!![i]?.desc
+                                        episode.title = media.anime.kitsuEpisodes!![i]?.title
+                                        episode.thumb =
+                                            media.anime.kitsuEpisodes!![i]?.thumb ?: media.cover
+                                    }
                                 }
                             }
+                            media.anime.episodes = episodes
+                            //CHIP GROUP
+                            addPageChips(media, episodes.size)
+                            updateRecycler(media)
                         }
-                        media.anime.episodes = episodes
-                        //CHIP GROUP
-                        addPageChips(media,episodes.size)
-                        updateRecycler(media)
                     }
                 })
                 model.getKitsuEpisodes().observe(viewLifecycleOwner,{ i->
@@ -151,7 +154,7 @@ class AnimeSourceFragment : Fragment() {
     fun onEpisodeClick(media: Media, i:String){
         if (media.anime?.episodes?.get(i)!=null)
             media.anime.selectedEpisode = i
-            SelectorDialogFragment.newInstance(media).show(requireActivity().supportFragmentManager,"dialog")
+            SelectorDialogFragment.newInstance(media,media.anime!!.episodes!![i]!!).show(requireActivity().supportFragmentManager,"dialog")
     }
 
     private fun addPageChips(media: Media, episode: Int){
