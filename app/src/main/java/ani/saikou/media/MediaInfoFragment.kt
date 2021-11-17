@@ -32,7 +32,7 @@ class MediaInfoFragment : Fragment() {
         binding.mediaInfoContainer.visibility = if (loaded) View.VISIBLE else View.GONE
 
         val model : MediaDetailsViewModel by activityViewModels()
-        model.getMedia().observe(this,{
+        model.getMedia().observe(viewLifecycleOwner,{
             val media = it
             if(media!=null){
                 loaded=true

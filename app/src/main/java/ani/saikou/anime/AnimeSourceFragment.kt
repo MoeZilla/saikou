@@ -52,14 +52,14 @@ class AnimeSourceFragment : Fragment() {
         if (selected==null){
             selected = binding.animeSourceList
         }
-        model.getMedia().observe(this,{
+        model.getMedia().observe(viewLifecycleOwner,{
             val media = it
             if (media?.anime != null){
                 if (media.anime.youtube!=null) {
                     binding.animeSourceYT.visibility = View.VISIBLE
                     binding.animeSourceYT.setOnClickListener {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(media.anime.youtube))
-                        context!!.startActivity(intent)
+                        requireContext().startActivity(intent)
                     }
                 }
                 val sources : Array<String> = resources.getStringArray(R.array.anime_sources)
@@ -103,7 +103,7 @@ class AnimeSourceFragment : Fragment() {
                     updateRecycler(media)
                 }
 
-                model.getEpisodes().observe(this,{episodes->
+                model.getEpisodes().observe(viewLifecycleOwner,{episodes->
                     binding.animeSouceChipGroup.removeAllViews()
 
                     if (episodes!=null) {
@@ -122,7 +122,7 @@ class AnimeSourceFragment : Fragment() {
                         updateRecycler(media)
                     }
                 })
-                model.getKitsuEpisodes().observe(this,{ i->
+                model.getKitsuEpisodes().observe(viewLifecycleOwner,{ i->
                     if (i!=null) {
                         media.anime.kitsuEpisodes = i
                     }
