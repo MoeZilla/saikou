@@ -76,6 +76,24 @@ fun twistSearchQuery(malId:String,ep:String): List<Episode.StreamLinks?> {
     )
 }
 
+fun allEpisdoesTwist(malId:String): MutableList<Episode> {
+    val responseList = mutableListOf<Episode>()
+    val animeJson = Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()
+    val slug = Regex(""""mal_id": $malId,(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
+
+    val slugURL = "https://api.twist.moe/api/anime/$slug/sources"
+
+    (1 .. Json.decodeFromString<JsonArray>(
+        Jsoup.connect(slugURL).ignoreContentType(true).get().body().text()
+    ).size).forEach{
+        responseList.add(Episode(
+            number = it.toString(),
+            link = slugURL
+        ))
+    }
+    return responseList
+}
+
 //fun testTwist(){
 //    println(twistSearchQuery("5525","3"))
 //}
