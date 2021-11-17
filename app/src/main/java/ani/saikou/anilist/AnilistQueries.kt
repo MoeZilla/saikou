@@ -1,9 +1,8 @@
 package ani.saikou.anilist
 
-import ani.saikou.FuzzyDate
-import ani.saikou.anilist
+import android.app.Activity
+import ani.saikou.*
 import ani.saikou.anime.Anime
-import ani.saikou.logger
 import ani.saikou.manga.Manga
 import ani.saikou.media.Character
 import ani.saikou.media.Media
@@ -15,13 +14,13 @@ import java.util.*
 
 class AnilistQueries{
 
-    private fun getQuery(query:String): String = runBlocking{
+    private fun getQuery(query:String,variables:String=""): String = runBlocking{
         withContext(Dispatchers.Default){
             val json = Jsoup.connect("https://graphql.anilist.co/")
                             .header("Content-Type", "application/json")
                             .header("Accept", "application/json")
                             .header("Authorization", "Bearer ${anilist.token}")
-                            .requestBody("""{"query":"$query"}""")
+                            .requestBody("""{"query":"$query","variables": "$variables"}""")
                             .ignoreContentType(true).ignoreHttpErrors(true)
                             .post().body().text()
             logger("JSON : $json",false)
@@ -307,29 +306,61 @@ class AnilistQueries{
         return returnArray
     }
 
-    fun genreCollection(){
+    fun genreCollection(activity: Activity){
         logger("GenreCollection started")
-        val returnMap = mutableMapOf<String,String>()
-        val query = "{GenreCollection}"
-        val ids = arrayListOf<String>()
-        if(Json.decodeFromString<JsonObject>(getQuery(query))["data"]!=JsonNull) {
-            Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
-                val genreQuery = """{ Page(perPage: 10){media(genre:${genre.toString().replace("\"", "\\\"")}, sort: TRENDING_DESC, type: ANIME, countryOfOrigin:\"JP\") {id bannerImage } } }"""
-                val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Page"]!!
-                if (response.jsonObject["media"].toString() != "null") {
-                    run next@{
-                        response.jsonObject["media"]!!.jsonArray.forEach {
-                            if (it.jsonObject["id"].toString() !in ids && it.jsonObject["bannerImage"].toString() != "null") {
-                                ids.add(it.jsonObject["id"].toString())
-                                returnMap[genre.toString().trim('"')] = it.jsonObject["bannerImage"].toString().trim('"')
-                                return@next
+        val genres = loadData<MutableMap<String,String>>(activity,"genres")
+        val time = loadData<Long>(activity,"genresTime")
+        fun get(){
+            val returnMap = mutableMapOf<String,String>()
+            val query = "{GenreCollection}"
+            val ids = arrayListOf<String>()
+            if(Json.decodeFromString<JsonObject>(getQuery(query))["data"]!=JsonNull) {
+                Json.decodeFromString<JsonObject>(getQuery(query))["data"]!!.jsonObject["GenreCollection"]!!.jsonArray.forEach { genre ->
+                    val genreQuery = """{ Page(perPage: 10){media(genre:${genre.toString().replace("\"", "\\\"")}, sort: TRENDING_DESC, type: ANIME, countryOfOrigin:\"JP\") {id bannerImage } } }"""
+                    val response = Json.decodeFromString<JsonObject>(getQuery(genreQuery))["data"]!!.jsonObject["Page"]!!
+                    if (response.jsonObject["media"].toString() != "null") {
+                        run next@{
+                            response.jsonObject["media"]!!.jsonArray.forEach {
+                                if (it.jsonObject["id"].toString() !in ids && it.jsonObject["bannerImage"].toString() != "null") {
+                                    ids.add(it.jsonObject["id"].toString())
+                                    returnMap[genre.toString().trim('"')] = it.jsonObject["bannerImage"].toString().trim('"')
+                                    return@next
+                                }
                             }
                         }
                     }
                 }
             }
+            saveData(activity,"genres",returnMap)
+            saveData(activity,"genresTime",System.currentTimeMillis())
+            anilist.genres = returnMap
+            logger("$returnMap \n finished")
         }
-        anilist.genres = returnMap
-        logger("$returnMap \n finished")
+        if (genres==null) get()
+        else{
+            if(time!=null)
+                if(time-System.currentTimeMillis()<604800000) {
+                    logger("Loaded Genres from Save.")
+                    anilist.genres = genres
+                }
+            else get()
+        }
     }
+
+    fun mutation (mediaId: Int, status: String, score: String, progress: String,  repeat: Int,  startedAt: FuzzyDate, completedAt: FuzzyDate) {
+        val query = """
+        mutation (${"$"}mediaId: Int, ${"$"}status: MediaListStatus) {
+            SaveMediaListEntry (mediaId: ${"$"}mediaId, status: ${"$"}status) {
+                id
+                status
+            }
+        }
+        """
+        val variable = """
+            "mediaId" : $mediaId,
+            "status" : \"CURRENT\"
+        """.trimIndent()
+        println(getQuery(query,variable))
+    }
+
 }

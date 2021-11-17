@@ -10,6 +10,7 @@ import ani.saikou.anime.source.parsers.getGogoStream
 import ani.saikou.anime.source.parsers.getTwistEpisodes
 import ani.saikou.anime.source.parsers.getTwistStream
 import ani.saikou.kitsu
+import ani.saikou.logger
 
 class MediaDetailsViewModel:ViewModel() {
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
@@ -24,7 +25,7 @@ class MediaDetailsViewModel:ViewModel() {
     private val loaded = mutableMapOf<Int,MutableMap<String,Episode>>()
     fun getEpisodes() : LiveData<MutableMap<Int,MutableMap<String,Episode>>> = episodes
     fun loadEpisodes(media: Media,i:Int){
-        println("Loading Episodes : $loaded")
+        logger("Loading Episodes : $loaded")
         if(!loaded.containsKey(i)) {
             loaded[i] = when (i) {
                 0 -> getGogoEpisodes(media)
@@ -38,7 +39,6 @@ class MediaDetailsViewModel:ViewModel() {
     private var streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
     fun getStreams() : LiveData<Episode> = streams
     fun loadStreams(episode: Episode,i:Int){
-        println("AAAAAAAAAA : $i")
         streams.postValue(when (i) {
             0 -> getGogoStream(episode)
             1 -> getGogoStream(episode)

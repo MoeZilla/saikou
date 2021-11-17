@@ -22,7 +22,7 @@ import ani.saikou.anilist.Anilist
 import ani.saikou.kitsu.Kitsu
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
-import java.io.Serializable
+import java.io.*
 import java.util.*
 import kotlin.math.abs
 
@@ -48,6 +48,27 @@ fun logger(e:Any?,print:Boolean=true){
         println(e)
 }
 
+fun saveData(context: Context,fileName:String,data:Any){
+    val fos: FileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+    val os = ObjectOutputStream(fos)
+    os.writeObject(data)
+    os.close()
+    fos.close()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> loadData(context: Context,fileName:String): T? {
+    if (fileName in context.fileList()){
+        val fileIS: FileInputStream = context.openFileInput(fileName)
+        val objIS = ObjectInputStream(fileIS)
+        val data = objIS.readObject() as T
+        objIS.close()
+        fileIS.close()
+        return data
+    }
+    return null
+}
+
 fun initActivity(window:Window,view:View?=null) {
     WindowCompat.setDecorFitsSystemWindows(window, false)
     if (view != null) {
@@ -67,15 +88,15 @@ fun isOnline(context: Context): Boolean {
     if (capabilities != null) {
         when {
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                logger("NetworkCapabilities.TRANSPORT_CELLULAR")
+                logger("Device on Cellular")
                 return true
             }
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                logger("NetworkCapabilities.TRANSPORT_WIFI")
+                logger("Device on Wifi")
                 return true
             }
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                logger("NetworkCapabilities.TRANSPORT_ETHERNET")
+                logger("Device on Ethernet, TF man?")
                 return true
             }
         }

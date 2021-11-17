@@ -102,7 +102,7 @@ class HomeFragment : Fragment() {
             }
             // get genres and respective images
             launch {
-                anilist.query.genreCollection()
+                anilist.query.genreCollection(requireActivity())
             }
 
             //get List Images in current Thread(idle)
