@@ -39,14 +39,48 @@ class HomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         val model: AnilistHomeViewModel by viewModels()
-        var listImagesLoaded = false
-        var watchingLoaded = false
-        var readingLoaded = false
-        var recommendedLoaded = false
 
-        binding.fragmentHome.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        fun load(){
+            requireActivity().runOnUiThread {
+                binding.homeUserName.text = anilist.username
+                binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
+                binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
+                Picasso.get().load(anilist.avatar).into(binding.homeUserAvatar)
+
+                binding.homeUserDataProgressBar.visibility = View.GONE
+                binding.homeUserDataContainer.visibility = View.VISIBLE
+            }
+        }
+
+        homeRefresh.observe(this, {
+            if (it) {
+                scope.launch {
+                    //Get userData First
+                    if (anilist.userid == null)
+                        if (anilist.query.getUserData()) load() else println("Error loading data")
+                    else load()
+                    //get Watching in new Thread
+                    val a = async { model.setAnimeContinue() }
+                    //get Reading in new Thread
+                    val b = async { model.setMangaContinue() }
+                    // get genres and respective images
+                    val c = async { anilist.query.genreCollection(requireActivity()) }
+                    //get List Images in current Thread(idle)
+                    model.setListImages()
+                    //get Recommended in current Thread(idle)
+                    model.setRecommendation()
+
+                    awaitAll(a, b, c)
+                    requireActivity().runOnUiThread {
+                        homeRefresh.postValue(false)
+                        binding.homeRefresh.isRefreshing = false
+                    }
+                }
+            }
+        })
+
+        binding.homeContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight
         }
@@ -66,56 +100,17 @@ class HomeFragment : Fragment() {
             }
         }
 
+        binding.homeRefresh.setOnRefreshListener {
+            homeRefresh.postValue(true)
+        }
+
         //UserData
         binding.homeUserDataProgressBar.visibility = View.VISIBLE
         binding.homeUserDataContainer.visibility = View.GONE
-        fun load(){
-            requireActivity().runOnUiThread {
-                binding.homeUserName.text = anilist.username
-                binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
-                binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
-                Picasso.get().load(anilist.avatar).into(binding.homeUserAvatar)
-
-                binding.homeUserDataProgressBar.visibility = View.GONE
-                binding.homeUserDataContainer.visibility = View.VISIBLE
-            }
-        }
-        scope.launch {
-            //Get userData First
-            if (anilist.userid == null) {
-                if(anilist.query.getUserData()){
-                    load()
-                }
-                else{
-                    println("Error loading data")
-                }
-            }
-            else{load()}
-            //get Watching in new Thread
-            launch {
-                if (!watchingLoaded) model.setAnimeContinue()
-//                anilist.query.genreCollection()
-            }
-            //get Reading in new Thread
-            launch {
-                if (!readingLoaded) model.setMangaContinue()
-            }
-            // get genres and respective images
-            launch {
-                anilist.query.genreCollection(requireActivity())
-            }
-
-            //get List Images in current Thread(idle)
-            if (!listImagesLoaded) model.setListImages()
-
-            //get Recommended in current Thread(idle)
-            if (!recommendedLoaded) model.setRecommendation()
-        }
 
         //List Images
         model.getListImages().observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                listImagesLoaded = true
                 Picasso.get().load(it[0] ?: "https://bit.ly/31bsIHq")
                     .into(binding.homeAnimeListImage)
                 Picasso.get().load(it[1] ?: "https://bit.ly/2ZGfcuG")
@@ -135,11 +130,6 @@ class HomeFragment : Fragment() {
 
             modelFunc.observe(viewLifecycleOwner, {
                 if (it != null) {
-                    when (mode) {
-                        0 -> watchingLoaded = true
-                        1 -> readingLoaded = true
-                        2 -> recommendedLoaded = true
-                    }
                     if (it.isNotEmpty()) {
                         recyclerView.adapter = MediaAdaptor(it,requireActivity())
                         recyclerView.layoutManager = LinearLayoutManager(

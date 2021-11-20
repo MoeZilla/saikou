@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.Anilist
 import ani.saikou.kitsu.Kitsu
@@ -42,6 +43,7 @@ lateinit var bottomBar: AnimatedBottomBar
 var anilist : Anilist = Anilist()
 var kitsu : Kitsu = Kitsu()
 
+var homeRefresh = MutableLiveData(true)
 
 fun logger(e:Any?,print:Boolean=true){
     if(buildDebug && print)

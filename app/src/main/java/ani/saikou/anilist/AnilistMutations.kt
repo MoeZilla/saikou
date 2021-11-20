@@ -2,30 +2,34 @@ package ani.saikou.anilist
 
 class AnilistMutations {
 
-    fun toggleFav(id:Int){
-        val query = """mutation (${"$"}id: Int) { ToggleFavourite(animeId:${"$"}id){ anime { edges { id } } } }"""
-        val variables = """{\"id\":\"$id\"}"""
+    fun toggleFav(anime:Boolean=true,id:Int){
+        val query = """mutation (${"$"}animeId: Int,${"$"}mangaId:Int) { ToggleFavourite(animeId:${"$"}animeId,mangaId:${"$"}mangaId){ anime { edges { id } } manga { edges { id } } } }"""
+        val variables = if(anime) """{\"animeId\":\"$id\"}""" else """{\"mangaId\":\"$id\"}"""
         executeQuery(query,variables)
     }
 
     fun editList(
         mediaID:Int,
-        progress:Int,
-        score:String,
-        status: String,
-        startedAt:Long,
-        completedAt:Long
+        progress:Int?,
+        score: Int?,
+        status: String?,
+        startedAt:Long?,
+        completedAt:Long?
     ){
-        println("editLIST STARTED")
-        val query = """mutation (${"$"}mediaID: Int, ${"$"}progress: Int,${"$"}score:Float,${"$"}status:MediaListStatus,${"$"}start:FuzzyDateInput,${"$"}completed:FuzzyDateInput) {SaveMediaListEntry(mediaId: ${"$"}mediaID, progress: ${"$"}progress, score: ${"$"}score, status:${"$"}status, startedAt: ${"$"}start, completedAt: ${"$"}completed) {id}}"""
-        val variables = """{\"mediaID\":\"$mediaID\",\"progress\":\"$progress\",\"score\":\"$score\",\"status\":\"${status.uppercase()}\",\"startedAt\":\"$startedAt\",\"completedAt\":\"$completedAt\"}"""
-
-        println(executeQuery(query,variables))
-        println("editLIST Finished")
+        val query = """
+            mutation ( ${"$"}mediaID: Int, ${"$"}progress: Int, ${"$"}scoreRaw:Int, ${"$"}status:MediaListStatus, ${"$"}start:FuzzyDateInput, ${"$"}completed:FuzzyDateInput ) {
+                SaveMediaListEntry( mediaId: ${"$"}mediaID, progress: ${"$"}progress, scoreRaw: ${"$"}scoreRaw, status:${"$"}status, startedAt: ${"$"}start, completedAt: ${"$"}completed ) {
+                    score(format:POINT_10_DECIMAL)
+                }
+            }
+        """.replace("\n","").replace("""    ""","")
+        val variables = """{\"mediaID\":\"$mediaID\"
+            ${if (progress!=null) """,\"progress\":\"$progress\"""" else ""}
+            ${if (score!=null) """,\"scoreRaw\":\"$score\"""" else ""}
+            ${if (status!=null) """,\"status\":\"${status}\"""" else ""}
+            ${if (startedAt!=null) """,\"startedAt\":\"$startedAt\"""" else ""}
+            ${if (completedAt!=null) """,\"completedAt\":\"$completedAt\"""" else ""}
+            }""".replace("\n","").replace("""    ""","")
+        executeQuery(query,variables)
     }
-
-    fun testMutation(){
-        editList(1,24,"9.2","completed",1637280000,1637366400)
-    }
-
 }

@@ -30,7 +30,7 @@ import kotlin.math.abs
 class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
     private lateinit var binding: ActivityMediaBinding
-    val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.Default)
     private val model: MediaDetailsViewModel by viewModels()
     private lateinit var tabLayout : AnimatedBottomBar
     var selected = 0
@@ -77,7 +77,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val favButton = PopImageButton(scope,this,binding.mediaFav,media,R.drawable.ic_round_favorite_24,R.drawable.ic_round_favorite_border_24,R.color.nav_tab,R.color.fav,true)
         binding.mediaFav.setOnClickListener {
             favButton.clicked()
-            anilist.mutation.toggleFav(media.id)
         }
 
         //Notify Button
@@ -85,16 +84,24 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         val notifyButton = PopImageButton(scope,this,binding.mediaNotify,media, R.drawable.ic_round_notifications_active_24, R.drawable.ic_round_notifications_none_24,R.color.nav_tab, R.color.violet_400,false)
         binding.mediaNotify.setOnClickListener { notifyButton.clicked() }
 
-        if(media.userStatus!=null) {
-            binding.mediaAddToList.setText(R.string.list_editor)
-            binding.mediaUserStatus.text = media.userStatus
-            binding.mediaUserProgress.text =(media.userProgress?:"~").toString()
-        } else{
-            binding.mediaUserStatus.visibility = View.GONE
-            binding.mediaUserProgress.visibility = View.GONE
-            binding.mediaTotal.visibility = View.GONE
-            binding.mediaAddToList.setText(R.string.add)
-        }
+        model.userStatus.value = media.userStatus
+        model.userScore.value = media.userScore.toDouble()
+        model.userProgress.value = media.userProgress
+        model.userStatus.observe(this, {
+            if (it != null) {
+                binding.mediaAddToList.setText(R.string.list_editor)
+                binding.mediaUserStatus.text = it
+                binding.mediaUserProgress.text = (model.userProgress.value ?: "~").toString()
+            } else {
+                binding.mediaUserStatus.visibility = View.GONE
+                binding.mediaUserProgress.visibility = View.GONE
+                binding.mediaTotal.visibility = View.GONE
+                binding.mediaAddToList.setText(R.string.add)
+            }
+            media.userStatus = it
+        })
+        model.userProgress.observe(this,{media.userProgress = it})
+        model.userScore.observe(this,{media.userScore = (it?:0).toInt()})
 
         binding.mediaAddToList.setOnClickListener{
             MediaListDialogFragment().show(supportFragmentManager, "dialog")
@@ -198,6 +205,8 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                     if (fav_or_not) {
                         media.isFav = !media.isFav
                         clicked = media.isFav
+                        scope.launch { anilist.mutation.toggleFav(media.anime!=null,media.id) }
+                        homeRefresh.postValue(true)
                     }
                     else {
                         media.notify = !media.notify

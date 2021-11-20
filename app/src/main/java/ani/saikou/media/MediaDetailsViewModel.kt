@@ -17,6 +17,10 @@ class MediaDetailsViewModel:ViewModel() {
     fun getMedia(): LiveData<Media> = media
     fun loadMedia(m:Media) { media.postValue(anilist.query.mediaDetails(m)) }
 
+    val userScore = MutableLiveData<Double?>(null)
+    val userProgress = MutableLiveData<Int?>(null)
+    val userStatus = MutableLiveData<String?>(null)
+
     private val kitsuEpisodes: MutableLiveData<MutableMap<String,Episode>> = MutableLiveData<MutableMap<String,Episode>>(null)
     fun getKitsuEpisodes() : LiveData<MutableMap<String,Episode>> = kitsuEpisodes
     fun loadKitsuEpisodes(s:String){ if (kitsuEpisodes.value==null) kitsuEpisodes.postValue(kitsu.getKitsuEpisodesDetails(s))}
