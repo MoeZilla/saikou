@@ -114,14 +114,13 @@ class MediaListDialogFragment : BottomSheetDialogFragment(){
 
                 binding.mediaListSave.setOnClickListener {
                     scope.launch {
-                        anilist.query.mutation(
+                        anilist.mutation.editList(
                         media!!.id,
-                        binding.mediaListStatus.text.toString(),
+                        binding.mediaListProgress.text.toString().toInt(),
                         binding.mediaListScore.text.toString(),
-                        binding.mediaListProgress.text.toString(),
-                        0,
-                        start.date,
-                        end.date,
+                        binding.mediaListStatus.text.toString(),
+                        start.date.getEpoch(),
+                        end.date.getEpoch(),
                         )
                         dismiss()
                     }

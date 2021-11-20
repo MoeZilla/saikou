@@ -7,6 +7,7 @@ import java.io.File
 
 class Anilist {
     val query : AnilistQueries = AnilistQueries()
+    val mutation : AnilistMutations = AnilistMutations()
 
     var token : String? = null
     var username : String? = null

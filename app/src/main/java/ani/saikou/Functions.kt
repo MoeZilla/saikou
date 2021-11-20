@@ -121,6 +121,11 @@ data class FuzzyDate(
         val cal = Calendar.getInstance()
         return FuzzyDate(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH))
     }
+    fun getEpoch():Long{
+        val cal = Calendar.getInstance()
+        cal.set(year?:cal.get(Calendar.YEAR),month?:cal.get(Calendar.MONTH),day?:cal.get(Calendar.DAY_OF_MONTH))
+        return cal.timeInMillis
+    }
 }
 
 class DatePickerFragment(activity: Activity, var date: FuzzyDate=FuzzyDate().getToday()) : DialogFragment(), DatePickerDialog.OnDateSetListener {

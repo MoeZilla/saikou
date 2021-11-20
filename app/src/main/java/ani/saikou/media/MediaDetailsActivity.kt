@@ -17,13 +17,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import ani.saikou.R
-import ani.saikou.ZoomOutPageTransformer
+import ani.saikou.*
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
-import ani.saikou.initActivity
 import ani.saikou.manga.MangaSourceFragment
-import ani.saikou.statusBarHeight
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
@@ -78,7 +75,10 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         //Fav Button
         if (media.isFav) binding.mediaFav.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_favorite_24))
         val favButton = PopImageButton(scope,this,binding.mediaFav,media,R.drawable.ic_round_favorite_24,R.drawable.ic_round_favorite_border_24,R.color.nav_tab,R.color.fav,true)
-        binding.mediaFav.setOnClickListener { favButton.clicked() }
+        binding.mediaFav.setOnClickListener {
+            favButton.clicked()
+            anilist.mutation.toggleFav(media.id)
+        }
 
         //Notify Button
         if (media.notify) binding.mediaNotify.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_round_notifications_active_24))
