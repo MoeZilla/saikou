@@ -197,7 +197,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             ObjectAnimator.ofFloat(binding.mediaAccessContainer,"translationX",0f).setDuration(200).start()
             ObjectAnimator.ofFloat(binding.mediaTitleCollapse,"translationX",0f).setDuration(200).start()
             binding.mediaBannerStatus.visibility=View.VISIBLE
-            this.window.statusBarColor = ContextCompat.getColor(this, R.color.status)
+            this.window.statusBarColor = ContextCompat.getColor(this, R.color.nav_status)
         }
     }
     inner class PopImageButton(private val scope: CoroutineScope,private val activity: Activity,private val image:ImageView,private val media:Media,private val d1:Int,private val d2:Int,private val c1:Int,private val c2:Int,private val fav_or_not:Boolean? = null){

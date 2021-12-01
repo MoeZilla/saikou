@@ -15,7 +15,7 @@ import ani.saikou.logger
 class MediaDetailsViewModel:ViewModel() {
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
     fun getMedia(): LiveData<Media> = media
-    fun loadMedia(m:Media) { media.postValue(anilist.query.mediaDetails(m)) }
+    fun loadMedia(m:Media) { if (media.value==null) media.postValue(anilist.query.mediaDetails(m)) }
 
     val userScore = MutableLiveData<Double?>(null)
     val userProgress = MutableLiveData<Int?>(null)

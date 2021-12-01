@@ -111,6 +111,13 @@ class EpisodeListAdapter(
             itemView.setOnClickListener {
                 fragment.onEpisodeClick(media,arr[bindingAdapterPosition].number)
             }
+            itemView.setOnLongClickListener {
+                if(binding.itemEpisodeDesc.maxLines == 4)
+                    binding.itemEpisodeDesc.maxLines = 100
+                else
+                    binding.itemEpisodeDesc.maxLines = 4
+                return@setOnLongClickListener true
+            }
         }
     }
 }

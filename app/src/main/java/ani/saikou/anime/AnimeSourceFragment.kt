@@ -54,10 +54,9 @@ class AnimeSourceFragment : Fragment() {
         model.getMedia().observe(viewLifecycleOwner,{
             val media = it
             if (media?.anime != null) {
-                binding.animeSourceContainer.visibility = progress
+                binding.animeSourceContainer.visibility = View.VISIBLE
+                binding.animeLoadProgressBar.visibility = View.GONE
                 progress = View.GONE
-                binding.animeLoadProgressBar.visibility = progress
-
                 if (media.anime.youtube!=null) {
                     binding.animeSourceYT.visibility = View.VISIBLE
                     binding.animeSourceYT.setOnClickListener {

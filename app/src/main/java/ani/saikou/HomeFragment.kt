@@ -24,7 +24,6 @@ import kotlinx.coroutines.*
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private var loaded = false
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -41,7 +40,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val model: AnilistHomeViewModel by viewModels()
-
         fun load(){
             requireActivity().runOnUiThread {
                 binding.homeUserName.text = anilist.username
@@ -61,7 +59,7 @@ class HomeFragment : Fragment() {
                     if (anilist.userid == null)
                         if (anilist.query.getUserData()) load() else println("Error loading data")
                     else load()
-                    loaded = true
+                    model.load.postValue(true)
                     //get Watching in new Thread
                     val a = async { model.setAnimeContinue() }
                     //get Reading in new Thread
@@ -82,6 +80,7 @@ class HomeFragment : Fragment() {
             }
         })
 
+
         binding.homeContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight
@@ -101,7 +100,8 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
+        binding.homeRefresh.setSlingshotDistance(statusBarHeight+128)
+        binding.homeRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.homeRefresh.setOnRefreshListener {
             homeRefresh.postValue(true)
         }
@@ -109,7 +109,9 @@ class HomeFragment : Fragment() {
         //UserData
         binding.homeUserDataProgressBar.visibility = View.VISIBLE
         binding.homeUserDataContainer.visibility = View.GONE
-
+        if(model.load.value!!){
+            load()
+        }
         //List Images
         model.getListImages().observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
@@ -167,13 +169,5 @@ class HomeFragment : Fragment() {
             binding.homeRecommendedProgressBar,
             binding.homeRecommendedEmpty
         )
-    }
-
-    override fun onResume() {
-        if(loaded) {
-            binding.homeUserDataProgressBar.visibility = View.GONE
-            binding.homeUserDataContainer.visibility = View.VISIBLE
-        }
-        super.onResume()
     }
 }
