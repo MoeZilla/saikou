@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.InputFilter
 import android.text.Spanned
+import android.util.AttributeSet
 import android.view.View
 import android.view.Window
 import android.widget.AutoCompleteTextView
@@ -18,6 +19,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.Anilist
 import ani.saikou.kitsu.Kitsu
@@ -185,5 +187,31 @@ class ZoomOutPageTransformer : ViewPager2.PageTransformer {
             view.alpha = 1.0f - abs(position)
             view.translationY = height - (1.0f - abs(position))*height
         }
+    }
+}
+class FadingEdgeRecyclerView : RecyclerView {
+
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    override fun isPaddingOffsetRequired(): Boolean {
+        return !clipToPadding
+    }
+
+    override fun getLeftPaddingOffset(): Int {
+        return if (clipToPadding) 0 else -paddingLeft
+    }
+
+    override fun getTopPaddingOffset(): Int {
+        return if (clipToPadding) 0 else -paddingTop
+    }
+
+    override fun getRightPaddingOffset(): Int {
+        return if (clipToPadding) 0 else paddingRight
+    }
+
+    override fun getBottomPaddingOffset(): Int {
+        return if (clipToPadding) 0 else paddingBottom
     }
 }

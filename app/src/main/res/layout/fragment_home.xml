@@ -278,7 +278,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="90dp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <ani.saikou.FadingEdgeRecyclerView
                         android:id="@+id/homeWatchingRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -286,6 +286,7 @@
                         android:nestedScrollingEnabled="true"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        android:requiresFadingEdge="horizontal"
                         tools:itemCount="4"
                         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_compact"
@@ -349,13 +350,14 @@
                         android:layout_gravity="center"
                         android:layout_margin="90dp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <ani.saikou.FadingEdgeRecyclerView
                         android:id="@+id/homeReadingRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        android:requiresFadingEdge="horizontal"
                         tools:itemCount="4"
                         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_compact"
@@ -415,13 +417,14 @@
                         android:layout_gravity="center"
                         android:layout_margin="90dp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <ani.saikou.FadingEdgeRecyclerView
                         android:id="@+id/homeRecommendedRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        android:requiresFadingEdge="horizontal"
                         tools:itemCount="4"
                         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_compact"

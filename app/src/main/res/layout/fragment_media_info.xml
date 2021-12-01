@@ -306,7 +306,7 @@
                 android:text="@string/genres"
                 android:textSize="16sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ani.saikou.FadingEdgeRecyclerView
                 android:id="@+id/mediaInfoGenresRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -314,6 +314,7 @@
                 android:nestedScrollingEnabled="true"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
+                android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/item_genre"
@@ -331,7 +332,7 @@
                 android:text="@string/characters"
                 android:textSize="16sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ani.saikou.FadingEdgeRecyclerView
                 android:id="@+id/mediaInfoCharacterRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -339,6 +340,7 @@
                 android:nestedScrollingEnabled="true"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/item_character"
@@ -354,7 +356,7 @@
                 android:text="@string/relations"
                 android:textSize="16sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ani.saikou.FadingEdgeRecyclerView
                 android:id="@+id/mediaInfoRelationRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -362,6 +364,7 @@
                 android:nestedScrollingEnabled="true"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/item_compact"
@@ -377,7 +380,7 @@
                 android:text="@string/recommended"
                 android:textSize="16sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ani.saikou.FadingEdgeRecyclerView
                 android:id="@+id/mediaInfoRecommendedRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -385,6 +388,7 @@
                 android:nestedScrollingEnabled="true"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/item_compact"
