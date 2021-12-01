@@ -43,4 +43,5 @@ data class Media(
     var recommendations: ArrayList<Media>?=null,
 
     var nameMAL:String?=null,
+    var selected: Selected?=null,
 ) : Serializable

@@ -76,7 +76,7 @@ fun getGogoStream(episode: Episode) : Episode{
 }
 
 fun getGogoEpisodes(media: Media,dub:Boolean=false):MutableMap<String,Episode>{
-    val it = if (media.idMAL!=null) getMalTitle(media.idMAL!!) else media.nameRomaji
+    val it = media.nameMAL?:media.nameRomaji
     val search = searchGogo(it + if (dub) " (Dub)" else "")
     println("Search : $search")
     if (search.isNotEmpty()) {

@@ -17,6 +17,7 @@ import ani.saikou.databinding.FragmentAnimeSourceBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.navBarHeight
+import ani.saikou.saveData
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,14 +29,14 @@ class AnimeSourceFragment : Fragment() {
     private var _binding: FragmentAnimeSourceBinding? = null
     private val binding get() = _binding!!
     private val scope = CoroutineScope(Dispatchers.Default)
-    private var style = 0
-    private var gridCount = 1
-    private var reversed = false
+    private var screenWidth:Float =0f
+
     private var selected:ImageView?=null
     private var selectedChip:Chip?= null
     private var start = 0
     private var end:Int?=null
     private var loading = true
+    private var progress = View.VISIBLE
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAnimeSourceBinding.inflate(inflater, container, false)
@@ -45,16 +46,18 @@ class AnimeSourceFragment : Fragment() {
     override fun onDestroyView() { super.onDestroyView();_binding = null }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val screenWidth = resources.displayMetrics.run { widthPixels / density }
+        screenWidth = resources.displayMetrics.run { widthPixels / density }
         binding.animeSourceContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         super.onViewCreated(view, savedInstanceState)
         val model : MediaDetailsViewModel by activityViewModels()
-        if (selected==null){
-            selected = binding.animeSourceList
-        }
+
         model.getMedia().observe(viewLifecycleOwner,{
             val media = it
-            if (media?.anime != null){
+            if (media?.anime != null) {
+                binding.animeSourceContainer.visibility = progress
+                progress = View.GONE
+                binding.animeLoadProgressBar.visibility = progress
+
                 if (media.anime.youtube!=null) {
                     binding.animeSourceYT.visibility = View.VISIBLE
                     binding.animeSourceYT.setOnClickListener {
@@ -66,38 +69,47 @@ class AnimeSourceFragment : Fragment() {
                 binding.animeSource.setText("GOGO")
                 binding.animeSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown,sources))
                 binding.animeSource.setOnItemClickListener { _, _, i, _ ->
+                    binding.animeEpisodesRecycler.adapter = null
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
-                    media.anime.source = i
+                    media.selected!!.source = i
                     scope.launch{
                         model.loadEpisodes(media,i)
                     }
                 }
-
+                selected = when(media.selected!!.recyclerStyle){
+                    0->binding.animeSourceList
+                    1->binding.animeSourceGrid
+                    2->binding.animeSourceCompact
+                    else -> binding.animeSourceList
+                }
+                selected?.alpha = 1f
+                binding.animeSourceTop.rotation = if (!media.selected!!.recyclerReversed) 90f else -90f
                 binding.animeSourceTop.setOnClickListener {
-                    binding.animeSourceTop.rotation = if (reversed) 90f else -90f
-                    reversed=!reversed
+                    binding.animeSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
+                    media.selected!!.recyclerReversed=!media.selected!!.recyclerReversed
+                    saveData(requireContext(),media.id.toString(), media.selected!!)
                     updateRecycler(media)
                 }
                 binding.animeSourceList.setOnClickListener {
-                    style=0
-                    gridCount = 1
+                    media.selected!!.recyclerStyle=0
+                    saveData(requireContext(),media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceList
                     selected?.alpha = 1f
                     updateRecycler(media)
                 }
                 binding.animeSourceGrid.setOnClickListener {
-                    style=1
-                    gridCount = (screenWidth/200f).toInt()
+                    media.selected!!.recyclerStyle=1
+                    saveData(requireContext(),media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceGrid
                     selected?.alpha = 1f
                     updateRecycler(media)
                 }
                 binding.animeSourceCompact.setOnClickListener {
-                    style=2
-                    gridCount = (screenWidth/80f).toInt()
+                    media.selected!!.recyclerStyle=2
+                    saveData(requireContext(),media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceCompact
                     selected?.alpha = 1f
@@ -107,7 +119,7 @@ class AnimeSourceFragment : Fragment() {
                 model.getEpisodes().observe(viewLifecycleOwner,{loadedEpisodes->
                     if(loadedEpisodes!=null) {
                         binding.animeSouceChipGroup.removeAllViews()
-                        val episodes = loadedEpisodes[media.anime.source]
+                        val episodes = loadedEpisodes[media.selected!!.source]
                         if (episodes != null) {
                             episodes.forEach { (i, episode) ->
                                 if (media.anime.kitsuEpisodes != null) {
@@ -139,9 +151,21 @@ class AnimeSourceFragment : Fragment() {
             }
         })
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.animeLoadProgressBar.visibility = progress
+    }
+
     private fun updateRecycler(media: Media){
         if(media.anime?.episodes!=null) {
-            binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, style, reversed, start, end)
+            binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, media.selected!!.recyclerStyle, media.selected!!.recyclerReversed, start, end)
+            val gridCount = when (media.selected!!.recyclerStyle){
+                0->1
+                1->(screenWidth/200f).toInt()
+                2->(screenWidth/80f).toInt()
+                else->1
+            }
             binding.animeEpisodesRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
             loading = false
             binding.animeSourceProgressBar.visibility = View.GONE

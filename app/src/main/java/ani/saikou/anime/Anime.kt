@@ -20,6 +20,5 @@ data class Anime(
     var selectedEpisode: String?=null,
     var episodes: MutableMap<String,Episode>? = null,
     var slug:String?=null,
-    var source:Int=0,
     var kitsuEpisodes: MutableMap<String,Episode>? = null
 ):Serializable

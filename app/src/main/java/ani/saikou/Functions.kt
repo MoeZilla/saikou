@@ -170,28 +170,20 @@ fun getMalTitle(id:Int) : String{
     return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-name").text()
 }
 
-private const val MIN_SCALE = 0.33f
-private const val MIN_ALPHA = 0f
-
 class ZoomOutPageTransformer : ViewPager2.PageTransformer {
-
     override fun transformPage(view: View, position: Float) {
-        view.apply {
-            when {
-                position < -1 -> {
-                    alpha = 0f
-                }
-                position <= 1 -> {
-                    val scaleFactor = MIN_SCALE.coerceAtLeast(1 - abs(position))
-                    scaleX = scaleFactor
-                    scaleY = scaleFactor
-                    alpha = (MIN_ALPHA +
-                            (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
-                }
-                else -> {
-                    alpha = 0f
-                }
-            }
+        val height = view.height
+        view.translationX = view.width * -position
+        if (position <= -1.0f || position >= 1.0f) {
+            view.alpha = 0.0f
+            view.translationY = 1.0f*height
+        } else if (position == 0.0f) {
+            view.alpha = 1.0f
+            view.translationY = 0f
+        } else {
+            // position is between -1.0F & 0.0F OR 0.0F & 1.0F
+            view.alpha = 1.0f - abs(position)
+            view.translationY = height - (1.0f - abs(position))*height
         }
     }
 }

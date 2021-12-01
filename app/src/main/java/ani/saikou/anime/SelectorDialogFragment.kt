@@ -56,7 +56,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
         })
         if(episode.streamLinks==null) {
             CoroutineScope(Dispatchers.Default).launch {
-                model.loadStreams(episode, media.anime!!.source)
+                model.loadStreams(episode, media.selected!!.source)
             }
         }
         super.onViewCreated(view, savedInstanceState)

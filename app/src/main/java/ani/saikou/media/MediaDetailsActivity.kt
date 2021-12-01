@@ -66,6 +66,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         viewPager.isUserInputEnabled = false
 
         val media: Media = intent.getSerializableExtra("media") as Media
+        media.selected = loadData<Selected>(this,media.id.toString())?: Selected()
         Picasso.get().load(media.cover).into(binding.mediaCoverImage)
         Picasso.get().load(media.banner).into(binding.mediaBanner)
         Picasso.get().load(media.banner).into(binding.mediaBannerStatus)
@@ -116,14 +117,18 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             tabLayout = binding.mediaMangaTab
             viewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle,false)
         }
+        selected = media.selected!!.window
         viewPager.setPageTransformer(ZoomOutPageTransformer())
         binding.mediaTitle.translationX = -screenWidth
         tabLayout.visibility = View.VISIBLE
         tabLayout.setupWithViewPager2(viewPager)
-
+        tabLayout.selectTabAt(selected,false)
+        viewPager.post { viewPager.setCurrentItem(selected, false) }
         tabLayout.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
                 selected = newIndex
+                media.selected!!.window = newIndex
+                saveData(this@MediaDetailsActivity,media.id.toString(),media.selected!!)
             }
         })
         scope.launch {

@@ -24,6 +24,7 @@ import kotlinx.coroutines.*
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private var loaded = false
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -60,6 +61,7 @@ class HomeFragment : Fragment() {
                     if (anilist.userid == null)
                         if (anilist.query.getUserData()) load() else println("Error loading data")
                     else load()
+                    loaded = true
                     //get Watching in new Thread
                     val a = async { model.setAnimeContinue() }
                     //get Reading in new Thread
@@ -165,5 +167,13 @@ class HomeFragment : Fragment() {
             binding.homeRecommendedProgressBar,
             binding.homeRecommendedEmpty
         )
+    }
+
+    override fun onResume() {
+        if(loaded) {
+            binding.homeUserDataProgressBar.visibility = View.GONE
+            binding.homeUserDataContainer.visibility = View.VISIBLE
+        }
+        super.onResume()
     }
 }

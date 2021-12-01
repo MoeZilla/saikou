@@ -5,7 +5,7 @@
     <color name="pink_700">#C50053</color>
     <color name="violet_400">#7366FF</color>
     <color name="violet_700">#3D3DCC</color>
-    <color name="bg_black">#0F081F</color>
+    <color name="bg_black">#1F1F1F</color>
     <color name="bg_white">#E9E8F0</color>
     <color name="bg">@color/bg_white</color>
     <color name="bg_opp">@color/bg_black</color>
