@@ -41,4 +41,6 @@ data class Media(
     var characters:ArrayList<Character>?=null,
     var relations: ArrayList<Media>?=null,
     var recommendations: ArrayList<Media>?=null,
+
+    var nameMAL:String?=null,
 ) : Serializable
