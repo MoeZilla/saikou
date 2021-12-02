@@ -17,9 +17,13 @@
 
     <string name="sad">X(</string>
     <string name="oh">:o</string>
+    <string name="colon">\u0008:\u0008</string>
 
     <string name="no_internet">No Internet Connection</string>
     <string name="refresh">Refresh</string>
+
+    <string name="search">Search</string>
+    <string name="trending_anime">Trending Anime</string>
 
     <string name="username">Username</string>
     <string name="chapters_read">Chapters Read : </string>

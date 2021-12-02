@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import android.widget.ImageView
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
                 binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
                 binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
                 Picasso.get().load(anilist.avatar).into(binding.homeUserAvatar)
-
+                binding.homeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
                 binding.homeUserDataProgressBar.visibility = View.GONE
                 binding.homeUserDataContainer.visibility = View.VISIBLE
             }

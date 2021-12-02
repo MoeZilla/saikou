@@ -49,11 +49,12 @@ class MainActivity : AppCompatActivity() {
             val mainViewPager = binding.viewpager
             mainViewPager.isUserInputEnabled = false
             mainViewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
-            mainViewPager.setPageTransformer(ZoomOutPageTransformer())
-            navbar.setupWithViewPager2(mainViewPager)
+            mainViewPager.setPageTransformer(ZoomOutPageTransformer(true))
+//            navbar.setupWithViewPager2(mainViewPager)
             navbar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
                 override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
                     navbar.animate().translationZ(12f).setDuration(200).start()
+                    mainViewPager.setCurrentItem(newIndex,false)
                 }
             })
             navbar.selectTabAt(1)
@@ -72,9 +73,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
         this.doubleBackToExitPressedOnce = true
-        val snackbar = Snackbar.make(binding.root, "Please click BACK again to exit", Snackbar.LENGTH_LONG)
-        snackbar.view.translationY = (-navBarHeight).toFloat()
-        snackbar.show()
+        val snackBar = Snackbar.make(binding.root, "Please click BACK again to exit", Snackbar.LENGTH_LONG)
+        snackBar.view.translationY = -navBarHeight - binding.navbar.height - 2f
+        snackBar.show()
 
         Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
     }

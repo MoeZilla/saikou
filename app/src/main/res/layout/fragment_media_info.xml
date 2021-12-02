@@ -367,7 +367,7 @@
                 android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/item_compact"
+                tools:listitem="@layout/item_media_compact"
                 tools:orientation="horizontal" />
 
             <TextView
@@ -391,7 +391,7 @@
                 android:requiresFadingEdge="horizontal"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/item_compact"
+                tools:listitem="@layout/item_media_compact"
                 tools:orientation="horizontal" />
         </LinearLayout>
     </FrameLayout>

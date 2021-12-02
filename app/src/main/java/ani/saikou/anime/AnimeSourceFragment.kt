@@ -65,13 +65,14 @@ class AnimeSourceFragment : Fragment() {
                     }
                 }
                 val sources : Array<String> = resources.getStringArray(R.array.anime_sources)
-                binding.animeSource.setText("GOGO")
+                binding.animeSource.setText(sources[media.selected!!.source])
                 binding.animeSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown,sources))
                 binding.animeSource.setOnItemClickListener { _, _, i, _ ->
                     binding.animeEpisodesRecycler.adapter = null
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
                     media.selected!!.source = i
+                    saveData(requireContext(),media.id.toString(), media.selected!!)
                     scope.launch{
                         model.loadEpisodes(media,i)
                     }
@@ -144,7 +145,7 @@ class AnimeSourceFragment : Fragment() {
                 })
                 scope.launch{
                     model.loadKitsuEpisodes(media.nameRomaji)
-                    model.loadEpisodes(media,0)
+                    model.loadEpisodes(media,media.selected!!.source)
                 }
 
             }

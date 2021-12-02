@@ -121,12 +121,13 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         viewPager.setPageTransformer(ZoomOutPageTransformer())
         binding.mediaTitle.translationX = -screenWidth
         tabLayout.visibility = View.VISIBLE
-        tabLayout.setupWithViewPager2(viewPager)
+//        tabLayout.setupWithViewPager2(viewPager)
         tabLayout.selectTabAt(selected,false)
         viewPager.post { viewPager.setCurrentItem(selected, false) }
         tabLayout.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
                 selected = newIndex
+                viewPager.setCurrentItem(selected, false)
                 media.selected!!.window = newIndex
                 saveData(this@MediaDetailsActivity,media.id.toString(),media.selected!!)
             }

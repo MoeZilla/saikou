@@ -20,6 +20,7 @@
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearanceOverlay.Demo</item>
         <item name="android:ambientShadowAlpha">0.08</item>
         <item name="android:spotShadowAlpha">0.08</item>
+        <item name="snackbarStyle">@style/MySnackbar</item>
     </style>
 
     <style name="Theme.Saikou" parent="Theme.Base">

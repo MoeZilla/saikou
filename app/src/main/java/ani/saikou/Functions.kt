@@ -11,6 +11,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.Window
 import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
@@ -18,6 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -27,7 +29,7 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
 import java.util.*
-import kotlin.math.abs
+import kotlin.math.max
 
 const val STATE_RESUME_WINDOW = "resumeWindow"
 const val STATE_RESUME_POSITION = "resumePosition"
@@ -46,6 +48,8 @@ var anilist : Anilist = Anilist()
 var kitsu : Kitsu = Kitsu()
 
 var homeRefresh = MutableLiveData(true)
+var animeRefresh = MutableLiveData(true)
+var mangaRefresh = MutableLiveData(true)
 
 fun logger(e:Any?,print:Boolean=true){
     if(buildDebug && print)
@@ -172,23 +176,18 @@ fun getMalTitle(id:Int) : String{
     return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-name").text()
 }
 
-class ZoomOutPageTransformer : ViewPager2.PageTransformer {
+class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {
     override fun transformPage(view: View, position: Float) {
-        val height = view.height
-        view.translationX = view.width * -position
-        if (position <= -1.0f || position >= 1.0f) {
-            view.alpha = 0.0f
-            view.translationY = 1.0f*height
-        } else if (position == 0.0f) {
-            view.alpha = 1.0f
-            view.translationY = 0f
-        } else {
-            // position is between -1.0F & 0.0F OR 0.0F & 1.0F
-            view.alpha = 1.0f - abs(position)
-            view.translationY = height - (1.0f - abs(position))*height
+        if (position == 0.0f) {
+            var cy = 0
+            if (bottom) cy = view.height
+            val a = ViewAnimationUtils.createCircularReveal(view, view.width / 2, cy, 0f, max(view.height, view.width).toFloat())
+            a.interpolator = LinearOutSlowInInterpolator()
+            a.setDuration(400).start()
         }
     }
 }
+
 class FadingEdgeRecyclerView : RecyclerView {
 
     constructor(context: Context) : super(context)
