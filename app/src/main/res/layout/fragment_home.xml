@@ -271,6 +271,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="@string/browse_anime"
+                            app:cornerRadius="16dp"
                             tools:ignore="TextContrastCheck" />
                     </LinearLayout>
 
@@ -343,7 +344,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="@string/browse_manga"
-                            tools:ignore="TextContrastCheck" />
+                            tools:ignore="TextContrastCheck"
+                            app:cornerRadius="16dp" />
                     </LinearLayout>
 
                     <ProgressBar

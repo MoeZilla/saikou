@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
@@ -123,7 +124,7 @@ class HomeFragment : Fragment() {
         })
 
         //Function For Recycler Views
-        fun initRecyclerView(mode: Int, recyclerView: RecyclerView, progress: View, empty: View) {
+        fun initRecyclerView(mode: Int, recyclerView: RecyclerView, progress: View, empty: View,emptyButton:Button?=null) {
             lateinit var modelFunc: LiveData<ArrayList<Media>>
             when (mode) {
                 0 -> modelFunc = model.getAnimeContinue();1 -> modelFunc =
@@ -144,6 +145,12 @@ class HomeFragment : Fragment() {
                         recyclerView.visibility = View.VISIBLE
                     } else {
                         empty.visibility = View.VISIBLE
+                        emptyButton?.setOnClickListener{
+                            when(mode){
+                                0-> bottomBar.selectTabAt(0)
+                                1-> bottomBar.selectTabAt(2)
+                            }
+                        }
                     }
                     progress.visibility = View.GONE
                 }
@@ -155,13 +162,15 @@ class HomeFragment : Fragment() {
             0,
             binding.homeWatchingRecyclerView,
             binding.homeWatchingProgressBar,
-            binding.homeWatchingEmpty
+            binding.homeWatchingEmpty,
+            binding.homeWatchingBrowseButton
         )
         initRecyclerView(
             1,
             binding.homeReadingRecyclerView,
             binding.homeReadingProgressBar,
-            binding.homeReadingEmpty
+            binding.homeReadingEmpty,
+            binding.homeReadingBrowseButton
         )
         initRecyclerView(
             2,

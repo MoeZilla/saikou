@@ -25,3 +25,24 @@ class AnilistHomeViewModel : ViewModel() {
 
     val load : MutableLiveData<Boolean> = MutableLiveData(false)
 }
+
+class AnilistAnimeViewModel : ViewModel() {
+    private val type = "ANIME"
+    private val trending: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
+    fun getTrending(): LiveData<ArrayList<Media>> = trending
+    fun loadTrending() = trending.postValue(anilist.query.search(type, perPage = 10, sort="TRENDING_DESC").results)
+}
+
+class AnilistSearch : ViewModel(){
+    private val search: MutableLiveData<SearchResults> = MutableLiveData<SearchResults>(null)
+    fun getSearch(): LiveData<SearchResults> = search
+    fun loadSearch(type:String,search_val:String?=null,genres:ArrayList<String>?=null,sort:String="SEARCH_MATCH") = search.postValue(anilist.query.search(type, search=search_val, sort=sort, genres = genres))
+
+    fun loadNextPage(r:SearchResults){
+        val get = anilist.query.search(r.type,r.page+1,r.perPage,r.search,r.sort,r.genres)
+        r.results.addAll(get.results)
+        r.page = get.page
+        r.hasNextPage = get.hasNextPage
+        search.postValue(r)
+    }
+}

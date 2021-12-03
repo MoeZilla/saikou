@@ -1,5 +1,6 @@
 package ani.saikou
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.util.Pair
+import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-
 
 class AnimeFragment : Fragment() {
     private var _binding: FragmentAnimeBinding? = null
@@ -52,9 +56,20 @@ class AnimeFragment : Fragment() {
             animeRefresh.postValue(true)
         }
         if(anilist.avatar!=null){
-            Picasso.get().load(anilist.avatar).into(binding.homeUserAvatar)
-            binding.homeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
+            Picasso.get().load(anilist.avatar).into(binding.animeUserAvatar)
+            binding.animeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
+
+        binding.animeSearchBarText.setOnClickListener{
+            ContextCompat.startActivity(
+                requireActivity(),
+                Intent(requireActivity(), SearchActivity::class.java).putExtra("type","ANIME"),
+                ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),
+                    Pair.create(binding.animeSearchBar, ViewCompat.getTransitionName(binding.animeSearchBar)!!),
+                ).toBundle()
+            )
+        }
+
         model.getTrending().observe(viewLifecycleOwner,{
             if(it!=null){
                 binding.animeTrendingViewPager.adapter = MediaLargeAdaptor(it,binding.animeTrendingViewPager,requireActivity())

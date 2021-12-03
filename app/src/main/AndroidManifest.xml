@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ani.saikou" >
+    package="ani.saikou">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Saikou"
-        tools:ignore="AllowBackup" >
+        android:usesCleartextTraffic="true"
+        tools:ignore="AllowBackup">
+        <activity
+            android:name=".SearchActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Saikou.NoActionBar"/>
         <activity
             android:name=".media.MediaDetailsActivity"
             android:exported="true"
@@ -25,12 +29,12 @@
         <activity
             android:name=".anime.ExoplayerView"
             android:configChanges="orientation|screenSize|layoutDirection"
-            android:theme="@style/Theme.Saikou.Exoplayer"
-            android:keepScreenOn="true" />
+            android:keepScreenOn="true"
+            android:theme="@style/Theme.Saikou.Exoplayer" />
         <activity
             android:name=".anilist.Login"
-            android:exported="true" >
-            <intent-filter android:label="filter_view_example_gizmos" >
+            android:exported="true">
+            <intent-filter android:label="filter_view_example_gizmos">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,7 +47,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

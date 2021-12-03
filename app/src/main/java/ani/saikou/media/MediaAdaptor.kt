@@ -11,6 +11,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 
 import ani.saikou.R
@@ -20,7 +21,7 @@ import com.squareup.picasso.Picasso
 import java.io.Serializable
 
 class MediaAdaptor(
-    private val mediaList: ArrayList<Media>, private val activity: Activity
+    private val mediaList: ArrayList<Media>, private val activity: Activity,private val matchParent:Boolean=false,
     ) : RecyclerView.Adapter<MediaAdaptor.MediaViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {
@@ -53,6 +54,7 @@ class MediaAdaptor(
 
     inner class MediaViewHolder(val binding: ItemMediaCompactBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
+            if (matchParent) itemView.updateLayoutParams { width=-1 }
             itemView.setOnClickListener {
                 val media = mediaList[bindingAdapterPosition]
                 ContextCompat.startActivity(
@@ -60,7 +62,6 @@ class MediaAdaptor(
                     Intent(activity, MediaDetailsActivity::class.java).putExtra("media",media as Serializable),
                         ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         Pair.create(binding.itemCompactImage,ViewCompat.getTransitionName(binding.itemCompactImage)!!),
-//                        Pair.create(binding.itemCompactTitle,ViewCompat.getTransitionName(binding.itemCompactTitle)!!),
                     ).toBundle()
                 )
             }
