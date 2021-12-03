@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        homeRefresh.observe(this, {
+        homeRefresh.observe(viewLifecycleOwner, {
             if (it) {
                 scope.launch {
                     //Get userData First
