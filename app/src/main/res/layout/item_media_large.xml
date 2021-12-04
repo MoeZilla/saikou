@@ -2,8 +2,10 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     app:cardBackgroundColor="@color/nav_bg"
     app:cardCornerRadius="28dp">
 
@@ -72,7 +74,7 @@
                         android:layout_marginStart="2dp"
                         android:fontFamily="@font/poppins_bold"
                         android:paddingTop="2dp"
-                        android:textColor="?attr/colorOnPrimary"
+                        android:textColor="@color/bg_white"
                         android:textSize="12sp"
                         tools:ignore="TextContrastCheck"
                         tools:text="0.0" />

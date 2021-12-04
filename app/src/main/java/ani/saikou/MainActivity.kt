@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
         this.doubleBackToExitPressedOnce = true
         val snackBar = Snackbar.make(binding.root, "Please click BACK again to exit", Snackbar.LENGTH_LONG)
-        snackBar.view.translationY = -navBarHeight - binding.navbar.height - 2f
+        snackBar.view.translationY = -navBarHeight.dp - if(binding.navbar.scaleX==1f) binding.navbar.height - 2f else 0f
         snackBar.show()
 
         Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)

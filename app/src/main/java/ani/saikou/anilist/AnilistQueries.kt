@@ -418,10 +418,11 @@ query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult:
             ${if (sort != null) """,\"sort\":\"$sort\"""" else ""}
             ${if (genres != null) """,\"genres\":\"$genres\"""" else ""}
             }""".replace("\n", " ").replace("""  """, "")
-        val response = executeQuery(query, variables, true)!!["data"]!!.jsonObject["Page"]!!
+        val response = executeQuery(query, variables, true)!!
         println("$response")
+        val a = response["data"]!!.jsonObject["Page"]!!
         val responseArray = arrayListOf<Media>()
-        response.jsonObject["media"]!!.jsonArray.forEach { i ->
+        a.jsonObject["media"]!!.jsonArray.forEach { i ->
             responseArray.add(
                 Media(
                     id = i.jsonObject["id"].toString().toInt(),
@@ -448,8 +449,8 @@ query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult:
             sort = sort,
             genres = genres,
             results = responseArray,
-            page = response.jsonObject["pageInfo"]!!.jsonObject["currentPage"].toString().toInt(),
-            hasNextPage = response.jsonObject["pageInfo"]!!.jsonObject["hasNextPage"].toString()=="true",
+            page = a.jsonObject["pageInfo"]!!.jsonObject["currentPage"].toString().toInt(),
+            hasNextPage = a.jsonObject["pageInfo"]!!.jsonObject["hasNextPage"].toString()=="true",
         )
     }
 }

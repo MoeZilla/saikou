@@ -9,7 +9,9 @@
         android:id="@+id/mediaBannerStatus"
         android:layout_width="match_parent"
         android:layout_height="192dp"
+        android:background="@color/nav_bg"
         android:scaleType="centerCrop"
+        android:translationZ="4dp"
         tools:ignore="ContentDescription,ImageContrastCheck"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 

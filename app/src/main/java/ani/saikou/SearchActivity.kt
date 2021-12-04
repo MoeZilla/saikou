@@ -10,8 +10,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.ActivitySearchBinding
 import ani.saikou.media.MediaAdaptor
@@ -32,22 +34,50 @@ class SearchActivity : AppCompatActivity() {
 
         screenWidth = resources.displayMetrics.run { widthPixels / density }
         binding.searchBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
-        binding.searchScrollContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight;bottomMargin += navBarHeight }
+        binding.searchScrollContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
+        binding.searchRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
+        binding.searchProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
+        binding.searchRecyclerView.updatePaddingRelative(bottom = navBarHeight+80.px)
+
+        binding.searchScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+            if(!v.canScrollVertically(1))
+                binding.searchRecyclerView.suppressLayout(false)
+            if(!v.canScrollVertically(-1))
+                binding.searchRecyclerView.suppressLayout(true)
+        })
 
         val type:String = intent.getStringExtra("type")!!
         val model: AnilistSearch by viewModels()
         model.getSearch().observe(this,{
             if(it!=null){
-                binding.searchRecyclerView.adapter = MediaAdaptor(it.results,this,true)
+                val adapter = MediaAdaptor(it.results,this,true)
+                var loading = false
+                binding.searchRecyclerView.adapter = adapter
                 binding.searchRecyclerView.layoutManager = GridLayoutManager(this, (screenWidth/124f).toInt())
                 binding.searchProgress.visibility = View.GONE
                 binding.searchRecyclerView.visibility = View.VISIBLE
                 if(it.hasNextPage) {
                     binding.searchProgress.visibility = View.VISIBLE
-                    binding.searchScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
-                        if (!v.canScrollVertically(1)) {
-                            if (it.hasNextPage) scope.launch { model.loadNextPage(it) }
-                            else binding.searchProgress.visibility = View.GONE
+                    binding.searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrolled(v: RecyclerView, dx: Int, dy: Int) {
+                            if (!v.canScrollVertically(1)) {
+                                if (it.hasNextPage && !loading) scope.launch {
+                                    if (!loading) {
+                                        loading=true
+                                        val get = model.loadNextPage(it)
+                                        val a = it.results.size
+                                        it.results.addAll(get.results)
+                                        runOnUiThread {
+                                            adapter.notifyItemRangeInserted(a,get.results.size)
+                                            binding.searchProgress.visibility = View.GONE
+                                        }
+                                        it.page = get.page
+                                        it.hasNextPage = get.hasNextPage
+                                        loading=false
+                                    }
+                                }
+                                else binding.searchProgress.visibility = View.GONE
+                            }
                         }
                     })
                 }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources.getSystem
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.InputFilter
@@ -41,7 +42,9 @@ const val buildDebug = true
 
 var statusBarHeight  = 0
 var navBarHeight = 0
-//val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics)
+val Int.dp: Int get() = (this / getSystem().displayMetrics.density).toInt()
+val Int.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
+
 lateinit var bottomBar: AnimatedBottomBar
 
 var anilist : Anilist = Anilist()

@@ -24,6 +24,7 @@
 
     <string name="search">Search</string>
     <string name="trending_anime">Trending Anime</string>
+    <string name="popular_anime">Popular Anime</string>
 
     <string name="username">Username</string>
     <string name="chapters_read">Chapters Read : </string>

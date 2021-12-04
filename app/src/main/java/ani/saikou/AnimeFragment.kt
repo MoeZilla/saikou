@@ -1,5 +1,6 @@
 package ani.saikou
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,20 +14,22 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePaddingRelative
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.AnilistAnimeViewModel
+import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentAnimeBinding
 import ani.saikou.media.MediaLargeAdaptor
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import kotlin.math.abs
 
 class AnimeFragment : Fragment() {
@@ -46,10 +49,23 @@ class AnimeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val model: AnilistAnimeViewModel by viewModels()
-        binding.animeContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            topMargin = statusBarHeight
-            bottomMargin = navBarHeight
-        }
+        binding.animeContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = statusBarHeight }
+
+        binding.animeScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+            if(!v.canScrollVertically(1)) {
+                binding.animePopularRecyclerView.suppressLayout(false)
+                ObjectAnimator.ofFloat(bottomBar,"scaleX",0f).setDuration(200).start()
+                ObjectAnimator.ofFloat(bottomBar,"scaleY",0f).setDuration(200).start()
+            }
+            if(!v.canScrollVertically(-1)){
+                binding.animePopularRecyclerView.suppressLayout(true)
+                ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
+                ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
+            }
+        })
+        binding.animePopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
+        binding.animePopularProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
+        binding.animePopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80.px)
         binding.animeRefresh.setSlingshotDistance(statusBarHeight+128)
         binding.animeRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.animeRefresh.setOnRefreshListener {
@@ -72,12 +88,12 @@ class AnimeFragment : Fragment() {
 
         model.getTrending().observe(viewLifecycleOwner,{
             if(it!=null){
-                binding.animeTrendingViewPager.adapter = MediaLargeAdaptor(it,binding.animeTrendingViewPager,requireActivity())
+                binding.animeTrendingViewPager.adapter = MediaLargeAdaptor(it,requireActivity(),binding.animeTrendingViewPager)
                 binding.animeTrendingViewPager.offscreenPageLimit = 3
                 binding.animeTrendingViewPager.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
                 val a = CompositePageTransformer()
-                a.addTransformer(MarginPageTransformer(40))
+                a.addTransformer(MarginPageTransformer(8.px))
                 a.addTransformer { page, position ->
                     page.scaleY = 0.85f + (1 - abs(position))*0.15f
                 }
@@ -95,13 +111,57 @@ class AnimeFragment : Fragment() {
                         }
                     }
                 )
-                println("$it")
             }
         })
+
+        val popularModel: AnilistSearch by viewModels()
+        popularModel.getSearch().observe(viewLifecycleOwner,{
+            if(it!=null){
+                val adapter = MediaLargeAdaptor(it.results,requireActivity())
+                var loading = false
+                binding.animePopularRecyclerView.adapter = adapter
+                binding.animePopularRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                binding.animePopularProgress.visibility = View.GONE
+                if(it.hasNextPage) {
+                    binding.animePopularRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrolled(v: RecyclerView, dx: Int, dy: Int) {
+                            if (!v.canScrollVertically(1)) {
+                                if (it.hasNextPage)
+                                    if (!loading) {
+                                        binding.animePopularProgress.visibility = View.VISIBLE
+                                        scope.launch {
+                                            loading = true
+                                            val get = popularModel.loadNextPage(it)
+                                            val a = it.results.size
+                                            it.results.addAll(get.results)
+                                            requireActivity().runOnUiThread {
+                                                adapter.notifyItemRangeInserted(a,get.results.size)
+                                                binding.animePopularProgress.visibility = View.GONE
+                                            }
+                                            it.page = get.page
+                                            it.hasNextPage = get.hasNextPage
+                                            loading = false
+                                        }
+                                }
+                                else binding.animePopularProgress.visibility = View.GONE
+                            }
+                            if (!v.canScrollVertically(-1)){
+                                binding.animePopularRecyclerView.suppressLayout(true)
+                                ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
+                                ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
+                            }
+                            super.onScrolled(v, dx, dy)
+                        }
+                    })
+                }
+            }
+        })
+
         animeRefresh.observe(viewLifecycleOwner,{
             if(it) {
                 scope.launch {
                     model.loadTrending()
+                    popularModel.loadSearch("ANIME",sort="POPULARITY_DESC")
                     requireActivity().runOnUiThread {
                         animeRefresh.postValue(false)
                         binding.animeRefresh.isRefreshing = false

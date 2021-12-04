@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -16,16 +17,17 @@ import androidx.viewpager2.widget.ViewPager2
 
 import ani.saikou.R
 import ani.saikou.databinding.ItemMediaLargeBinding
-
 import com.squareup.picasso.Picasso
+
 import java.io.Serializable
 
 class MediaLargeAdaptor(
-    private val mediaList: ArrayList<Media>,private val viewPager: ViewPager2, val activity: Activity
+    private val mediaList: ArrayList<Media>, val activity: Activity,private val viewPager: ViewPager2?=null
     ) : RecyclerView.Adapter<MediaLargeAdaptor.MediaViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {
         val binding = ItemMediaLargeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        if (viewPager!=null) binding.itemContainer.layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
         return MediaViewHolder(binding)
     }
     @SuppressLint("SetTextI18n")
@@ -45,7 +47,7 @@ class MediaLargeAdaptor(
             b.itemCompactTotal.text = "${media.manga.totalChapters?:"~"}"
         }
         @SuppressLint("NotifyDataSetChanged")
-        if (position == mediaList.size-2) viewPager.post {
+        if (position == mediaList.size-2 && viewPager!=null) viewPager.post {
             mediaList.addAll(mediaList)
             notifyDataSetChanged()
         }
@@ -61,8 +63,7 @@ class MediaLargeAdaptor(
                    activity,
                     Intent(activity, MediaDetailsActivity::class.java).putExtra("media",media as Serializable),
                         ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
-                        Pair.create(binding.itemCompactImage,ViewCompat.getTransitionName(binding.itemCompactImage)!!),
-//                        Pair.create(binding.itemCompactTitle,ViewCompat.getTransitionName(binding.itemCompactTitle)!!),
+                        Pair.create(binding.itemCompactImage,ViewCompat.getTransitionName(binding.itemCompactImage)!!)
                     ).toBundle()
                 )
             }

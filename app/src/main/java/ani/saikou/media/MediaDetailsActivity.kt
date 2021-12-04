@@ -44,6 +44,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         //Ui init
         initActivity(window)
+        this.window.statusBarColor = ContextCompat.getColor(this, R.color.nav_status)
 
         binding.mediaBanner.updateLayoutParams{ height += statusBarHeight }
         binding.mediaBannerStatus.updateLayoutParams{ height += statusBarHeight }
