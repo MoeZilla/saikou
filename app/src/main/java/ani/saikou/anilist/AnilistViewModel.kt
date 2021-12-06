@@ -31,6 +31,10 @@ class AnilistAnimeViewModel : ViewModel() {
     private val trending: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
     fun getTrending(): LiveData<ArrayList<Media>> = trending
     fun loadTrending() = trending.postValue(anilist.query.search(type, perPage = 10, sort="TRENDING_DESC").results)
+
+    private val updated: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
+    fun getUpdated(): LiveData<ArrayList<Media>> = updated
+    fun loadUpdated() = updated.postValue(anilist.query.recentlyUpdated())
 }
 
 class AnilistSearch : ViewModel(){

@@ -42,10 +42,11 @@ const val buildDebug = true
 
 var statusBarHeight  = 0
 var navBarHeight = 0
-val Int.dp: Int get() = (this / getSystem().displayMetrics.density).toInt()
-val Int.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
+val Int.dp: Float get() = (this / getSystem().displayMetrics.density)
+val Float.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
 
 lateinit var bottomBar: AnimatedBottomBar
+var selectedOption = 1
 
 var anilist : Anilist = Anilist()
 var kitsu : Kitsu = Kitsu()

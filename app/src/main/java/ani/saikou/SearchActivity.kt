@@ -37,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
         binding.searchScrollContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight }
         binding.searchRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
         binding.searchProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
-        binding.searchRecyclerView.updatePaddingRelative(bottom = navBarHeight+80.px)
+        binding.searchRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
 
         binding.searchScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
             if(!v.canScrollVertically(1))

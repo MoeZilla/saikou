@@ -15,7 +15,7 @@ data class Anime(
 
     var youtube: String?=null,
     var nextAiringEpisode: Int? = null,
-    var nextAiringEpisodeTime: Date? = null,
+    var nextAiringEpisodeTime: Long? = null,
 
     var selectedEpisode: String?=null,
     var episodes: MutableMap<String,Episode>? = null,

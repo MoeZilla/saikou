@@ -26,6 +26,7 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.AnilistAnimeViewModel
 import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentAnimeBinding
+import ani.saikou.media.MediaAdaptor
 import ani.saikou.media.MediaLargeAdaptor
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
@@ -65,7 +66,7 @@ class AnimeFragment : Fragment() {
         })
         binding.animePopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
         binding.animePopularProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
-        binding.animePopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80.px)
+        binding.animePopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
         binding.animeRefresh.setSlingshotDistance(statusBarHeight+128)
         binding.animeRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.animeRefresh.setOnRefreshListener {
@@ -88,12 +89,13 @@ class AnimeFragment : Fragment() {
 
         model.getTrending().observe(viewLifecycleOwner,{
             if(it!=null){
+                binding.animeTrendingProgressBar.visibility = View.GONE
                 binding.animeTrendingViewPager.adapter = MediaLargeAdaptor(it,requireActivity(),binding.animeTrendingViewPager)
                 binding.animeTrendingViewPager.offscreenPageLimit = 3
                 binding.animeTrendingViewPager.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
                 val a = CompositePageTransformer()
-                a.addTransformer(MarginPageTransformer(8.px))
+                a.addTransformer(MarginPageTransformer(8f.px))
                 a.addTransformer { page, position ->
                     page.scaleY = 0.85f + (1 - abs(position))*0.15f
                 }
@@ -111,6 +113,15 @@ class AnimeFragment : Fragment() {
                         }
                     }
                 )
+            }
+        })
+
+        model.getUpdated().observe(viewLifecycleOwner,{
+            if(it!=null){
+                binding.animeUpdatedProgressBar.visibility = View.GONE
+                binding.animeUpdatedRecyclerView.adapter = MediaAdaptor(it,requireActivity())
+                binding.animeUpdatedRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                binding.animeUpdatedRecyclerView.visibility = View.VISIBLE
             }
         })
 
@@ -161,6 +172,7 @@ class AnimeFragment : Fragment() {
             if(it) {
                 scope.launch {
                     model.loadTrending()
+                    model.loadUpdated()
                     popularModel.loadSearch("ANIME",sort="POPULARITY_DESC")
                     requireActivity().runOnUiThread {
                         animeRefresh.postValue(false)

@@ -4,6 +4,7 @@ package ani.saikou.anime
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -37,10 +38,17 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
     private var isPlayerPlaying = true
     private var trackDialog: Dialog? = null
 
+    override fun onDestroy() {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExoplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (android.provider.Settings.System.getInt(contentResolver, android.provider.Settings.System.ACCELEROMETER_ROTATION, 0) != 1) requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         val episode:Episode = intent.getSerializableExtra("ep")!! as Episode
 

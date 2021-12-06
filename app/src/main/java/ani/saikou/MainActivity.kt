@@ -54,11 +54,12 @@ class MainActivity : AppCompatActivity() {
             navbar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
                 override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
                     navbar.animate().translationZ(12f).setDuration(200).start()
+                    selectedOption = newIndex
                     mainViewPager.setCurrentItem(newIndex,false)
                 }
             })
-            navbar.selectTabAt(1)
-            mainViewPager.post { mainViewPager.setCurrentItem(1, false) }
+            navbar.selectTabAt(selectedOption)
+            mainViewPager.post { mainViewPager.setCurrentItem(selectedOption, false) }
         } else {
             //Login
             supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, LoginFragment()).addToBackStack(null).commit()

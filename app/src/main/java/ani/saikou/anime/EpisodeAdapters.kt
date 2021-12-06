@@ -2,6 +2,7 @@ package ani.saikou.anime
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.databinding.ItemEpisodeCompactBinding
@@ -100,6 +101,7 @@ class EpisodeListAdapter(
         val ep = arr[position]
         Picasso.get().load(ep.thumb?:media.cover).into(binding.itemEpisodeImage)
         binding.itemEpisodeNumber.text = ep.number
+        if (ep.desc==null) binding.itemEpisodeDesc.visibility = View.GONE
         binding.itemEpisodeDesc.text = ep.desc?:""
         binding.itemEpisodeTitle.text = ep.title?:media.name
     }
@@ -112,10 +114,10 @@ class EpisodeListAdapter(
                 fragment.onEpisodeClick(media,arr[bindingAdapterPosition].number)
             }
             itemView.setOnLongClickListener {
-                if(binding.itemEpisodeDesc.maxLines == 4)
+                if(binding.itemEpisodeDesc.maxLines == 3)
                     binding.itemEpisodeDesc.maxLines = 100
                 else
-                    binding.itemEpisodeDesc.maxLines = 4
+                    binding.itemEpisodeDesc.maxLines = 3
                 return@setOnLongClickListener true
             }
         }
