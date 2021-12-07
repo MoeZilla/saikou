@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import ani.saikou.*
+import ani.saikou.anilist.Anilist
 import ani.saikou.databinding.BottomSheetMediaListBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +115,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment(){
 
                 binding.mediaListSave.setOnClickListener {
                     scope.launch {
-                        anilist.mutation.editList(
+                        Anilist.mutation.editList(
                         media!!.id,
                         if (binding.mediaListProgress.text.toString()!="") binding.mediaListProgress.text.toString().toInt() else null,
                         if (binding.mediaListScore.text.toString()!="") (binding.mediaListScore.text.toString().toDouble()*10).toInt() else null,

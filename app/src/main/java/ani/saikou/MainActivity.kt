@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import ani.saikou.anilist.Anilist
 
 import ani.saikou.databinding.ActivityMainBinding
 
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        if (anilist.getSavedToken(this)) {
+        if (Anilist.getSavedToken(this)) {
 
             //Load Data
             val navbar = binding.navbar

@@ -1,6 +1,7 @@
 package ani.saikou.media
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ani.saikou.R
 import ani.saikou.databinding.FragmentMediaInfoBinding
 
+@SuppressLint("SetTextI18n")
 class MediaInfoFragment : Fragment() {
     private var _binding: FragmentMediaInfoBinding? = null
     private val binding get() = _binding!!
@@ -24,6 +26,7 @@ class MediaInfoFragment : Fragment() {
         _binding = FragmentMediaInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onDestroyView() {
         super.onDestroyView();_binding = null
     }
@@ -51,6 +54,7 @@ class MediaInfoFragment : Fragment() {
                         binding.mediaInfoCountdownContainer.visibility = View.VISIBLE
                         timer = object :
                             CountDownTimer((media.anime.nextAiringEpisodeTime!! + 10000)*1000-System.currentTimeMillis(), 1000) {
+
                             override fun onTick(millisUntilFinished: Long) {
                                 val a = millisUntilFinished/1000
                                 binding.mediaInfoCountdown.text = "Next Episode will be released in \n ${a/86400} days ${a%86400/3600} hrs ${a%86400%3600/60} mins ${a%86400%3600%60} secs"

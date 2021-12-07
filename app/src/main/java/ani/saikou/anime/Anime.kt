@@ -1,7 +1,6 @@
 package ani.saikou.anime
 
 import java.io.Serializable
-import java.util.Date
 
 data class Anime(
     var totalEpisodes: Int? = null,

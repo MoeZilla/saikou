@@ -1,5 +1,6 @@
 package ani.saikou.anime
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 
-
+@SuppressLint("SetTextI18n")
 class AnimeSourceFragment : Fragment() {
     private var _binding: FragmentAnimeSourceBinding? = null
     private val binding get() = _binding!!
@@ -90,7 +91,7 @@ class AnimeSourceFragment : Fragment() {
                     media.selected!!.source = i
                     saveData(requireContext(),media.id.toString(), media.selected!!)
                     scope.launch{
-                        model.loadEpisodes(media,i)
+                        model.loadEpisodes(media,i,model)
                     }
                 }
                 selected = when(media.selected!!.recyclerStyle){
@@ -161,7 +162,7 @@ class AnimeSourceFragment : Fragment() {
                 })
                 scope.launch{
                     model.loadKitsuEpisodes(media.nameRomaji)
-                    model.loadEpisodes(media,media.selected!!.source)
+                    model.loadEpisodes(media,media.selected!!.source,model)
                 }
 
             }
@@ -204,6 +205,8 @@ class AnimeSourceFragment : Fragment() {
 
     private fun addPageChips(media: Media, episode: Int){
         val divisions = episode.toDouble() / 10
+        start = 0
+        end = null
         val limit = when{
             (divisions < 25) -> 25
             (divisions < 50) -> 50

@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.anilist.AnilistAnimeViewModel
+import ani.saikou.anilist.Anilist
 import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentAnimeBinding
 import ani.saikou.media.MediaAdaptor
@@ -72,8 +73,8 @@ class AnimeFragment : Fragment() {
         binding.animeRefresh.setOnRefreshListener {
             animeRefresh.postValue(true)
         }
-        if(anilist.avatar!=null){
-            Picasso.get().load(anilist.avatar).into(binding.animeUserAvatar)
+        if(Anilist.avatar!=null){
+            Picasso.get().load(Anilist.avatar).into(binding.animeUserAvatar)
             binding.animeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 

@@ -3,19 +3,19 @@ package ani.saikou.media
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ani.saikou.anilist
+import ani.saikou.anilist.Anilist
 import ani.saikou.anime.Episode
-import ani.saikou.anime.source.parsers.getGogoEpisodes
-import ani.saikou.anime.source.parsers.getGogoStream
-import ani.saikou.anime.source.parsers.getTwistEpisodes
-import ani.saikou.anime.source.parsers.getTwistStream
-import ani.saikou.kitsu
+import ani.saikou.anime.source.Parser
+import ani.saikou.anime.source.parsers.*
+import ani.saikou.kitsu.Kitsu
 import ani.saikou.logger
 
 class MediaDetailsViewModel:ViewModel() {
+    private val parsers:MutableMap<Int,Parser> = mutableMapOf()
+
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
     fun getMedia(): LiveData<Media> = media
-    fun loadMedia(m:Media) { if (media.value==null) media.postValue(anilist.query.mediaDetails(m)) }
+    fun loadMedia(m:Media) { if (media.value==null) media.postValue(Anilist.query.mediaDetails(m)) }
 
     val userScore = MutableLiveData<Double?>(null)
     val userProgress = MutableLiveData<Int?>(null)
@@ -23,32 +23,27 @@ class MediaDetailsViewModel:ViewModel() {
 
     private val kitsuEpisodes: MutableLiveData<MutableMap<String,Episode>> = MutableLiveData<MutableMap<String,Episode>>(null)
     fun getKitsuEpisodes() : LiveData<MutableMap<String,Episode>> = kitsuEpisodes
-    fun loadKitsuEpisodes(s:String){ if (kitsuEpisodes.value==null) kitsuEpisodes.postValue(kitsu.getKitsuEpisodesDetails(s))}
+    fun loadKitsuEpisodes(s:String){ if (kitsuEpisodes.value==null) kitsuEpisodes.postValue(Kitsu.getKitsuEpisodesDetails(s))}
 
     private val episodes: MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>> = MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>>(null)
     private val loaded = mutableMapOf<Int,MutableMap<String,Episode>>()
     fun getEpisodes() : LiveData<MutableMap<Int,MutableMap<String,Episode>>> = episodes
-    fun loadEpisodes(media: Media,i:Int){
+    fun loadEpisodes(media: Media,i:Int,model:MediaDetailsViewModel){
         logger("Loading Episodes : $loaded")
         if(!loaded.containsKey(i)) {
             loaded[i] = when (i) {
-                0 -> getGogoEpisodes(media)
-                1 -> getGogoEpisodes(media,true)
-                2 -> getTwistEpisodes(media)
-                else -> getGogoEpisodes(media)
-            }
+                0 -> parsers.getOrPut(i, { Gogo(model) })
+                1 -> parsers.getOrPut(i, { Gogo(model,true) })
+                2 -> parsers.getOrPut(i, { Twist() })
+                else -> parsers.getOrPut(i, { Gogo(model) })
+            }.getEpisodes(media)
         }
         episodes.postValue(loaded)
     }
     private var streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
     fun getStreams() : LiveData<Episode> = streams
     fun loadStreams(episode: Episode,i:Int){
-        streams.postValue(when (i) {
-            0 -> getGogoStream(episode)
-            1 -> getGogoStream(episode)
-            2 -> getTwistStream(episode)
-            else -> episode
-        })
+        streams.postValue(parsers[i]?.getStream(episode)?:episode)
         streams = MutableLiveData<Episode>(null)
     }
 }

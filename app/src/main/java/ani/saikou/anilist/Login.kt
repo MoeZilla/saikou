@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ani.saikou.anilist
 import ani.saikou.logger
 import ani.saikou.startMainActivity
 
@@ -13,10 +12,10 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val data: Uri? = intent?.data
         logger(data.toString())
-        anilist.token = Regex("""(?<=access_token=).+(?=&token_type)""").find(data.toString())!!.value
+        Anilist.token = Regex("""(?<=access_token=).+(?=&token_type)""").find(data.toString())!!.value
         val filename = "anilistToken"
         this.openFileOutput(filename, Context.MODE_PRIVATE).use {
-            it.write(anilist.token!!.toByteArray())
+            it.write(Anilist.token!!.toByteArray())
         }
         startMainActivity(this)
     }

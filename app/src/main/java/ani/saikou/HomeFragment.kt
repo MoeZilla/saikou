@@ -14,6 +14,7 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+import ani.saikou.anilist.Anilist
 import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
@@ -43,10 +44,10 @@ class HomeFragment : Fragment() {
         val model: AnilistHomeViewModel by viewModels()
         fun load(){
             requireActivity().runOnUiThread {
-                binding.homeUserName.text = anilist.username
-                binding.homeUserEpisodesWatched.text = anilist.episodesWatched.toString()
-                binding.homeUserChaptersRead.text = anilist.chapterRead.toString()
-                Picasso.get().load(anilist.avatar).into(binding.homeUserAvatar)
+                binding.homeUserName.text = Anilist.username
+                binding.homeUserEpisodesWatched.text = Anilist.episodesWatched.toString()
+                binding.homeUserChaptersRead.text = Anilist.chapterRead.toString()
+                Picasso.get().load(Anilist.avatar).into(binding.homeUserAvatar)
                 binding.homeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
                 binding.homeUserDataProgressBar.visibility = View.GONE
                 binding.homeUserDataContainer.visibility = View.VISIBLE
@@ -57,8 +58,8 @@ class HomeFragment : Fragment() {
             if (it) {
                 scope.launch {
                     //Get userData First
-                    if (anilist.userid == null)
-                        if (anilist.query.getUserData()) load() else println("Error loading data")
+                    if (Anilist.userid == null)
+                        if (Anilist.query.getUserData()) load() else println("Error loading data")
                     else load()
                     model.load.postValue(true)
                     //get Watching in new Thread
@@ -66,7 +67,7 @@ class HomeFragment : Fragment() {
                     //get Reading in new Thread
                     val b = async { model.setMangaContinue() }
                     // get genres and respective images
-                    val c = async { anilist.query.genreCollection(requireActivity()) }
+                    val c = async { Anilist.query.genreCollection(requireActivity()) }
                     //get List Images in current Thread(idle)
                     model.setListImages()
                     //get Recommended in current Thread(idle)

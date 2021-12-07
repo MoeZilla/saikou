@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import java.io.File
 
-class Anilist {
+object Anilist {
     val query : AnilistQueries = AnilistQueries()
     val mutation : AnilistMutations = AnilistMutations()
 

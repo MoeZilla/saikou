@@ -6,7 +6,7 @@ import kotlinx.serialization.json.*
 import org.jsoup.Connection.*
 import org.jsoup.Jsoup
 
-class Kitsu {
+object Kitsu {
     private fun getKitsuData(query:String): String {
         return Jsoup.connect("https://kitsu.io/api/graphql")
             .header("Content-Type", "application/json")

@@ -24,8 +24,6 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import ani.saikou.anilist.Anilist
-import ani.saikou.kitsu.Kitsu
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
@@ -48,8 +46,6 @@ val Float.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
 lateinit var bottomBar: AnimatedBottomBar
 var selectedOption = 1
 
-var anilist : Anilist = Anilist()
-var kitsu : Kitsu = Kitsu()
 
 var homeRefresh = MutableLiveData(true)
 var animeRefresh = MutableLiveData(true)

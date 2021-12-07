@@ -15,13 +15,13 @@ import kotlin.collections.ArrayList
 
 
 fun executeQuery(query:String, variables:String="",force:Boolean=false): JsonObject? {
-    val set = Jsoup.connect("https://graphql.anilist.co/")
+    val set = Jsoup.connect("https://graphql.Anilist.co/")
         .header("Content-Type", "application/json")
         .header("Accept", "application/json")
         .requestBody("""{"query":"$query","variables": "$variables"}""")
         .ignoreContentType(true).ignoreHttpErrors(true)
-    if (anilist.token!=null || force) {
-        if (anilist.token!=null) set.header("Authorization", "Bearer ${anilist.token}")
+    if (Anilist.token!=null || force) {
+        if (Anilist.token!=null) set.header("Authorization", "Bearer ${Anilist.token}")
         val json = set.post().body().text()
         logger("JSON : $json", false)
         return Json.decodeFromString(json)
@@ -45,11 +45,11 @@ class AnilistQueries{
         return try{
             val response = executeQuery("""{Viewer {name avatar{medium}id statistics{anime{episodesWatched}manga{chaptersRead}}}}""")!!["data"]!!.jsonObject["Viewer"]!!
 
-            anilist.userid = response.jsonObject["id"].toString().toInt()
-            anilist.username = response.jsonObject["name"].toString().trim('"')
-            anilist.avatar = response.jsonObject["avatar"]!!.jsonObject["medium"].toString().trim('"')
-            anilist.episodesWatched = response.jsonObject["statistics"]!!.jsonObject["anime"]!!.jsonObject["episodesWatched"].toString().toInt()
-            anilist.chapterRead = response.jsonObject["statistics"]!!.jsonObject["manga"]!!.jsonObject["chaptersRead"].toString().toInt()
+            Anilist.userid = response.jsonObject["id"].toString().toInt()
+            Anilist.username = response.jsonObject["name"].toString().trim('"')
+            Anilist.avatar = response.jsonObject["avatar"]!!.jsonObject["medium"].toString().trim('"')
+            Anilist.episodesWatched = response.jsonObject["statistics"]!!.jsonObject["anime"]!!.jsonObject["episodesWatched"].toString().toInt()
+            Anilist.chapterRead = response.jsonObject["statistics"]!!.jsonObject["manga"]!!.jsonObject["chaptersRead"].toString().toInt()
             true
         } catch (e: Exception){
             logger(e)
@@ -196,7 +196,7 @@ class AnilistQueries{
 
 
     fun continueMedia(type:String): ArrayList<Media> {
-        val response = executeQuery(""" { MediaListCollection(userId: ${anilist.userid}, type: $type, status: CURRENT) { lists { entries { progress score(format:POINT_100) status media { id status chapters episodes nextAiringEpisode {episode} meanScore isFavourite bannerImage coverImage{large} title { english romaji userPreferred } } } } } } """)
+        val response = executeQuery(""" { MediaListCollection(userId: ${Anilist.userid}, type: $type, status: CURRENT) { lists { entries { progress score(format:POINT_100) status media { id status chapters episodes nextAiringEpisode {episode} meanScore isFavourite bannerImage coverImage{large} title { english romaji userPreferred } } } } } } """)
         val returnArray = arrayListOf<Media>()
         val list = response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray
         if (list.isNotEmpty()){
@@ -256,7 +256,7 @@ class AnilistQueries{
     }
 
     private fun bannerImage(type: String): String? {
-        val response = executeQuery("""{ MediaListCollection(userId: ${anilist.userid}, type: $type, sort:[SCORE_DESC,UPDATED_TIME_DESC],chunk:1,perChunk:1) { lists { entries{ media { bannerImage } } } } } """)
+        val response = executeQuery("""{ MediaListCollection(userId: ${Anilist.userid}, type: $type, sort:[SCORE_DESC,UPDATED_TIME_DESC],chunk:1,perChunk:1) { lists { entries{ media { bannerImage } } } } } """)
         val list = response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray
         if (list.isNotEmpty()){
             return list[0].jsonObject["entries"]!!.jsonArray[0].jsonObject["media"]!!.jsonObject["bannerImage"].toString().trim('"')
@@ -272,7 +272,7 @@ class AnilistQueries{
     }
 
     fun mangaList(): MutableList<Media> {
-        val response = executeQuery("""{ MediaListCollection(userId: ${anilist.userid}, type: MANGA) { lists { name entries { progress score(format:POINT_100) media { id status chapters episodes nextAiringEpisode {episode} bannerImage meanScore isFavourite coverImage{large} title {english romaji userPreferred } } } } } }""")
+        val response = executeQuery("""{ MediaListCollection(userId: ${Anilist.userid}, type: MANGA) { lists { name entries { progress score(format:POINT_100) media { id status chapters episodes nextAiringEpisode {episode} bannerImage meanScore isFavourite coverImage{large} title {english romaji userPreferred } } } } } }""")
         val returnArray = mutableListOf<Media>()
         response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray.forEach { i ->
             i.jsonObject["entries"]!!.jsonArray.forEach {
@@ -296,7 +296,7 @@ class AnilistQueries{
     }
 
     fun animeList(): ArrayList<Media> {
-        val response = executeQuery("""{ MediaListCollection(userId: ${anilist.userid}, type: ANIME) { lists { name entries { status progress score(format:POINT_100) media { id status chapters episodes nextAiringEpisode {episode} meanScore bannerImage coverImage{large} title {english romaji userPreferred } } } } } }""")
+        val response = executeQuery("""{ MediaListCollection(userId: ${Anilist.userid}, type: ANIME) { lists { name entries { status progress score(format:POINT_100) media { id status chapters episodes nextAiringEpisode {episode} meanScore bannerImage coverImage{large} title {english romaji userPreferred } } } } } }""")
         val returnArray = arrayListOf<Media>()
         println(response)
         response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray.forEach { i ->
@@ -351,7 +351,7 @@ class AnilistQueries{
             }
             saveData(activity,"genres",returnMap)
             saveData(activity,"genresTime",System.currentTimeMillis())
-            anilist.genres = returnMap
+            Anilist.genres = returnMap
             logger("$returnMap \n finished")
         }
         if (genres==null) get()
@@ -359,7 +359,7 @@ class AnilistQueries{
             if(time!=null)
                 if(time-System.currentTimeMillis()<604800000) {
                     logger("Loaded Genres from Save.")
-                    anilist.genres = genres
+                    Anilist.genres = genres
                 }
             else get()
         }
