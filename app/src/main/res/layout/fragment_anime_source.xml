@@ -108,11 +108,26 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/animeSourceTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:ellipsize="marquee"
+                    android:fontFamily="@font/poppins_bold"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    tools:text="@string/get_recommendations" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:layout_marginTop="-12dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:fontFamily="@font/poppins_bold"
-                    android:padding="8dp"
+                    android:padding="12dp"
                     android:text="@string/wrong"
                     android:textAlignment="textEnd"
                     android:textColor="?attr/colorSecondary" />

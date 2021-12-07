@@ -1,6 +1,5 @@
 package ani.saikou.anilist
 
-import android.app.Activity
 import ani.saikou.*
 import ani.saikou.anime.Anime
 import ani.saikou.manga.Manga
@@ -323,10 +322,10 @@ class AnilistQueries{
         return returnArray
     }
 
-    fun genreCollection(activity: Activity){
+    fun genreCollection(){
         logger("GenreCollection started")
-        val genres = loadData<MutableMap<String,String>>(activity,"genres")
-        val time = loadData<Long>(activity,"genresTime")
+        val genres:MutableMap<String,String>? = loadData("genres")
+        val time :Long?= loadData("genresTime")
         fun get(){
             val returnMap = mutableMapOf<String,String>()
             val query = "{GenreCollection}"
@@ -349,8 +348,8 @@ class AnilistQueries{
                     }
                 }
             }
-            saveData(activity,"genres",returnMap)
-            saveData(activity,"genresTime",System.currentTimeMillis())
+            saveData("genres",returnMap)
+            saveData("genresTime",System.currentTimeMillis())
             Anilist.genres = returnMap
             logger("$returnMap \n finished")
         }

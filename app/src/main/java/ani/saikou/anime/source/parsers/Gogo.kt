@@ -1,18 +1,23 @@
 package ani.saikou.anime.source.parsers
 
+import android.annotation.SuppressLint
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.Extractor
 import ani.saikou.anime.source.Parser
 import ani.saikou.anime.source.SourceAnime
 import ani.saikou.anime.source.extractors.*
+import ani.saikou.loadData
+import ani.saikou.logger
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
+import ani.saikou.saveData
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
+@SuppressLint("SetTextI18n")
 class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false): Parser(){
     private val host = listOf(
-        "http://gogoanime.pe"
+        "http://gogoanime.cm"
     )
 
     private fun httpsIfy(text: String): String {
@@ -26,7 +31,8 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
             "gogo" in domain -> GogoCDN()
             "sb" in domain ->  SBPlay()
             "fplayer" in domain -> FPlayer()
-//            "dood" in domain -> Doodla(name,url)
+            "fembed" in domain -> FPlayer()
+//            "dood" in domain -> Doodla()
             else -> null
         }
         return extractor?.getStreamLinks(name,url)
@@ -52,13 +58,22 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
-        val it = media.nameMAL?:media.nameRomaji
-        val search = search(it + if (dub) " (Dub)" else "")
-        println("Search : $search")
-        if (search.isNotEmpty()) {
-            println("Slugged : ${search[0].name}")
-            return getSlugEpisodes(search[0].link)
+        var slug:SourceAnime? = loadData("gogo${if(dub) "dub" else ""}_${media.id}")
+        if (slug==null) {
+            val it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
+            model.parserText.postValue("Searching for $it")
+            logger("Gogo : Searching for $it")
+            val search = search(it)
+            if (search.isNotEmpty()) {
+                slug = search[0]
+                model.parserText.postValue("Found : ${slug.name}")
+                saveData("gogo${if(dub) "dub" else ""}_${media.id}", slug)
+            }
         }
+        else{
+            model.parserText.postValue("Selected : ${slug.name}")
+        }
+        if (slug!=null) return getSlugEpisodes(slug.link)
         return mutableMapOf()
     }
 
@@ -69,7 +84,9 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
         Jsoup.connect("${host[0]}/search.html?keyword=$string").get().body()
             .select(".last_episodes > ul > li div.img > a").forEach {
                 val link = it.attr("href").toString().replace("/category/", "")
-                responseArray.add(SourceAnime(link,link,link))
+                val title = it.attr("title")
+                val cover = it.select("img").attr("src")
+                responseArray.add(SourceAnime(link,title,cover))
             }
         return responseArray
     }
@@ -80,9 +97,7 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
         val animeId = pageBody.select("input#movie_id").attr("value").toString()
 
         val responseArray = mutableMapOf<String,Episode>()
-        val a = Jsoup.connect("https://ajax.gogo-load.com/ajax/load-list-episode?ep_start=0&ep_end=$lastEpisode&id=$animeId").get().body()
-            .select("ul > li > a").reversed()
-//    println("Slug Episodes : $a")
+        val a = Jsoup.connect("https://ajax.gogo-load.com/ajax/load-list-episode?ep_start=0&ep_end=$lastEpisode&id=$animeId").get().body().select("ul > li > a").reversed()
         a.forEach{
             val num = it.select(".name").text().replace("EP","").trim()
             responseArray[num] = Episode(number = num,link = host[0]+it.attr("href").trim())

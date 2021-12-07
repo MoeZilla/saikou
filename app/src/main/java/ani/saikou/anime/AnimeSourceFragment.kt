@@ -51,8 +51,13 @@ class AnimeSourceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         screenWidth = resources.displayMetrics.run { widthPixels / density }
         binding.animeSourceContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
+        binding.animeSourceTitle.isSelected = true
         super.onViewCreated(view, savedInstanceState)
         val model : MediaDetailsViewModel by activityViewModels()
+
+        model.parserText.observe(viewLifecycleOwner,{
+            binding.animeSourceTitle.text = it
+        })
 
         model.getMedia().observe(viewLifecycleOwner,{
             val media = it
@@ -89,7 +94,7 @@ class AnimeSourceFragment : Fragment() {
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
                     media.selected!!.source = i
-                    saveData(requireContext(),media.id.toString(), media.selected!!)
+                    saveData(media.id.toString(), media.selected!!)
                     scope.launch{
                         model.loadEpisodes(media,i,model)
                     }
@@ -105,12 +110,12 @@ class AnimeSourceFragment : Fragment() {
                 binding.animeSourceTop.setOnClickListener {
                     binding.animeSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
                     media.selected!!.recyclerReversed=!media.selected!!.recyclerReversed
-                    saveData(requireContext(),media.id.toString(), media.selected!!)
+                    saveData(media.id.toString(), media.selected!!)
                     updateRecycler(media)
                 }
                 binding.animeSourceList.setOnClickListener {
                     media.selected!!.recyclerStyle=0
-                    saveData(requireContext(),media.id.toString(), media.selected!!)
+                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceList
                     selected?.alpha = 1f
@@ -118,7 +123,7 @@ class AnimeSourceFragment : Fragment() {
                 }
                 binding.animeSourceGrid.setOnClickListener {
                     media.selected!!.recyclerStyle=1
-                    saveData(requireContext(),media.id.toString(), media.selected!!)
+                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceGrid
                     selected?.alpha = 1f
@@ -126,7 +131,7 @@ class AnimeSourceFragment : Fragment() {
                 }
                 binding.animeSourceCompact.setOnClickListener {
                     media.selected!!.recyclerStyle=2
-                    saveData(requireContext(),media.id.toString(), media.selected!!)
+                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceCompact
                     selected?.alpha = 1f

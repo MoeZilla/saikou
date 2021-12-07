@@ -46,4 +46,6 @@ class MediaDetailsViewModel:ViewModel() {
         streams.postValue(parsers[i]?.getStream(episode)?:episode)
         streams = MutableLiveData<Episode>(null)
     }
+
+    val parserText = MutableLiveData("")
 }

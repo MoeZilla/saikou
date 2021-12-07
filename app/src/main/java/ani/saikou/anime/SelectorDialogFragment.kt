@@ -44,7 +44,6 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
         binding.selectorContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.selectorRecyclerView.adapter = null
         binding.selectorProgressBar.visibility = View.VISIBLE
-        println("CHeck : ${binding.selectorProgressBar.visibility} & ${binding.selectorRecyclerView.adapter}")
         val model : MediaDetailsViewModel by activityViewModels()
         model.getStreams().observe(this,{
             if (it!=null){

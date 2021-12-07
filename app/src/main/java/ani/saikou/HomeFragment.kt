@@ -67,7 +67,7 @@ class HomeFragment : Fragment() {
                     //get Reading in new Thread
                     val b = async { model.setMangaContinue() }
                     // get genres and respective images
-                    val c = async { Anilist.query.genreCollection(requireActivity()) }
+                    val c = async { Anilist.query.genreCollection() }
                     //get List Images in current Thread(idle)
                     model.setListImages()
                     //get Recommended in current Thread(idle)

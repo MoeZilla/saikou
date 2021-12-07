@@ -68,7 +68,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         viewPager.isUserInputEnabled = false
 
         val media: Media = intent.getSerializableExtra("media") as Media
-        media.selected = loadData<Selected>(this,media.id.toString())?: Selected()
+        media.selected = loadData<Selected>(media.id.toString())?: Selected()
         Picasso.get().load(media.cover).into(binding.mediaCoverImage)
         Picasso.get().load(media.banner).into(binding.mediaBanner)
         Picasso.get().load(media.banner).into(binding.mediaBannerStatus)
@@ -131,7 +131,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 selected = newIndex
                 viewPager.setCurrentItem(selected, false)
                 media.selected!!.window = newIndex
-                saveData(this@MediaDetailsActivity,media.id.toString(),media.selected!!)
+                saveData(media.id.toString(),media.selected!!)
             }
         })
         scope.launch {

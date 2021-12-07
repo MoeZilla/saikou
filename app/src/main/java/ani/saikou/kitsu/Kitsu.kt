@@ -23,14 +23,12 @@ object Kitsu {
     fun getKitsuEpisodesDetails(title:String): MutableMap<String,Episode>? {
         val query = """{"query":"query{searchAnimeByTitle(first:1,title:\"$title\"){nodes{id titles{localized}episodes(first:2000){nodes{number titles{canonical}description thumbnail{original{url}}}}}}}"}"""
         val result = getKitsuData(query)
-        println(result)
         var arr :  MutableMap<String,Episode>? = null
         val node : JsonElement? = Json.decodeFromString<JsonObject>(result).jsonObject["data"]!!.jsonObject["searchAnimeByTitle"]!!.jsonObject["nodes"]
             if (node!=null){ if (!node.jsonArray.isEmpty()){
                 val episodes : JsonElement? = node.jsonArray[0].jsonObject["episodes"]!!.jsonObject["nodes"]
                 arr = mutableMapOf()
                 episodes?.jsonArray?.forEach {
-                    println(it.toString())
                     if (it!=JsonNull){
                         arr[it.jsonObject["number"]?.toString()?.replace("\"", "")!!] = Episode(
                             number = it.jsonObject["number"]?.toString()?.replace("\"", "")!!,

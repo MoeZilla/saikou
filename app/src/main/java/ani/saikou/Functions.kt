@@ -46,6 +46,8 @@ val Float.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
 lateinit var bottomBar: AnimatedBottomBar
 var selectedOption = 1
 
+@SuppressLint("StaticFieldLeak")
+lateinit var context:Context
 
 var homeRefresh = MutableLiveData(true)
 var animeRefresh = MutableLiveData(true)
@@ -56,7 +58,7 @@ fun logger(e:Any?,print:Boolean=true){
         println(e)
 }
 
-fun saveData(context: Context,fileName:String,data:Any){
+fun saveData(fileName:String,data:Any){
     val fos: FileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
     val os = ObjectOutputStream(fos)
     os.writeObject(data)
@@ -65,7 +67,7 @@ fun saveData(context: Context,fileName:String,data:Any){
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> loadData(context: Context,fileName:String): T? {
+fun <T> loadData(fileName:String): T? {
     if (fileName in context.fileList()){
         val fileIS: FileInputStream = context.openFileInput(fileName)
         val objIS = ObjectInputStream(fileIS)
@@ -86,6 +88,7 @@ fun initActivity(window:Window,view:View?=null) {
             navBarHeight = insets.bottom
             WindowInsetsCompat.CONSUMED
         }
+        context = view.context
     }
 }
 
