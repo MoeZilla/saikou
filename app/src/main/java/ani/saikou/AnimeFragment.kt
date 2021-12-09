@@ -65,6 +65,7 @@ class AnimeFragment : Fragment() {
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
             }
         })
+
         binding.animePopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
         binding.animePopularProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.animePopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
@@ -78,6 +79,7 @@ class AnimeFragment : Fragment() {
             binding.animeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 
+        binding.animeSearchBar.hint = "ANIME"
         binding.animeSearchBarText.setOnClickListener{
             ContextCompat.startActivity(
                 requireActivity(),
@@ -86,6 +88,19 @@ class AnimeFragment : Fragment() {
                     Pair.create(binding.animeSearchBar, ViewCompat.getTransitionName(binding.animeSearchBar)!!),
                 ).toBundle()
             )
+        }
+
+        Picasso.get().load("https://bit.ly/31bsIHq").into(binding.animeGenreImage)
+        Picasso.get().load( "https://bit.ly/2ZGfcuG").into(binding.animeTopScoreImage)
+
+        binding.animeGenre.setOnClickListener {
+            ContextCompat.startActivity(
+                requireActivity(), Intent(requireActivity(), GenreActivity::class.java).putExtra("type","ANIME"),null)
+        }
+
+        binding.animeTopScore.setOnClickListener {
+            ContextCompat.startActivity(
+                requireActivity(), Intent(requireActivity(), SearchActivity::class.java).putExtra("type","ANIME").putExtra("sortBy","Score"),null)
         }
 
         model.getTrending().observe(viewLifecycleOwner,{

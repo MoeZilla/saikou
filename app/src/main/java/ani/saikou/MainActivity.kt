@@ -35,10 +35,7 @@ class MainActivity : AppCompatActivity() {
         if (!isOnline(this)) {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
             startActivity(
-                Intent(
-                    this,
-                    NoInternet::class.java
-                ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                Intent(this, NoInternet::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
 
@@ -83,8 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //ViewPager
-    private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
-        FragmentStateAdapter(fragmentManager, lifecycle) {
+    private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
         override fun getItemCount(): Int = 3
 

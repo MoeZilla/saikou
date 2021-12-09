@@ -16,6 +16,14 @@ object Anilist {
     var episodesWatched : Int? = null
     var chapterRead : Int? = null
     var genres:Map<String,String>?=null
+    var sortBy = mapOf(
+        Pair("Score","SCORE_DESC"),
+        Pair("Popularity","POPULARITY_DESC"),
+        Pair("Trending","TRENDING_DESC"),
+        Pair("A-Z","TITLE_ENGLISH"),
+        Pair("Z-A","TITLE_ENGLISH_DESC"),
+        Pair("Trash","SCORE"),
+    )
 
     fun loginIntent(context: Context){
         val clientID = 6818

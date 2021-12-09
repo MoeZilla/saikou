@@ -415,10 +415,11 @@ query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult:
             ${if (page != null) """,\"page\":\"$page\"""" else ""}
             ${if (search != null) """,\"search\":\"$search\"""" else ""}
             ${if (sort != null) """,\"sort\":\"$sort\"""" else ""}
-            ${if (genres != null) """,\"genres\":\"$genres\"""" else ""}
+            ${if (genres != null && genres.isNotEmpty()) """,\"genres\":\"${genres[0]}\"""" else ""}
             }""".replace("\n", " ").replace("""  """, "")
+//        println(variables)
         val response = executeQuery(query, variables, true)!!
-        println("$response")
+//        println("$response")
         val a = response["data"]!!.jsonObject["Page"]!!
         val responseArray = arrayListOf<Media>()
         a.jsonObject["media"]!!.jsonArray.forEach { i ->

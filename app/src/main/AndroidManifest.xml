@@ -16,6 +16,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
         <activity
+            android:name=".GenreActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Saikou.NoActionBar"/>
+        <activity
             android:name=".SearchActivity"
             android:exported="true"
             android:theme="@style/Theme.Saikou.NoActionBar"/>

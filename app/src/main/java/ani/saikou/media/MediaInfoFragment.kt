@@ -21,6 +21,7 @@ class MediaInfoFragment : Fragment() {
     private val binding get() = _binding!!
     private var loaded = false
     private var timer: CountDownTimer? = null
+    private var type = "ANIME"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMediaInfoBinding.inflate(inflater, container, false)
@@ -76,6 +77,7 @@ class MediaInfoFragment : Fragment() {
                     binding.mediaInfoTotal.text = if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()
                 }
                 else if (media.manga!=null){
+                    type = "MANGA"
                     binding.mediaInfoTotalTitle.setText(R.string.total_chaps)
                     binding.mediaInfoTotal.text = (media.manga.totalChapters?:"~").toString()
                 }
@@ -92,7 +94,7 @@ class MediaInfoFragment : Fragment() {
                 binding.mediaInfoRelationRecyclerView.adapter=MediaAdaptor(media.relations!!,requireActivity())
                 binding.mediaInfoRelationRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-                binding.mediaInfoGenresRecyclerView.adapter = GenreAdapter(media.genres!!)
+                binding.mediaInfoGenresRecyclerView.adapter = GenreAdapter(media.genres!!,type,requireActivity())
                 binding.mediaInfoGenresRecyclerView.layoutManager = GridLayoutManager(requireContext(), (screenWidth/156f).toInt())
 
                 binding.mediaInfoCharacterRecyclerView.adapter = CharacterAdapter(media.characters!!)

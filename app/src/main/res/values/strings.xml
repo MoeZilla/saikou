@@ -23,6 +23,10 @@
     <string name="refresh">Refresh</string>
 
     <string name="search">Search</string>
+    <string name="search_results">Search Results</string>
+    <string name="sort_by">Sort By</string>
+    <string name="genre">Genre</string>
+    <string name="top_score">Top Score</string>
     <string name="updated">Recently Updated</string>
     <string name="trending_anime">Trending Anime</string>
     <string name="popular_anime">Popular Anime</string>
