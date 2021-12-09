@@ -34,7 +34,8 @@ class MediaDetailsViewModel:ViewModel() {
             loaded[i] = when (i) {
                 0 -> parsers.getOrPut(i, { Gogo(model) })
                 1 -> parsers.getOrPut(i, { Gogo(model,true) })
-                2 -> parsers.getOrPut(i, { Twist() })
+                2 -> parsers.getOrPut(i, { NineAnime(model) })
+                3 -> parsers.getOrPut(i, { NineAnime(model,true) })
                 else -> parsers.getOrPut(i, { Gogo(model) })
             }.getEpisodes(media)
         }

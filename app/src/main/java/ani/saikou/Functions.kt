@@ -176,7 +176,7 @@ class InputFilterMinMax(private val min: Double, private val max: Double,private
 }
 
 fun getMalTitle(id:Int) : String{
-    return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-name").text()
+    return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-english").text()
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {
