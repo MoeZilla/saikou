@@ -24,8 +24,8 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import ani.saikou.anime.source.SourceAnime
 import ani.saikou.media.Media
+import ani.saikou.media.Source
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
@@ -180,10 +180,18 @@ class InputFilterMinMax(private val min: Double, private val max: Double,private
 }
 
 fun getMalMedia(media:Media) : Media{
-    val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
-    val a = res.select(".title-english").text()
-    media.nameMAL = if (a!="") a else res.select(".title-name").text()
-    media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+    if(media.anime!=null) {
+        val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
+        val a = res.select(".title-english").text()
+        media.nameMAL = if (a!="") a else res.select(".title-name").text()
+        media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+    }else{
+        val res = Jsoup.connect("https://myanimelist.net/manga/${media.idMAL}").ignoreHttpErrors(true).get()
+        val b = res.select(".title-english").text()
+        val a = res.select(".h1-title").text().removeSuffix(b)
+        media.nameMAL = a
+        media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+    }
     return media
 }
 
@@ -258,13 +266,13 @@ fun levenshtein(lhs : CharSequence, rhs : CharSequence) : Int {
     return cost[lhsLength - 1]
 }
 
-fun ArrayList<SourceAnime>.sortByTitle(string: String){
+fun ArrayList<Source>.sortByTitle(string: String){
     val temp : MutableMap<Int,Int> = mutableMapOf()
     for (i in 0 until this.size){
         temp[i] = levenshtein(string.lowercase(),this[i].name.lowercase())
     }
     val a = temp.toList().sortedBy { (_, value) -> value}.toMap().keys.toTypedArray()
-    val temp2 = arrayListOf<SourceAnime>()
+    val temp2 = arrayListOf<Source>()
     temp2.addAll(this)
     this.clear()
     for (i in a.indices){

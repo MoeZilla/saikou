@@ -199,7 +199,6 @@ class MangaFragment : Fragment() {
                 }
             }
         })
-
     }
 
     override fun onPause() {

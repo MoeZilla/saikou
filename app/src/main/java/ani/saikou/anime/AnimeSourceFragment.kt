@@ -77,7 +77,7 @@ class AnimeSourceFragment : Fragment() {
                     timer?.start()
                 }
                 binding.animeSourceContainer.visibility = View.VISIBLE
-                binding.animeLoadProgressBar.visibility = View.GONE
+                binding.mediaLoadProgressBar.visibility = View.GONE
                 progress = View.GONE
                 if (media.anime.youtube!=null) {
                     binding.animeSourceYT.visibility = View.VISIBLE
@@ -176,7 +176,7 @@ class AnimeSourceFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.animeLoadProgressBar.visibility = progress
+        binding.mediaLoadProgressBar.visibility = progress
     }
 
     override fun onDestroy() {
@@ -257,5 +257,4 @@ class AnimeSourceFragment : Fragment() {
             updateRecycler(media)
         }
     }
-
 }

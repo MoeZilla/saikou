@@ -2,9 +2,9 @@ package ani.saikou.anime.source.parsers
 
 
 import ani.saikou.anime.Episode
-import ani.saikou.anime.source.Parser
-import ani.saikou.anime.source.SourceAnime
+import ani.saikou.anime.source.AnimeParser
 import ani.saikou.media.Media
+import ani.saikou.media.Source
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import org.jsoup.Jsoup
@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.ArrayList
 
-class Twist:Parser() {
+class Twist:AnimeParser() {
 
     object DecodeTwistSources{
         private val secret = "267041df55ca2b36f2e322d05ee2c9cf".toByteArray()
@@ -97,7 +97,7 @@ class Twist:Parser() {
         return mutableMapOf()
     }
 
-    override fun search(string: String): ArrayList<SourceAnime> {
+    override fun search(string: String): ArrayList<Source> {
         TODO("Not yet implemented")
     }
 }

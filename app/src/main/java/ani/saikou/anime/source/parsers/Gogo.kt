@@ -3,19 +3,19 @@ package ani.saikou.anime.source.parsers
 import android.annotation.SuppressLint
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.Extractor
-import ani.saikou.anime.source.Parser
-import ani.saikou.anime.source.SourceAnime
+import ani.saikou.anime.source.AnimeParser
 import ani.saikou.anime.source.extractors.*
 import ani.saikou.loadData
 import ani.saikou.logger
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
+import ani.saikou.media.Source
 import ani.saikou.saveData
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
 @SuppressLint("SetTextI18n")
-class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false): Parser(){
+class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false): AnimeParser(){
     private val host = listOf(
         "http://gogoanime.cm"
     )
@@ -58,7 +58,7 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
-        var slug:SourceAnime? = loadData("gogo${if(dub) "dub" else ""}_${media.id}")
+        var slug:Source? = loadData("go-go${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
             val it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
             model.parserText.postValue("Searching for $it")
@@ -67,7 +67,7 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
             if (search.isNotEmpty()) {
                 slug = search[0]
                 model.parserText.postValue("Found : ${slug.name}")
-                saveData("gogo${if(dub) "dub" else ""}_${media.id}", slug)
+                saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
             }
         }
         else{
@@ -77,16 +77,16 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
         return mutableMapOf()
     }
 
-    override fun search(string: String): ArrayList<SourceAnime> {
+    override fun search(string: String): ArrayList<Source> {
         // make search and get all links
         println("Searching for : $string")
-        val responseArray = arrayListOf<SourceAnime>()
+        val responseArray = arrayListOf<Source>()
         Jsoup.connect("${host[0]}/search.html?keyword=$string").get().body()
             .select(".last_episodes > ul > li div.img > a").forEach {
                 val link = it.attr("href").toString().replace("/category/", "")
                 val title = it.attr("title")
                 val cover = it.select("img").attr("src")
-                responseArray.add(SourceAnime(link,title,cover))
+                responseArray.add(Source(link,title,cover))
             }
         return responseArray
     }

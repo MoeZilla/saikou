@@ -1,12 +1,12 @@
 package ani.saikou.anime.source.parsers
 
 import ani.saikou.anime.Episode
-import ani.saikou.anime.source.Parser
-import ani.saikou.anime.source.SourceAnime
+import ani.saikou.anime.source.AnimeParser
 import ani.saikou.loadData
 import ani.saikou.logger
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
+import ani.saikou.media.Source
 import ani.saikou.saveData
 import ani.saikou.sortByTitle
 import kotlinx.serialization.decodeFromString
@@ -17,7 +17,7 @@ import kotlinx.serialization.json.jsonObject
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
-class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolean=false): Parser() {
+class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolean=false): AnimeParser() {
 
     //WE DO A LIL TROLLIN
     private val host = listOf(
@@ -44,7 +44,7 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
-        var slug:SourceAnime? = loadData("animekisain${if(dub) "dub" else ""}_${media.id}")
+        var slug:Source? = loadData("animekisa_in${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
             val it = media.nameMAL
             model.parserText.postValue("Searching for ${media.nameMAL} ${media.name}")
@@ -54,14 +54,17 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
                 search.sortByTitle(it!!)
                 slug = search[0]
                 model.parserText.postValue("Found : ${slug.name}")
-                saveData("animekisain${if(dub) "dub" else ""}_${media.id}", slug)
+                saveData("animekisa_in${if(dub) "dub" else ""}_${media.id}", slug)
             }
+        }
+        else{
+            model.parserText.postValue("Selected : ${slug.name}")
         }
         if (slug!=null) return getSlugEpisodes(slug.link)
         return mutableMapOf()
     }
 
-    override fun search(string: String): ArrayList<SourceAnime> {
+    override fun search(string: String): ArrayList<Source> {
         //THIS IS LIKE THE WORST SEARCH ENGINE OF AN WEBSITE
         var url = URLEncoder.encode(string, "utf-8")
         if(string.startsWith("$!")){
@@ -69,13 +72,13 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
             url = URLEncoder.encode(a[0], "utf-8")+a[1]
         }
         println("${host[0]}filter?keyword=$url")
-        val responseArray = arrayListOf<SourceAnime>()
+        val responseArray = arrayListOf<Source>()
         Jsoup.connect("${host[0]}filter?keyword=$url").get()
             .select("#main-wrapper .film_list-wrap > .flw-item .film-poster").forEach{
                 val link = it.select("a").attr("href")
                 val title = it.select("img").attr("title")
                 val cover = it.select("img").attr("data-src")
-                responseArray.add(SourceAnime(link,title,cover))
+                responseArray.add(Source(link,title,cover))
             }
         return responseArray
     }
