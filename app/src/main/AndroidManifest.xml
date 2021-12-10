@@ -16,17 +16,17 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
         <activity
+            android:name=".manga.MangaReaderActivity"
+            android:exported="false" />
+        <activity
             android:name=".GenreActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Saikou.NoActionBar"/>
+            android:exported="true" />
         <activity
             android:name=".SearchActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Saikou.NoActionBar"/>
+            android:exported="true" />
         <activity
             android:name=".media.MediaDetailsActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Saikou.NoActionBar" />
+            android:exported="true" />
         <activity
             android:name=".NoInternet"
             android:exported="true" />

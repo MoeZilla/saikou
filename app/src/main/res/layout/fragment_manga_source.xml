@@ -49,10 +49,10 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:fontFamily="@font/poppins_bold"
-                    tools:text="Next Episode will be released in \n00:00:00"
                     android:textAlignment="center"
                     android:textAllCaps="true"
-                    android:textColor="?attr/colorOnPrimary" />
+                    android:textColor="?attr/colorOnPrimary"
+                    tools:text="Next Episode will be released in \n00:00:00" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -218,5 +218,16 @@
                 tools:scrollbars="vertical" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/mangaSourceNovel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="32dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/novel_na"
+            android:textSize="16sp"
+            android:visibility="gone" />
     </FrameLayout>
 </androidx.core.widget.NestedScrollView>

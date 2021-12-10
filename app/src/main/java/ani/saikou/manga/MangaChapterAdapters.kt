@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ani.saikou.databinding.ItemChapterListBinding
 import ani.saikou.databinding.ItemEpisodeCompactBinding
 import ani.saikou.media.Media
 
@@ -53,21 +54,21 @@ class ChapterListAdapter(
     private val arr: List<MangaChapter>,
 ): RecyclerView.Adapter<ChapterListAdapter.ChapterCompactViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterCompactViewHolder {
-        val binding = ItemEpisodeCompactBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemChapterListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ChapterCompactViewHolder(binding)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ChapterCompactViewHolder, position: Int) {
         val binding = holder.binding
-
         val ep = arr[position]
-        binding.itemEpisodeNumber.text = ep.number
+        binding.itemChapterNumber.text = ep.number
+        binding.itemChapterTitle.text = ep.title
     }
 
     override fun getItemCount(): Int = arr.size
 
-    inner class ChapterCompactViewHolder(val binding: ItemEpisodeCompactBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ChapterCompactViewHolder(val binding: ItemChapterListBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
                 fragment.onMangaChapterClick(media,arr[bindingAdapterPosition].number)

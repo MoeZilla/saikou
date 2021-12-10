@@ -17,7 +17,7 @@ import kotlinx.serialization.json.jsonObject
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
-class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolean=false): AnimeParser() {
+class NineAnime(private val dub:Boolean=false): AnimeParser() {
 
     //WE DO A LIL TROLLIN
     private val host = listOf(
@@ -47,18 +47,18 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
         var slug:Source? = loadData("animekisa_in${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
             val it = media.nameMAL
-            model.parserText.postValue("Searching for ${media.nameMAL} ${media.name}")
+            live.postValue("Searching for ${media.nameMAL} ${media.name}")
             logger("9anime : Searching for ${media.nameMAL} ${media.name}")
             val search = search("$! | &language%5B%5D=${if(dub) "d" else "s"}ubbed&year%5B%5D=${media.anime?.seasonYear}&sort=default&season%5B%5D=${media.anime?.season?.lowercase()}&type%5B%5D=${media.typeMAL?.lowercase()}")
             if (search.isNotEmpty()) {
                 search.sortByTitle(it!!)
                 slug = search[0]
-                model.parserText.postValue("Found : ${slug.name}")
+                live.postValue("Found : ${slug.name}")
                 saveData("animekisa_in${if(dub) "dub" else ""}_${media.id}", slug)
             }
         }
         else{
-            model.parserText.postValue("Selected : ${slug.name}")
+            live.postValue("Selected : ${slug.name}")
         }
         if (slug!=null) return getSlugEpisodes(slug.link)
         return mutableMapOf()

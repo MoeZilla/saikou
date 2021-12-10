@@ -1,6 +1,8 @@
 package ani.saikou.anime.source.parsers
 
 import android.annotation.SuppressLint
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.Extractor
 import ani.saikou.anime.source.AnimeParser
@@ -15,7 +17,7 @@ import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
 @SuppressLint("SetTextI18n")
-class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false): AnimeParser(){
+class Gogo(private val dub:Boolean=false): AnimeParser(){
     private val host = listOf(
         "http://gogoanime.cm"
     )
@@ -61,17 +63,17 @@ class Gogo(private val model:MediaDetailsViewModel,private val dub:Boolean=false
         var slug:Source? = loadData("go-go${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
             val it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
-            model.parserText.postValue("Searching for $it")
+            live.postValue("Searching for $it")
             logger("Gogo : Searching for $it")
             val search = search(it)
             if (search.isNotEmpty()) {
                 slug = search[0]
-                model.parserText.postValue("Found : ${slug.name}")
+                live.postValue("Found : ${slug.name}")
                 saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
             }
         }
         else{
-            model.parserText.postValue("Selected : ${slug.name}")
+            live.postValue("Selected : ${slug.name}")
         }
         if (slug!=null) return getSlugEpisodes(slug.link)
         return mutableMapOf()

@@ -53,8 +53,7 @@ dependencies {
 
 //    UI
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
-//    implementation 'com.nambimobile.widgets:expandable-fab:1.2.1'
-//    implementation 'com.alexvasilkov:gesture-views:2.8.2'
+    implementation 'com.alexvasilkov:gesture-views:2.8.2'
     implementation 'com.github.ibrahimsn98:android-particles:2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

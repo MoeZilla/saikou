@@ -96,7 +96,7 @@ class AnimeSourceFragment : Fragment() {
                     media.selected!!.source = i
                     saveData(media.id.toString(), media.selected!!)
                     scope.launch{
-                        model.loadEpisodes(media,i,model)
+                        model.loadEpisodes(media,i)
                     }
                 }
                 selected = when(media.selected!!.recyclerStyle){
@@ -167,7 +167,7 @@ class AnimeSourceFragment : Fragment() {
                 })
                 scope.launch{
                     model.loadKitsuEpisodes(media.nameRomaji)
-                    model.loadEpisodes(media,media.selected!!.source,model)
+                    model.loadEpisodes(media,media.selected!!.source)
                 }
 
             }

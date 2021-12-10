@@ -1,5 +1,6 @@
 package ani.saikou.media
 
+import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -14,4 +15,4 @@ data class Character(
     var gender:String?=null,
     var dateOfBirth:Date?=null,
     var roles:ArrayList<Media>?=null
-)
+):Serializable

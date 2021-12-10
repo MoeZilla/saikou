@@ -4,12 +4,11 @@ import ani.saikou.loadData
 import ani.saikou.manga.MangaChapter
 import ani.saikou.manga.source.MangaParser
 import ani.saikou.media.Media
-import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.media.Source
 import ani.saikou.saveData
 import org.jsoup.Jsoup
 
-class MangaPill(private val model: MediaDetailsViewModel):MangaParser() {
+class MangaPill:MangaParser() {
     override fun getChapter(chapter: MangaChapter): MangaChapter {
         chapter.images = arrayListOf()
         Jsoup.connect(chapter.link!!).get().select("img.lazy.js-page").forEach {
@@ -28,19 +27,27 @@ class MangaPill(private val model: MediaDetailsViewModel):MangaParser() {
     }
 
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
-        var source:Source? = loadData("mangapil_${media.id}")
+        var source:Source? = loadData("mangapill_${media.id}")
         if (source==null) {
-            model.parserText.postValue("Searching : ${media.name}")
+            live.postValue("Searching : ${media.name}")
             val search = search(media.name)
             if (search.isNotEmpty()) {
                 println("MangaPill : ${search[0]}")
                 source = search[0]
-                model.parserText.postValue("Found : ${source.name}")
+                live.postValue("Found : ${source.name}")
                 saveData("mangapill_${media.id}", source)
+            }else{
+                val a = search(media.nameRomaji)
+                if (a.isNotEmpty()) {
+                    println("MangaPill : ${a[0]}")
+                    source = a[0]
+                    live.postValue("Found : ${source.name}")
+                    saveData("mangapill_${media.id}", source)
+                }
             }
         }
         else{
-            model.parserText.postValue("Selected : ${source.name}")
+            live.postValue("Selected : ${source.name}")
         }
         if (source!=null) return getLinkChapters(source.link)
         return mutableMapOf()

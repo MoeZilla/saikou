@@ -1,6 +1,7 @@
 package ani.saikou.manga
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -75,70 +76,72 @@ class MangaSourceFragment : Fragment() {
 //                    }
 //                    timer?.start()
 //                }
-                binding.mangaSourceContainer.visibility = View.VISIBLE
+
                 binding.mediaLoadProgressBar.visibility = View.GONE
                 progress = View.GONE
 
-                val sources : Array<String> = resources.getStringArray(R.array.manga_sources)
-                binding.mangaSource.setText(sources[media.selected!!.source])
-                binding.mangaSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown,sources))
-                binding.mangaSource.setOnItemClickListener { _, _, i, _ ->
-                    binding.mangaSourceRecycler.adapter = null
-                    loading=true
-                    binding.mangaSourceProgressBar.visibility=View.VISIBLE
-                    media.selected!!.source = i
-                    saveData(media.id.toString(), media.selected!!)
-                    scope.launch{
-                        model.loadMangaChapters(media,i,model)
+                if(media.format=="MANGA") {
+                    binding.mangaSourceContainer.visibility = View.VISIBLE
+                    val sources: Array<String> = resources.getStringArray(R.array.manga_sources)
+                    binding.mangaSource.setText(sources[media.selected!!.source])
+                    binding.mangaSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown, sources))
+                    binding.mangaSource.setOnItemClickListener { _, _, i, _ ->
+                        binding.mangaSourceRecycler.adapter = null
+                        loading = true
+                        binding.mangaSourceProgressBar.visibility = View.VISIBLE
+                        media.selected!!.source = i
+                        saveData(media.id.toString(), media.selected!!)
+                        scope.launch { model.loadMangaChapters(media, i) }
                     }
-                }
-                selected = when(media.selected!!.recyclerStyle){
-                    0->binding.mangaSourceList
-                    1->binding.mangaSourceCompact
-                    else -> binding.mangaSourceList
-                }
-                selected?.alpha = 1f
-                binding.mangaSourceTop.rotation = if (!media.selected!!.recyclerReversed) 90f else -90f
-                binding.mangaSourceTop.setOnClickListener {
-                    binding.mangaSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
-                    media.selected!!.recyclerReversed=!media.selected!!.recyclerReversed
-                    saveData(media.id.toString(), media.selected!!)
-                    updateRecycler(media)
-                }
-                binding.mangaSourceList.setOnClickListener {
-                    media.selected!!.recyclerStyle=0
-                    saveData(media.id.toString(), media.selected!!)
-                    selected?.alpha = 0.33f
-                    selected = binding.mangaSourceList
+                    selected = when (media.selected!!.recyclerStyle) {
+                        0 -> binding.mangaSourceList
+                        1 -> binding.mangaSourceCompact
+                        else -> binding.mangaSourceList
+                    }
                     selected?.alpha = 1f
-                    updateRecycler(media)
-                }
-                binding.mangaSourceCompact.setOnClickListener {
-                    media.selected!!.recyclerStyle=1
-                    saveData(media.id.toString(), media.selected!!)
-                    selected?.alpha = 0.33f
-                    selected = binding.mangaSourceCompact
-                    selected?.alpha = 1f
-                    updateRecycler(media)
-                }
+                    binding.mangaSourceTop.rotation = if (!media.selected!!.recyclerReversed) 90f else -90f
+                    binding.mangaSourceTop.setOnClickListener {
+                        binding.mangaSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
+                        media.selected!!.recyclerReversed = !media.selected!!.recyclerReversed
+                        saveData(media.id.toString(), media.selected!!)
+                        updateRecycler(media)
+                    }
+                    binding.mangaSourceList.setOnClickListener {
+                        media.selected!!.recyclerStyle = 0
+                        saveData(media.id.toString(), media.selected!!)
+                        selected?.alpha = 0.33f
+                        selected = binding.mangaSourceList
+                        selected?.alpha = 1f
+                        updateRecycler(media)
+                    }
+                    binding.mangaSourceCompact.setOnClickListener {
+                        media.selected!!.recyclerStyle = 1
+                        saveData(media.id.toString(), media.selected!!)
+                        selected?.alpha = 0.33f
+                        selected = binding.mangaSourceCompact
+                        selected?.alpha = 1f
+                        updateRecycler(media)
+                    }
 
-                model.getMangaChapters().observe(viewLifecycleOwner,{loadedChapters->
-                    if(loadedChapters!=null) {
-                        binding.mangaSourceChipGroup.removeAllViews()
-                        val chapters = loadedChapters[media.selected!!.source]
-                        if (chapters != null) {
-                            media.manga.chapters = chapters
-                            //CHIP GROUP
-                            addPageChips(media, chapters.size)
-                            updateRecycler(media)
+                    model.getMangaChapters().observe(viewLifecycleOwner, { loadedChapters ->
+                        if (loadedChapters != null) {
+                            binding.mangaSourceChipGroup.removeAllViews()
+                            val chapters = loadedChapters[media.selected!!.source]
+                            if (chapters != null) {
+                                media.manga.chapters = chapters
+                                //CHIP GROUP
+                                addPageChips(media, chapters.size)
+                                updateRecycler(media)
+                            }
                         }
+                    })
+                    scope.launch {
+                        model.loadMangaChapters(media, media.selected!!.source)
                     }
-                })
-
-                scope.launch{
-                    model.loadMangaChapters(media,media.selected!!.source,model)
                 }
-
+                else{
+                    binding.mangaSourceNovel.visibility=View.VISIBLE
+                }
             }
         })
     }
@@ -158,8 +161,7 @@ class MangaSourceFragment : Fragment() {
             binding.mangaSourceRecycler.adapter = mangaChapterAdapter(media, this, media.selected!!.recyclerStyle, media.selected!!.recyclerReversed, start, end)
             val gridCount = when (media.selected!!.recyclerStyle){
                 0->1
-                1->(screenWidth/200f).toInt()
-                2->(screenWidth/80f).toInt()
+                1->(screenWidth/80f).toInt()
                 else->1
             }
             binding.mangaSourceRecycler.layoutManager = GridLayoutManager(requireContext(), gridCount)
@@ -171,14 +173,14 @@ class MangaSourceFragment : Fragment() {
                 binding.mangaSourceNotFound.visibility = View.VISIBLE
         }
     }
+
     fun onMangaChapterClick(media: Media, i:String){
-        if (media.manga?.chapters?.get(i)!=null)
+        if (media.manga?.chapters?.get(i)!=null) {
             media.manga.selectedChapter = i
-        scope.launch{
-            model.loadMangaChap(media.manga!!.chapters!![i]!!,media.selected!!.recyclerStyle)
+            val intent = Intent(activity, MangaReaderActivity::class.java).apply { putExtra("media", media) }
+            startActivity(intent)
         }
     }
-
 
     private fun addPageChips(media: Media, chapter: Int){
         val divisions = chapter.toDouble() / 10

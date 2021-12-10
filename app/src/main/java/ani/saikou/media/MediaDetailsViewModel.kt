@@ -5,18 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ani.saikou.anilist.Anilist
 import ani.saikou.anime.Episode
-import ani.saikou.anime.source.AnimeParser
-import ani.saikou.anime.source.parsers.*
+import ani.saikou.anime.source.AnimeSources
 import ani.saikou.kitsu.Kitsu
 import ani.saikou.logger
 import ani.saikou.manga.MangaChapter
-import ani.saikou.manga.source.MangaParser
-import ani.saikou.manga.source.parsers.MangaPill
+import ani.saikou.manga.source.MangaSources
 
 class MediaDetailsViewModel:ViewModel() {
-    val parserText = MutableLiveData("")
-    private val animeParsers:MutableMap<Int,AnimeParser> = mutableMapOf()
-    private val mangaParsers:MutableMap<Int,MangaParser> = mutableMapOf()
+    var parserText = MutableLiveData("")
 
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
     fun getMedia(): LiveData<Media> = media
@@ -33,44 +29,30 @@ class MediaDetailsViewModel:ViewModel() {
     private val episodes: MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>> = MutableLiveData<MutableMap<Int,MutableMap<String,Episode>>>(null)
     private val epsLoaded = mutableMapOf<Int,MutableMap<String,Episode>>()
     fun getEpisodes() : LiveData<MutableMap<Int,MutableMap<String,Episode>>> = episodes
-    fun loadEpisodes(media: Media,i:Int,model:MediaDetailsViewModel){
+    fun loadEpisodes(media: Media,i:Int){
+        parserText = AnimeSources[i]!!.live
         logger("Loading Episodes : $epsLoaded")
         if(!epsLoaded.containsKey(i)) {
-            epsLoaded[i] = when (i) {
-                0 -> animeParsers.getOrPut(i, { Gogo(model) })
-                1 -> animeParsers.getOrPut(i, { Gogo(model,true) })
-                2 -> animeParsers.getOrPut(i, { NineAnime(model) })
-                3 -> animeParsers.getOrPut(i, { NineAnime(model,true) })
-                else -> animeParsers.getOrPut(i, { Gogo(model) })
-            }.getEpisodes(media)
+            epsLoaded[i] = AnimeSources[i]!!.getEpisodes(media)
         }
         episodes.postValue(epsLoaded)
     }
     private var streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
     fun getStreams() : LiveData<Episode> = streams
     fun loadStreams(episode: Episode,i:Int){
-        streams.postValue(animeParsers[i]?.getStream(episode)?:episode)
+        streams.postValue(AnimeSources[i]?.getStream(episode)?:episode)
         streams = MutableLiveData<Episode>(null)
     }
 
     private val mangaChapters: MutableLiveData<MutableMap<Int,MutableMap<String,MangaChapter>>> = MutableLiveData<MutableMap<Int,MutableMap<String,MangaChapter>>>(null)
     private val mangaLoaded = mutableMapOf<Int,MutableMap<String,MangaChapter>>()
     fun getMangaChapters() : LiveData<MutableMap<Int,MutableMap<String,MangaChapter>>> = mangaChapters
-    fun loadMangaChapters(media:Media,i:Int,model: MediaDetailsViewModel){
+    fun loadMangaChapters(media:Media,i:Int){
+        parserText = MangaSources[i]!!.live
         logger("Loading Manga Chapters : $mangaLoaded")
         if(!mangaLoaded.containsKey(i)){
-            mangaLoaded[i] = when(i){
-                0->mangaParsers.getOrPut(i, { MangaPill(model) })
-                else -> mangaParsers.getOrPut(i, { MangaPill(model) })
-            }.getChapters(media)
+            mangaLoaded[i] = MangaSources[i]!!.getChapters(media)
         }
         mangaChapters.postValue(mangaLoaded)
-    }
-
-    private var mangaChaps: MutableLiveData<MangaChapter> = MutableLiveData<MangaChapter>(null)
-    fun getMangaChap() : LiveData<MangaChapter> = mangaChaps
-    fun loadMangaChap(chap: MangaChapter,i:Int){
-        mangaChaps.postValue(mangaParsers[i]?.getChapter(chap)?:chap)
-        mangaChaps = MutableLiveData<MangaChapter>(null)
     }
 }
