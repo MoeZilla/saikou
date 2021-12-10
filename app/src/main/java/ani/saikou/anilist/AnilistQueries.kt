@@ -371,7 +371,8 @@ class AnilistQueries{
         perPage:Int?=null,
         search: String? = null,
         sort: String? = null,
-        genres: ArrayList<String>? = null
+        genres: ArrayList<String>? = null,
+        format:String?=null
     ): SearchResults {
         val query = """
 query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult: Boolean = false, ${"$"}search: String, ${"$"}format: [MediaFormat], ${"$"}status: MediaStatus, ${"$"}countryOfOrigin: CountryCode, ${"$"}source: MediaSource, ${"$"}season: MediaSeason, ${"$"}seasonYear: Int, ${"$"}year: String, ${"$"}onList: Boolean, ${"$"}yearLesser: FuzzyDateInt, ${"$"}yearGreater: FuzzyDateInt, ${"$"}episodeLesser: Int, ${"$"}episodeGreater: Int, ${"$"}durationLesser: Int, ${"$"}durationGreater: Int, ${"$"}chapterLesser: Int, ${"$"}chapterGreater: Int, ${"$"}volumeLesser: Int, ${"$"}volumeGreater: Int, ${"$"}licensedBy: [String], ${"$"}isLicensed: Boolean, ${"$"}genres: [String], ${"$"}excludedGenres: [String], ${"$"}tags: [String], ${"$"}excludedTags: [String], ${"$"}minimumTagRank: Int, ${"$"}sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC]) {
@@ -416,6 +417,7 @@ query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult:
             ${if (page != null) """,\"page\":\"$page\"""" else ""}
             ${if (search != null) """,\"search\":\"$search\"""" else ""}
             ${if (sort != null) """,\"sort\":\"$sort\"""" else ""}
+            ${if (format != null) """,\"format\":\"$format\"""" else ""}
             ${if (genres != null && genres.isNotEmpty()) """,\"genres\":\"${genres[0]}\"""" else ""}
             }""".replace("\n", " ").replace("""  """, "")
 //        println(variables)

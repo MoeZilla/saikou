@@ -183,7 +183,7 @@ fun getMalMedia(media:Media) : Media{
     val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
     val a = res.select(".title-english").text()
     media.nameMAL = if (a!="") a else res.select(".title-name").text()
-    media.typeMAL = res.select("div.spaceit_pad > a")[0].text()
+    media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
     return media
 }
 

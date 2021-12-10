@@ -41,9 +41,11 @@ class MediaLargeAdaptor(
         b.itemCompactScore.text = ((if(media.userScore==0) (media.meanScore?:0) else media.userScore)/10.0).toString()
         b.itemCompactScoreBG.background = ContextCompat.getDrawable(b.root.context,(if (media.userScore!=0) R.drawable.item_user_score else R.drawable.item_score))
         if (media.anime!=null){
+            b.itemTotal.text = "Episodes"
             b.itemCompactTotal.text = if (media.anime.nextAiringEpisode!=null) (media.anime.nextAiringEpisode.toString()+" / "+(media.anime.totalEpisodes?:"~").toString()) else (media.anime.totalEpisodes?:"~").toString()
         }
         else if(media.manga!=null){
+            b.itemTotal.text = "Chapters"
             b.itemCompactTotal.text = "${media.manga.totalChapters?:"~"}"
         }
         @SuppressLint("NotifyDataSetChanged")

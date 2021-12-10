@@ -30,6 +30,9 @@
     <string name="updated">Recently Updated</string>
     <string name="trending_anime">Trending Anime</string>
     <string name="popular_anime">Popular Anime</string>
+    <string name="trending_manga">Trending Manga</string>
+    <string name="trending_novel">Trending Novel</string>
+    <string name="popular_manga">Popular Manga</string>
 
     <string name="username">Username</string>
     <string name="chapters_read">Chapters Read : </string>

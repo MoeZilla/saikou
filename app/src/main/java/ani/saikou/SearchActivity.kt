@@ -47,7 +47,6 @@ class SearchActivity : AppCompatActivity() {
         binding.searchRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
         binding.searchProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.searchRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
-        binding.searchRecyclerView.suppressLayout(true)
 
         binding.searchScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
             if(!v.canScrollVertically(1))
@@ -95,6 +94,10 @@ class SearchActivity : AppCompatActivity() {
                                     }
                                 } else binding.searchProgress.visibility = View.GONE
                             }
+                            if (!v.canScrollVertically(-1)){
+                                binding.searchRecyclerView.suppressLayout(true)
+                            }
+                            super.onScrolled(v, dx, dy)
                         }
                     })
                 }

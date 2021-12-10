@@ -36,6 +36,17 @@ class AnilistAnimeViewModel : ViewModel() {
     fun loadUpdated() = updated.postValue(Anilist.query.recentlyUpdated())
 }
 
+class AnilistMangaViewModel : ViewModel() {
+    private val type = "MANGA"
+    private val trending: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
+    fun getTrending(): LiveData<ArrayList<Media>> = trending
+    fun loadTrending() = trending.postValue(Anilist.query.search(type, perPage = 10, sort="TRENDING_DESC").results)
+
+    private val updated: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
+    fun getTrendingNovel(): LiveData<ArrayList<Media>> = updated
+    fun loadTrendingNovel() = updated.postValue(Anilist.query.search(type, perPage = 10, sort="TRENDING_DESC",format="NOVEL").results)
+}
+
 class AnilistSearch : ViewModel(){
     private val search: MutableLiveData<SearchResults> = MutableLiveData<SearchResults>(null)
     fun getSearch(): LiveData<SearchResults> = search
