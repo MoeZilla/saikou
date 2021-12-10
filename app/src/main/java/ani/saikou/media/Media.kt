@@ -10,7 +10,9 @@ data class Media(
     val anime: Anime? = null,
     val manga: Manga? = null,
     val id: Int,
+
     var idMAL: Int?=null,
+    var typeMAL:String?=null,
 
     val name: String,
     val nameRomaji: String,

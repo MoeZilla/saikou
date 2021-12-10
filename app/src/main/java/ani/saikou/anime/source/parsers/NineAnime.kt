@@ -8,6 +8,7 @@ import ani.saikou.logger
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.saveData
+import ani.saikou.sortByTitle
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -43,14 +44,14 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
-        var slug:SourceAnime? = loadData("animekisa${if(dub) "dub" else ""}_${media.id}")
+        var slug:SourceAnime? = loadData("animekisain${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
-            val it = (media.nameMAL?:media.name)
-            model.parserText.postValue("Searching for $it")
-            logger("9anime : Searching for $it")
-            val search = search("$!$it | &language%5B%5D=${if(dub) "d" else "s"}ubbed&year%5B%5D=${media.anime?.seasonYear}&sort=default&status=all")
-//            val search = googleSearch(it)
+            val it = media.nameMAL
+            model.parserText.postValue("Searching for ${media.nameMAL} ${media.name}")
+            logger("9anime : Searching for ${media.nameMAL} ${media.name}")
+            val search = search("$! | &language%5B%5D=${if(dub) "d" else "s"}ubbed&year%5B%5D=${media.anime?.seasonYear}&sort=default&season%5B%5D=${media.anime?.season?.lowercase()}&type%5B%5D=${media.typeMAL?.lowercase()}")
             if (search.isNotEmpty()) {
+                search.sortByTitle(it!!)
                 slug = search[0]
                 model.parserText.postValue("Found : ${slug.name}")
                 saveData("animekisain${if(dub) "dub" else ""}_${media.id}", slug)
@@ -61,6 +62,7 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
     }
 
     override fun search(string: String): ArrayList<SourceAnime> {
+        //THIS IS LIKE THE WORST SEARCH ENGINE OF AN WEBSITE
         var url = URLEncoder.encode(string, "utf-8")
         if(string.startsWith("$!")){
             val a = string.replace("$!","").split(" | ")
@@ -90,16 +92,4 @@ class NineAnime(private val model: MediaDetailsViewModel, private val dub:Boolea
         println("Response Episodes : $responseArray")
         return responseArray
     }
-
-//    private fun googleSearch(title:String):ArrayList<String>{
-//        val arr = arrayListOf<String>()
-//        val a = Jsoup.connect("https://google.com/search?q=site%3Aanimekisa.in${URLEncoder.encode("\"$title\"", "utf-8")}").userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36").ignoreHttpErrors(true).timeout(0).get().body()
-//        println(a)
-////        val b = Jsoup.connect("https://google.com/"+a.select("noscript>div>a>href").attr("href")).get().body()
-//        a.select("div.g>div>div>div>a").forEach {
-//            println(it)
-//            arr.add(it.attr("href"))
-//        }
-//        return arr
-//    }
 }

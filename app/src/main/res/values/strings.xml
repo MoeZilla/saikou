@@ -89,8 +89,8 @@
     <string-array name="anime_sources">
         <item>GOGO</item>
         <item>GOGO-DUB</item>
-        <item>9ANIME (Bad Search)</item>
-        <item>9ANIME-DUB (Bad Search)</item>
+        <item>9ANIME</item>
+        <item>9ANIME-DUB</item>
     </string-array>
     <string-array name="manga_sources">
         <item>MANGAPILL</item>

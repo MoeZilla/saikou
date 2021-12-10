@@ -24,11 +24,15 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import ani.saikou.anime.source.SourceAnime
+import ani.saikou.media.Media
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.max
+import kotlin.math.min
 
 const val STATE_RESUME_WINDOW = "resumeWindow"
 const val STATE_RESUME_POSITION = "resumePosition"
@@ -175,8 +179,12 @@ class InputFilterMinMax(private val min: Double, private val max: Double,private
     }
 }
 
-fun getMalTitle(id:Int) : String{
-    return Jsoup.connect("https://myanimelist.net/anime/$id").ignoreHttpErrors(true).get().select(".title-english").text()
+fun getMalMedia(media:Media) : Media{
+    val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
+    val a = res.select(".title-english").text()
+    media.nameMAL = if (a!="") a else res.select(".title-name").text()
+    media.typeMAL = res.select("div.spaceit_pad > a")[0].text()
+    return media
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {
@@ -215,5 +223,51 @@ class FadingEdgeRecyclerView : RecyclerView {
 
     override fun getBottomPaddingOffset(): Int {
         return if (clipToPadding) 0 else paddingBottom
+    }
+}
+
+fun levenshtein(lhs : CharSequence, rhs : CharSequence) : Int {
+    if(lhs == rhs) { return 0 }
+    if(lhs.isEmpty()) { return rhs.length }
+    if(rhs.isEmpty()) { return lhs.length }
+
+    val lhsLength = lhs.length + 1
+    val rhsLength = rhs.length + 1
+
+    var cost = Array(lhsLength) { it }
+    var newCost = Array(lhsLength) { 0 }
+
+    for (i in 1 until rhsLength) {
+        newCost[0] = i
+
+        for (j in 1 until lhsLength) {
+            val match = if(lhs[j - 1] == rhs[i - 1]) 0 else 1
+
+            val costReplace = cost[j - 1] + match
+            val costInsert = cost[j] + 1
+            val costDelete = newCost[j - 1] + 1
+
+            newCost[j] = min(min(costInsert, costDelete), costReplace)
+        }
+
+        val swap = cost
+        cost = newCost
+        newCost = swap
+    }
+
+    return cost[lhsLength - 1]
+}
+
+fun ArrayList<SourceAnime>.sortByTitle(string: String){
+    val temp : MutableMap<Int,Int> = mutableMapOf()
+    for (i in 0 until this.size){
+        temp[i] = levenshtein(string.lowercase(),this[i].name.lowercase())
+    }
+    val a = temp.toList().sortedBy { (_, value) -> value}.toMap().keys.toTypedArray()
+    val temp2 = arrayListOf<SourceAnime>()
+    temp2.addAll(this)
+    this.clear()
+    for (i in a.indices){
+        this.add(temp2[a[i]])
     }
 }

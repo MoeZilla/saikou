@@ -65,10 +65,7 @@ class AnilistQueries{
 
             media.source = it.jsonObject["source"]!!.toString().trim('"')
             media.format = it.jsonObject["format"]!!.toString().trim('"')
-            if (it.jsonObject["idMal"]!!!=JsonNull) {
-                media.idMAL = it.jsonObject["idMal"]!!.toString().toInt()
-                media.nameMAL = getMalTitle(media.idMAL!!)
-            }
+
             media.startDate = FuzzyDate(
                 if(it.jsonObject["startDate"]!!.jsonObject["year"]!=JsonNull) it.jsonObject["startDate"]!!.jsonObject["year"].toString().toInt() else null,
                 if(it.jsonObject["startDate"]!!.jsonObject["month"]!=JsonNull) it.jsonObject["startDate"]!!.jsonObject["month"].toString().toInt() else null,
@@ -184,6 +181,10 @@ class AnilistQueries{
             }
             else if (media.manga != null) {
                 logger ("Nothing Here lmao",false)
+            }
+            if (it.jsonObject["idMal"]!!!=JsonNull) {
+                media.idMAL = it.jsonObject["idMal"]!!.toString().toInt()
+                return getMalMedia(media)
             }
             return media
 //        }
