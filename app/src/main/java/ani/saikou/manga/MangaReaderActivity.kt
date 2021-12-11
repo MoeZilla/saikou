@@ -3,6 +3,7 @@ package ani.saikou.manga
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import ani.saikou.databinding.ActivityMangaReaderBinding
 import ani.saikou.initActivity
 import ani.saikou.media.Media
@@ -18,7 +19,7 @@ class MangaReaderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMangaReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initActivity(window)
+        initActivity(this)
 
         var media = intent.getSerializableExtra("media") as Media
         val model : MangaChapterViewModel by viewModels()
@@ -27,7 +28,8 @@ class MangaReaderActivity : AppCompatActivity() {
                 media=it
                 val chapImages = media.manga!!.chapters!![media.manga!!.selectedChapter]?.images
                 if(chapImages!=null){
-                    binding.mangaReaderViewPager.adapter = ZoomableImageAdapter(chapImages)
+                    binding.mangaReaderRecyclerView.adapter = ImageAdapter(chapImages)
+                    binding.mangaReaderRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
                 }
             }
         })

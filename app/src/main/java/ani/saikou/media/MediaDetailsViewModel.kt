@@ -12,7 +12,6 @@ import ani.saikou.manga.MangaChapter
 import ani.saikou.manga.source.MangaSources
 
 class MediaDetailsViewModel:ViewModel() {
-    var parserText = MutableLiveData("")
 
     private val media: MutableLiveData<Media> = MutableLiveData<Media>(null)
     fun getMedia(): LiveData<Media> = media
@@ -30,7 +29,6 @@ class MediaDetailsViewModel:ViewModel() {
     private val epsLoaded = mutableMapOf<Int,MutableMap<String,Episode>>()
     fun getEpisodes() : LiveData<MutableMap<Int,MutableMap<String,Episode>>> = episodes
     fun loadEpisodes(media: Media,i:Int){
-        parserText = AnimeSources[i]!!.live
         logger("Loading Episodes : $epsLoaded")
         if(!epsLoaded.containsKey(i)) {
             epsLoaded[i] = AnimeSources[i]!!.getEpisodes(media)
@@ -48,7 +46,6 @@ class MediaDetailsViewModel:ViewModel() {
     private val mangaLoaded = mutableMapOf<Int,MutableMap<String,MangaChapter>>()
     fun getMangaChapters() : LiveData<MutableMap<Int,MutableMap<String,MangaChapter>>> = mangaChapters
     fun loadMangaChapters(media:Media,i:Int){
-        parserText = MangaSources[i]!!.live
         logger("Loading Manga Chapters : $mangaLoaded")
         if(!mangaLoaded.containsKey(i)){
             mangaLoaded[i] = MangaSources[i]!!.getChapters(media)

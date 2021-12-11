@@ -20,7 +20,6 @@ import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
-import com.google.android.exoplayer2.util.Util
 
 class ExoplayerView : AppCompatActivity(), Player.Listener {
     private lateinit var binding : ActivityExoplayerBinding
@@ -105,6 +104,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
             isFullscreen = savedInstanceState.getBoolean(STATE_PLAYER_FULLSCREEN)
             isPlayerPlaying = savedInstanceState.getBoolean(STATE_PLAYER_PLAYING)
         }
+        initPlayer()
     }
 
     private fun initPlayer(){
@@ -118,6 +118,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         exoPlayer = ExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory)).setTrackSelector(trackSelector).build().apply {
             playWhenReady = isPlayerPlaying
             seekTo(currentWindow, playbackPosition)
+            println(" isPlaying : $isPlayerPlaying \nposition : $playbackPosition\nwindow : $currentWindow")
             setMediaItem(mediaItem)
             prepare()
         }
@@ -137,6 +138,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         isPlayerPlaying = exoPlayer.playWhenReady
         playbackPosition = exoPlayer.currentPosition
         currentWindow = exoPlayer.currentMediaItemIndex
+        println(" isPlaying : $isPlayerPlaying \nposition : $playbackPosition\nwindow : $currentWindow")
         exoPlayer.release()
     }
 
@@ -148,25 +150,20 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (Util.SDK_INT > 23) {
-            initPlayer()
-            playerView.onResume()
-        }
+    override fun onPause() {
+        super.onPause()
+        playerView.player?.pause()
     }
 
     override fun onResume() {
         super.onResume()
+        playerView.onResume()
         playerView.useController = true
     }
 
     override fun onStop() {
         super.onStop()
-        if (Util.SDK_INT > 23) {
-            playerView.onPause()
-            releasePlayer()
-        }
+        playerView.player?.pause()
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {

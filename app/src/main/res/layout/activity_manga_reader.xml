@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.alexvasilkov.gestures.views.GestureFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/mangaReaderViewPager"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:isScrollContainer="true"
+    android:nestedScrollingEnabled="true"
+    android:scrollbars="vertical"
+    tools:context=".manga.MangaReaderActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mangaReaderRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:nestedScrollingEnabled="false"
-        tools:ignore="SpeakableTextPresentCheck"
-        android:orientation="vertical" />
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false" />
+
+</com.alexvasilkov.gestures.views.GestureFrameLayout>
+<!--    <androidx.viewpager2.widget.ViewPager2-->
+<!--        android:id="@+id/mangaReaderViewPager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="vertical"-->
+<!--        android:visibility="gone"-->
+<!--        tools:ignore="SpeakableTextPresentCheck" />-->

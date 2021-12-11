@@ -15,4 +15,9 @@ object AnimeSources {
         }
         return a
     }
+    fun flushLive(){
+        animeParsers.forEach{
+            it.value.live.value=null
+        }
+    }
 }

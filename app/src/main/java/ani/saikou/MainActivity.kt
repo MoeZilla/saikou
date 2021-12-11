@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
-import android.widget.Toast
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -13,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import ani.saikou.anilist.Anilist
 
+import ani.saikou.anilist.Anilist
 import ani.saikou.databinding.ActivityMainBinding
 
 import nl.joery.animatedbottombar.AnimatedBottomBar
@@ -26,29 +25,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initActivity(window, binding.navbarContainer)
+
+        initActivity(this, binding.root)
 
         binding.navbarContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = navBarHeight
         }
 
         if (!isOnline(this)) {
-            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
-            startActivity(
-                Intent(this, NoInternet::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
+            toastString("No Internet Connection")
+            startActivity(Intent(this, NoInternet::class.java))
         }
-
-        if (Anilist.getSavedToken(this)) {
-
+        else{
             //Load Data
+            Anilist.getSavedToken(this)
             val navbar = binding.navbar
             bottomBar = navbar
             val mainViewPager = binding.viewpager
             mainViewPager.isUserInputEnabled = false
             mainViewPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
             mainViewPager.setPageTransformer(ZoomOutPageTransformer(true))
-//            navbar.setupWithViewPager2(mainViewPager)
             navbar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
                 override fun onTabSelected(lastIndex: Int, lastTab: AnimatedBottomBar.Tab?, newIndex: Int, newTab: AnimatedBottomBar.Tab) {
                     navbar.animate().translationZ(12f).setDuration(200).start()
@@ -58,9 +54,6 @@ class MainActivity : AppCompatActivity() {
             })
             navbar.selectTabAt(selectedOption)
             mainViewPager.post { mainViewPager.setCurrentItem(selectedOption, false) }
-        } else {
-            //Login
-            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, LoginFragment()).addToBackStack(null).commit()
         }
     }
 
@@ -87,10 +80,10 @@ class MainActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             when (position){
                 0-> return AnimeFragment()
-                1-> return HomeFragment()
+                1-> return if (Anilist.token!=null) HomeFragment() else LoginFragment()
                 2-> return MangaFragment()
             }
-            return HomeFragment()
+            return LoginFragment()
         }
     }
 

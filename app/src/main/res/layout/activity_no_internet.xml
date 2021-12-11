@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,41 +17,50 @@
         app:particleLinesEnabled="true"
         tools:backgroundTint="@color/bg" />
 
-    <TextView
-        android:id="@+id/noInternetSad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_light"
-        android:text="@string/sad"
-        android:textColor="@color/pink_500"
-        android:textSize="48sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/no_internet"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noInternetSad" />
-
     <FrameLayout
-        android:id="@+id/refreshButtonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:id="@+id/refreshContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/noInternetSad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_thin"
+                android:text="@string/sad"
+                android:textColor="@color/pink_500"
+                android:textSize="64sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/no_internet"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/noInternetSad" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/refreshButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/refresh" />
+            android:layout_width="150dp"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="32dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/refresh"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_round_refresh_24" />
     </FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
 

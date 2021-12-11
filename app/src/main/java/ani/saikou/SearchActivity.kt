@@ -35,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initActivity(window)
+        initActivity(this)
 
         var grid = loadData<Boolean>("searchGrid")?:false
         (if (grid) binding.searchResultGrid else binding.searchResultList).alpha = 1f

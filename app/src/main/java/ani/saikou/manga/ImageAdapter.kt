@@ -5,19 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ani.saikou.databinding.ZoomableImageBinding
+import ani.saikou.databinding.ItemImageBinding
 import com.squareup.picasso.Picasso
 
-class ZoomableImageAdapter(
+class ImageAdapter(
 private val arr: ArrayList<String>
-): RecyclerView.Adapter<ZoomableImageAdapter.ImageViewHolder>() {
+): RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val binding = ZoomableImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ImageViewHolder(binding)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        holder.setIsRecyclable(false)
         val binding = holder.binding
         Picasso.get()
             .load(arr[position])
@@ -31,11 +32,5 @@ private val arr: ArrayList<String>
 
     override fun getItemCount(): Int = arr.size
 
-    inner class ImageViewHolder(val binding: ZoomableImageBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            itemView.setOnClickListener {
-                println(arr[bindingAdapterPosition])
-            }
-        }
-    }
+    inner class ImageViewHolder(val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root)
 }

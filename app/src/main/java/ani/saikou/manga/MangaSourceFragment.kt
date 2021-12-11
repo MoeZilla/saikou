@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import ani.saikou.R
 import ani.saikou.databinding.FragmentMangaSourceBinding
+import ani.saikou.manga.source.MangaSources
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.navBarHeight
@@ -55,10 +56,6 @@ class MangaSourceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val a : MediaDetailsViewModel by activityViewModels()
         model = a
-        model.parserText.observe(viewLifecycleOwner,{
-            binding.mangaSourceTitle.text = it
-        })
-
         model.getMedia().observe(viewLifecycleOwner,{
             val media = it
             if (media?.manga != null) {
@@ -91,6 +88,9 @@ class MangaSourceFragment : Fragment() {
                         binding.mangaSourceProgressBar.visibility = View.VISIBLE
                         media.selected!!.source = i
                         saveData(media.id.toString(), media.selected!!)
+                        MangaSources[i]!!.live.observe(viewLifecycleOwner,{ j ->
+                            binding.mangaSourceTitle.text = j
+                        })
                         scope.launch { model.loadMangaChapters(media, i) }
                     }
                     selected = when (media.selected!!.recyclerStyle) {
@@ -135,6 +135,9 @@ class MangaSourceFragment : Fragment() {
                             }
                         }
                     })
+                    MangaSources[media.selected!!.source]!!.live.observe(viewLifecycleOwner,{ j->
+                        binding.mangaSourceTitle.text = j
+                    })
                     scope.launch {
                         model.loadMangaChapters(media, media.selected!!.source)
                     }
@@ -153,6 +156,7 @@ class MangaSourceFragment : Fragment() {
 
     override fun onDestroy() {
         timer?.cancel()
+        MangaSources.flushLive()
         super.onDestroy()
     }
 

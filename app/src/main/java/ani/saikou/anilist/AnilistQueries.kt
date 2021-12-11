@@ -9,21 +9,27 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import org.jsoup.Jsoup
 import java.io.Serializable
+import java.net.UnknownHostException
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 fun executeQuery(query:String, variables:String="",force:Boolean=false): JsonObject? {
-    val set = Jsoup.connect("https://graphql.Anilist.co/")
-        .header("Content-Type", "application/json")
-        .header("Accept", "application/json")
-        .requestBody("""{"query":"$query","variables": "$variables"}""")
-        .ignoreContentType(true).ignoreHttpErrors(true)
-    if (Anilist.token!=null || force) {
-        if (Anilist.token!=null) set.header("Authorization", "Bearer ${Anilist.token}")
-        val json = set.post().body().text()
-        logger("JSON : $json", false)
-        return Json.decodeFromString(json)
+    try {
+        val set = Jsoup.connect("https://graphql.Anilist.co/")
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .requestBody("""{"query":"$query","variables": "$variables"}""")
+            .ignoreContentType(true).ignoreHttpErrors(true)
+        if (Anilist.token!=null || force) {
+            if (Anilist.token!=null) set.header("Authorization", "Bearer ${Anilist.token}")
+            val json = set.post().body().text()
+            logger("JSON : $json", false)
+            return Json.decodeFromString(json)
+        }
+    } catch (e:Exception){
+        if(e is UnknownHostException) toastString("Network error, please Retry.")
+        else toastString(e.message)
     }
     return null
 }
@@ -56,11 +62,11 @@ class AnilistQueries{
         }
     }
 
-    fun mediaDetails(media:Media): Media {
-        val response = executeQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite idMal nextAiringEpisode{episode airingAt}source format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""")!!
+    fun mediaDetails(media:Media): Media? {
+        val response = executeQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite idMal nextAiringEpisode{episode airingAt}source format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""", force = true)
 
-        val json = response["data"]!!
-//        try {
+        if (response!=null){
+            val json = response["data"]!!
             val it = json.jsonObject["Media"]!!
 
             media.source = it.jsonObject["source"]!!.toString().trim('"')
@@ -187,19 +193,16 @@ class AnilistQueries{
                 return getMalMedia(media)
             }
             return media
-//        }
-//        catch (e:Exception){
-//            logger ("Error : $e")
-//        }
-//        return null
+        }
+        return null
     }
 
 
     fun continueMedia(type:String): ArrayList<Media> {
         val response = executeQuery(""" { MediaListCollection(userId: ${Anilist.userid}, type: $type, status: CURRENT) { lists { entries { progress score(format:POINT_100) status media { id status chapters episodes nextAiringEpisode {episode} meanScore isFavourite bannerImage coverImage{large} title { english romaji userPreferred } } } } } } """)
         val returnArray = arrayListOf<Media>()
-        val list = response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray
-        if (list.isNotEmpty()){
+        val list = if (response!=null) response["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray else null
+        if (list!=null && list.isNotEmpty()){
             list[0].jsonObject["entries"]!!.jsonArray.reversed().forEach {
                 returnArray.add(
                     Media(
@@ -228,7 +231,7 @@ class AnilistQueries{
         val response = executeQuery(""" { Page(page: 1, perPage:30) { pageInfo { total currentPage hasNextPage } recommendations(sort: RATING_DESC, onList: true) { rating userRating mediaRecommendation { id mediaListEntry {progress score(format:POINT_100) status} chapters isFavourite episodes nextAiringEpisode {episode} meanScore isFavourite title {english romaji userPreferred } type status(version: 2) bannerImage coverImage { large } } } } } """)
         val responseArray = arrayListOf<Media>()
         val ids = arrayListOf<Int>()
-        response!!["data"]!!.jsonObject["Page"]!!.jsonObject["recommendations"]!!.jsonArray.reversed().forEach{
+        if (response!=null) response["data"]!!.jsonObject["Page"]!!.jsonObject["recommendations"]!!.jsonArray.reversed().forEach{
             val id =  it.jsonObject["mediaRecommendation"]!!.jsonObject["id"].toString().toInt()
             if (id !in ids) {
                 ids.add(id)
@@ -257,8 +260,8 @@ class AnilistQueries{
 
     private fun bannerImage(type: String): String? {
         val response = executeQuery("""{ MediaListCollection(userId: ${Anilist.userid}, type: $type, sort:[SCORE_DESC,UPDATED_TIME_DESC],chunk:1,perChunk:1) { lists { entries{ media { bannerImage } } } } } """)
-        val list = response!!["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray
-        if (list.isNotEmpty()){
+        val list = if (response!=null) response["data"]!!.jsonObject["MediaListCollection"]!!.jsonObject["lists"]!!.jsonArray else null
+        if (list!=null && list.isNotEmpty()){
             return list[0].jsonObject["entries"]!!.jsonArray[0].jsonObject["media"]!!.jsonObject["bannerImage"].toString().trim('"')
         }
         return null
@@ -496,7 +499,6 @@ Page(page:1,perPage:50) {
 }
         }""".replace("\n", " ").replace("""  """, "")
         val response = executeQuery(query, force = true)!!
-        println("$response")
         val a = response["data"]!!.jsonObject["Page"]!!.jsonObject["airingSchedules"]!!
         val responseArray = arrayListOf<Media>()
         a.jsonArray.forEach {

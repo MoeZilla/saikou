@@ -44,7 +44,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         screenWidth = resources.displayMetrics.widthPixels.toFloat()
 
         //Ui init
-        initActivity(window)
+        initActivity(this)
         this.window.statusBarColor = ContextCompat.getColor(this, R.color.nav_status)
 
         binding.mediaBanner.updateLayoutParams{ height += statusBarHeight }
@@ -107,7 +107,9 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         model.userScore.observe(this,{media.userScore = (it?:0).toInt()})
 
         binding.mediaAddToList.setOnClickListener{
-            MediaListDialogFragment().show(supportFragmentManager, "dialog")
+            if (Anilist.userid!=null)
+                MediaListDialogFragment().show(supportFragmentManager, "dialog")
+            else toastString("Please Login with Anilist!")
         }
         if (media.anime!=null){
             binding.mediaTotal.text = if (media.anime.nextAiringEpisode!=null) " | "+(media.anime.nextAiringEpisode.toString()+" | "+(media.anime.totalEpisodes?:"~").toString()) else " | "+(media.anime.totalEpisodes?:"~").toString()

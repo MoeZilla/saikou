@@ -133,6 +133,7 @@ class HomeFragment : Fragment() {
             }
             progress.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
+            empty.visibility = View.GONE
 
             modelFunc.observe(viewLifecycleOwner, {
                 if (it != null) {

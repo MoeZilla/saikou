@@ -13,7 +13,7 @@ class NoInternet : AppCompatActivity() {
         val binding = ActivityNoInternetBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.refreshButtonContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        binding.refreshContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = statusBarHeight
             bottomMargin = navBarHeight
         }

@@ -16,7 +16,7 @@ class GenreActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityGenreBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initActivity(window)
+        initActivity(this)
         binding.genreContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin += statusBarHeight;bottomMargin+= navBarHeight }
         val screenWidth = resources.displayMetrics.run { widthPixels / density }
         binding.mediaInfoGenresRecyclerView.adapter = GenreAdapter(Anilist.genres!!.keys.toList() as ArrayList<String>,intent.getStringExtra("type")!!,this,true)

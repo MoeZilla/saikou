@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import ani.saikou.R
+import ani.saikou.anime.source.AnimeSources
 import ani.saikou.databinding.FragmentAnimeSourceBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
@@ -55,10 +56,6 @@ class AnimeSourceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val model : MediaDetailsViewModel by activityViewModels()
 
-        model.parserText.observe(viewLifecycleOwner,{
-            binding.animeSourceTitle.text = it
-        })
-
         model.getMedia().observe(viewLifecycleOwner,{
             val media = it
             if (media?.anime != null) {
@@ -95,6 +92,9 @@ class AnimeSourceFragment : Fragment() {
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
                     media.selected!!.source = i
                     saveData(media.id.toString(), media.selected!!)
+                    AnimeSources[i]!!.live.observe(viewLifecycleOwner,{ j->
+                        binding.animeSourceTitle.text = j
+                    })
                     scope.launch{
                         model.loadEpisodes(media,i)
                     }
@@ -165,11 +165,13 @@ class AnimeSourceFragment : Fragment() {
                         media.anime.kitsuEpisodes = i
                     }
                 })
+                AnimeSources[media.selected!!.source]!!.live.observe(viewLifecycleOwner,{ j->
+                    binding.animeSourceTitle.text = j
+                })
                 scope.launch{
                     model.loadKitsuEpisodes(media.nameRomaji)
                     model.loadEpisodes(media,media.selected!!.source)
                 }
-
             }
         })
     }
@@ -181,6 +183,7 @@ class AnimeSourceFragment : Fragment() {
 
     override fun onDestroy() {
         timer?.cancel()
+        AnimeSources.flushLive()
         super.onDestroy()
     }
 

@@ -13,9 +13,9 @@ import android.text.Spanned
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.view.Window
 import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -51,7 +51,9 @@ lateinit var bottomBar: AnimatedBottomBar
 var selectedOption = 1
 
 @SuppressLint("StaticFieldLeak")
-lateinit var context:Context
+lateinit var activity: Activity
+
+var skipLogin = false
 
 var homeRefresh = MutableLiveData(true)
 var animeRefresh = MutableLiveData(true)
@@ -63,7 +65,7 @@ fun logger(e:Any?,print:Boolean=true){
 }
 
 fun saveData(fileName:String,data:Any){
-    val fos: FileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+    val fos: FileOutputStream = activity.openFileOutput(fileName, Context.MODE_PRIVATE)
     val os = ObjectOutputStream(fos)
     os.writeObject(data)
     os.close()
@@ -72,8 +74,8 @@ fun saveData(fileName:String,data:Any){
 
 @Suppress("UNCHECKED_CAST")
 fun <T> loadData(fileName:String): T? {
-    if (fileName in context.fileList()){
-        val fileIS: FileInputStream = context.openFileInput(fileName)
+    if (fileName in activity.fileList()){
+        val fileIS: FileInputStream = activity.openFileInput(fileName)
         val objIS = ObjectInputStream(fileIS)
         val data = objIS.readObject() as T
         objIS.close()
@@ -83,8 +85,10 @@ fun <T> loadData(fileName:String): T? {
     return null
 }
 
-fun initActivity(window:Window,view:View?=null) {
+fun initActivity(a: Activity,view:View?=null) {
+    val window = a.window
     WindowCompat.setDecorFitsSystemWindows(window, false)
+    activity = a
     if (view != null) {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -92,7 +96,6 @@ fun initActivity(window:Window,view:View?=null) {
             navBarHeight = insets.bottom
             WindowInsetsCompat.CONSUMED
         }
-        context = view.context
     }
 }
 
@@ -180,19 +183,27 @@ class InputFilterMinMax(private val min: Double, private val max: Double,private
 }
 
 fun getMalMedia(media:Media) : Media{
-    if(media.anime!=null) {
-        val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
-        val a = res.select(".title-english").text()
-        media.nameMAL = if (a!="") a else res.select(".title-name").text()
-        media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
-    }else{
-        val res = Jsoup.connect("https://myanimelist.net/manga/${media.idMAL}").ignoreHttpErrors(true).get()
-        val b = res.select(".title-english").text()
-        val a = res.select(".h1-title").text().removeSuffix(b)
-        media.nameMAL = a
-        media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+    try {
+        if(media.anime!=null) {
+            val res = Jsoup.connect("https://myanimelist.net/anime/${media.idMAL}").ignoreHttpErrors(true).get()
+            val a = res.select(".title-english").text()
+            media.nameMAL = if (a!="") a else res.select(".title-name").text()
+            media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+        }else{
+            val res = Jsoup.connect("https://myanimelist.net/manga/${media.idMAL}").ignoreHttpErrors(true).get()
+            val b = res.select(".title-english").text()
+            val a = res.select(".h1-title").text().removeSuffix(b)
+            media.nameMAL = a
+            media.typeMAL = if(res.select("div.spaceit_pad > a").isNotEmpty()) res.select("div.spaceit_pad > a")[0].text() else null
+        }
+    } catch (e:Exception){
+        toastString(e.message)
     }
     return media
+}
+
+fun toastString(s: String?){
+    activity.runOnUiThread { Toast.makeText(activity, s, Toast.LENGTH_SHORT).show() }
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {

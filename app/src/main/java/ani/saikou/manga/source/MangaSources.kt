@@ -11,4 +11,9 @@ object MangaSources {
         }
         return a
     }
+    fun flushLive(){
+        mangaParsers.forEach{
+            it.value.live.value=null
+        }
+    }
 }
