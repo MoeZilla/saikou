@@ -6,19 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".LoginFragment">
 
-<!--    <me.ibrahimsn.particle.ParticleView-->
-<!--        android:id="@+id/particleView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        app:particleColor="@color/violet_400"-->
-<!--        app:particleCount="60"-->
-<!--        app:particleLineColor="@color/violet_700"-->
-<!--        app:particleLinesEnabled="true"-->
-<!--        app:particleMaxRadius="10"-->
-<!--        app:particleMinRadius="3"-->
-<!--        app:particlesBackgroundColor="@color/bg"-->
-<!--        tools:backgroundTint="@color/bg" />-->
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,8 +43,51 @@
             android:layout_margin="32dp"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/login"
+            android:textColor="@color/button_icon"
             app:cornerRadius="16dp"
-            app:icon="@drawable/ic_anilist" />
+            app:icon="@drawable/ic_anilist"
+            app:iconTint="@color/button_icon" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/loginDiscord"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:src="@drawable/ic_discord"
+                app:tint="@color/bg_opp"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/loginGithub"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_github"
+                app:tint="@color/bg_opp"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/loginTelegram"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:src="@drawable/ic_telegram"
+                app:tint="@color/bg_opp"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

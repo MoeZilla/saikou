@@ -88,6 +88,7 @@ class AnimeSourceFragment : Fragment() {
                 binding.animeSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown,sources))
                 binding.animeSource.setOnItemClickListener { _, _, i, _ ->
                     binding.animeEpisodesRecycler.adapter = null
+                    binding.animeSourceChipGroup.removeAllViews()
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
                     media.selected!!.source = i
@@ -140,7 +141,6 @@ class AnimeSourceFragment : Fragment() {
 
                 model.getEpisodes().observe(viewLifecycleOwner,{loadedEpisodes->
                     if(loadedEpisodes!=null) {
-                        binding.animeSouceChipGroup.removeAllViews()
                         val episodes = loadedEpisodes[media.selected!!.source]
                         if (episodes != null) {
                             episodes.forEach { (i, episode) ->
@@ -253,7 +253,7 @@ class AnimeSourceFragment : Fragment() {
                         updateRecycler(media)
                     }
                 }
-                binding.animeSouceChipGroup.addView(chip)
+                binding.animeSourceChipGroup.addView(chip)
             }
         }
         else{

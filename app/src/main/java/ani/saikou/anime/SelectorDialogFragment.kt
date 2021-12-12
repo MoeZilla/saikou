@@ -44,20 +44,26 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
         binding.selectorContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.selectorRecyclerView.adapter = null
         binding.selectorProgressBar.visibility = View.VISIBLE
-        val model : MediaDetailsViewModel by activityViewModels()
-        model.getStreams().observe(this,{
-            if (it!=null){
-                binding.selectorProgressBar.visibility = View.GONE
-                media.anime!!.episodes!![media.anime!!.selectedEpisode!!] = it
-                binding.selectorRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false)
-                binding.selectorRecyclerView.adapter = StreamAdapter()
-            }
-        })
+
+        fun load(){
+            binding.selectorProgressBar.visibility = View.GONE
+            media.anime!!.episodes!![media.anime!!.selectedEpisode!!] = episode
+            binding.selectorRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false)
+            binding.selectorRecyclerView.adapter = StreamAdapter()
+        }
         if(episode.streamLinks==null) {
+            val model : MediaDetailsViewModel by activityViewModels()
+            model.getStreams().observe(this,{
+                if (it!=null){
+                    episode = it
+                    load()
+                }
+            })
             CoroutineScope(Dispatchers.Default).launch {
                 model.loadStreams(episode, media.selected!!.source)
             }
         }
+        else load()
         super.onViewCreated(view, savedInstanceState)
     }
 

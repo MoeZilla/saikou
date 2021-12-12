@@ -84,6 +84,7 @@ class MangaSourceFragment : Fragment() {
                     binding.mangaSource.setAdapter(ArrayAdapter(requireContext(), R.layout.item_dropdown, sources))
                     binding.mangaSource.setOnItemClickListener { _, _, i, _ ->
                         binding.mangaSourceRecycler.adapter = null
+                        binding.mangaSourceChipGroup.removeAllViews()
                         loading = true
                         binding.mangaSourceProgressBar.visibility = View.VISIBLE
                         media.selected!!.source = i
@@ -125,7 +126,6 @@ class MangaSourceFragment : Fragment() {
 
                     model.getMangaChapters().observe(viewLifecycleOwner, { loadedChapters ->
                         if (loadedChapters != null) {
-                            binding.mangaSourceChipGroup.removeAllViews()
                             val chapters = loadedChapters[media.selected!!.source]
                             if (chapters != null) {
                                 media.manga.chapters = chapters

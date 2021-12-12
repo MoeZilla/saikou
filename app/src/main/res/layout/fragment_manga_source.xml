@@ -178,10 +178,6 @@
                         tools:ignore="ContentDescription,ImageContrastCheck" />
                 </LinearLayout>
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/mangaSourceChipGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
@@ -190,6 +186,22 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_height="match_parent"
+                android:requiresFadingEdge="horizontal">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/mangaSourceChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp" />
+
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/mangaSourceNotFound"

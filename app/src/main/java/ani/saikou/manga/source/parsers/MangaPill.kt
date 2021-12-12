@@ -17,7 +17,7 @@ class MangaPill:MangaParser() {
         return chapter
     }
 
-    private fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
+    override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val responseArray = mutableMapOf<String, MangaChapter>()
         Jsoup.connect(link).get().select("#chapters > div > a").reversed().forEach{
             val chap = it.text().replace("Chapter ","")
@@ -56,9 +56,11 @@ class MangaPill:MangaParser() {
     override fun search(string: String): ArrayList<Source> {
         val response = arrayListOf<Source>()
         Jsoup.connect("https://mangapill.com/quick-search?q=$string").get().select(".bg-card").forEach{
+            val text2 = it.select(".text-sm").text()
+            println("AAA : ${it.select(".flex .flex-col").text().split("\n")[0]}")
             response.add(Source(
                 link = it.attr("abs:href"),
-                name = it.select(".flex > div").text(),
+                name = it.select(".flex .flex-col").text().replace(text2,"").trim(),
                 cover = it.select("img").attr("src")
             ))
         }

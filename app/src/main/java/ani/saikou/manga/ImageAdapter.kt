@@ -13,12 +13,11 @@ private val arr: ArrayList<String>
 ): RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ImageViewHolder(binding)
+        return ImageViewHolder(binding).apply { setIsRecyclable(false) }
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.setIsRecyclable(false)
         val binding = holder.binding
         Picasso.get()
             .load(arr[position])

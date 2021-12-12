@@ -1,5 +1,7 @@
 package ani.saikou
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,5 +21,8 @@ class LoginFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.loginButton.setOnClickListener { Anilist.loginIntent(requireActivity()) }
+        binding.loginDiscord.setOnClickListener { requireActivity().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.discord)))) }
+        binding.loginTelegram.setOnClickListener { requireActivity().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.telegram)))) }
+        binding.loginGithub.setOnClickListener { requireActivity().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github)))) }
     }
 }

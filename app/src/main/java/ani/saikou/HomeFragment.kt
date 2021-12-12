@@ -136,6 +136,8 @@ class HomeFragment : Fragment() {
             empty.visibility = View.GONE
 
             modelFunc.observe(viewLifecycleOwner, {
+                recyclerView.visibility = View.GONE
+                empty.visibility = View.GONE
                 if (it != null) {
                     if (it.isNotEmpty()) {
                         recyclerView.adapter = MediaAdaptor(it,requireActivity())
