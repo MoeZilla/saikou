@@ -38,9 +38,16 @@ object Kitsu {
                     logger("Kitsu : forEach=$it",print)
                     if (it!=JsonNull){
                         val i = it.jsonObject["number"]?.toString()?.replace("\"", "")!!
+                        var name : String? = null
+                        if (it.jsonObject["titles"]!!.jsonObject["canonical"]!=JsonNull) {
+                            name = it.jsonObject["titles"]!!.jsonObject["canonical"]?.toString()?.replace("\"", "")
+                            if (name == "null") {
+                                name = null
+                            }
+                        }
                         arr[i] = Episode(
                             number = it.jsonObject["number"]?.toString()?.replace("\"", "")!!,
-                            title = if (it.jsonObject["titles"]!!.jsonObject["canonical"]!=JsonNull) it.jsonObject["titles"]!!.jsonObject["canonical"]?.toString()?.replace("\"", "") else null,
+                            title = name,
                             desc = if (it.jsonObject["description"]!!.jsonObject["en"]!=JsonNull) it.jsonObject["description"]!!.jsonObject["en"]?.toString()?.replace("\"", "")?.replace("\\n", "\n") else null,
                             thumb = if (it.jsonObject["thumbnail"]!=JsonNull) "https://image-compression-api.herokuapp.com/?q=" + it.jsonObject["thumbnail"]!!.jsonObject["original"]!!.jsonObject["url"]?.toString()?.replace("\"", "") else null,
                         )

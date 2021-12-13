@@ -13,13 +13,21 @@ class MangaBuddy: MangaParser() {
     override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val arr = mutableMapOf<String, MangaChapter>()
         Jsoup.connect("https://mangabuddy.com/api/manga${link}/chapters?source=detail").get().select("#chapter-list>li").reversed().forEach {
+            println(it.toString())
             if (it.select("strong").text().contains("Chapter")) {
-                val chap = Regex("(Chapter ([A-Za-z0-9.]+):?)( (.+))?").find(it.select("strong").text())?.destructured
-                arr[chap!!.component2()] = MangaChapter(
-                    number = chap.component2(),
-                    link = it.select("a").attr("abs:href"),
-                    title = chap.component4()
-                )
+                val chap = Regex("(Chapter ([A-Za-z0-9.]+))( ?: ?)?( ?(.+))?").find(it.select("strong").text())?.destructured
+                if(chap!=null) {
+                    arr[chap.component2()] = MangaChapter(
+                        number = chap.component2(),
+                        link = it.select("a").attr("abs:href"),
+                        title = chap.component5()
+                    )
+                }else{
+                    arr[it.select("strong").text()] = MangaChapter(
+                        number = it.select("strong").text(),
+                        link = it.select("a").attr("abs:href"),
+                    )
+                }
             }
         }
         return arr
