@@ -4,18 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <me.ibrahimsn.particle.ParticleView
-        android:id="@+id/particleView"
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:particleCount="60"
-        app:particleMinRadius="3"
-        app:particleMaxRadius="10"
-        app:particlesBackgroundColor="@color/bg"
-        app:particleColor="@color/violet_400"
-        app:particleLineColor="@color/violet_700"
-        app:particleLinesEnabled="true"
-        tools:backgroundTint="@color/bg" />
+        tools:ignore="ContentDescription" />
 
     <FrameLayout
         android:id="@+id/refreshContainer"

@@ -11,7 +11,7 @@ android {
         minSdk 23
         targetSdk 31
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.2"
     }
 
     buildTypes {
@@ -54,6 +54,5 @@ dependencies {
 //    UI
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
     implementation 'com.alexvasilkov:gesture-views:2.8.2'
-    implementation 'com.github.ibrahimsn98:android-particles:2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

@@ -70,6 +70,8 @@
     <string name="completed_at">COMPLETED AT</string>
     <string name="save">Save</string>
 
+    <string name="name">Name</string>
+    <string name="name_romaji">Name Romaji</string>
     <string name="mean_score">Mean Score</string>
     <string name="format">Format</string>
     <string name="status_title">Status</string>

@@ -44,6 +44,8 @@ class MediaInfoFragment : Fragment() {
                 loaded=true
                 binding.mediaInfoProgressBar.visibility = View.GONE
                 binding.mediaInfoContainer.visibility = View.VISIBLE
+                binding.mediaInfoName.text = media.name
+                binding.mediaInfoNameRomaji.text = media.nameRomaji
                 binding.mediaInfoMeanScore.text = if(media.meanScore!=null) (media.meanScore/10.0).toString() else "??"
                 binding.mediaInfoStatus.text = media.status
                 binding.mediaInfoFormat.text = media.format

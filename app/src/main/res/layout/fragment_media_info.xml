@@ -64,6 +64,46 @@
                 android:paddingEnd="32dp"
                 android:paddingBottom="16dp">
 
+                <LinearLayout
+                    android:id="@+id/mediaInfoNameContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.58"
+                        android:text="@string/name"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mediaInfoName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/mediaInfoNameRomajiContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.58"
+                        android:text="@string/name_romaji"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mediaInfoNameRomaji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="24dp"

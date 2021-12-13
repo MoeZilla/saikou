@@ -103,7 +103,8 @@ class EpisodeListAdapter(
         binding.itemEpisodeNumber.text = ep.number
         if (ep.desc==null) binding.itemEpisodeDesc.visibility = View.GONE
         binding.itemEpisodeDesc.text = ep.desc?:""
-        binding.itemEpisodeTitle.text = ep.title?:media.name
+        println("${ ep.title == "null" } ${ep.title==null}" )
+        binding.itemEpisodeTitle.text = ep.title?:media.userPreferredName
     }
 
     override fun getItemCount(): Int = arr.size
