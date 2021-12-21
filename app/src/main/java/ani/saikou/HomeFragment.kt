@@ -20,7 +20,7 @@ import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor
 
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
                 binding.homeUserName.text = Anilist.username
                 binding.homeUserEpisodesWatched.text = Anilist.episodesWatched.toString()
                 binding.homeUserChaptersRead.text = Anilist.chapterRead.toString()
-                Picasso.get().load(Anilist.avatar).into(binding.homeUserAvatar)
+                Glide.with(requireActivity()).load(Anilist.avatar).into(binding.homeUserAvatar)
                 binding.homeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
                 binding.homeUserDataProgressBar.visibility = View.GONE
                 binding.homeUserDataContainer.visibility = View.VISIBLE
@@ -117,9 +117,9 @@ class HomeFragment : Fragment() {
         //List Images
         model.getListImages().observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                Picasso.get().load(it[0] ?: "https://bit.ly/31bsIHq")
+                Glide.with(requireActivity()).load(it[0] ?: "https://bit.ly/31bsIHq")
                     .into(binding.homeAnimeListImage)
-                Picasso.get().load(it[1] ?: "https://bit.ly/2ZGfcuG")
+                Glide.with(requireActivity()).load(it[1] ?: "https://bit.ly/2ZGfcuG")
                     .into(binding.homeMangaListImage)
             }
         })

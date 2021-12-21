@@ -29,8 +29,8 @@ class MangaPill:MangaParser() {
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangapill_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.name}")
-            val search = search(media.name)
+            live.postValue("Searching : ${media.getMainName()}")
+            val search = search(media.getMainName())
             if (search.isNotEmpty()) {
                 println("MangaPill : ${search[0]}")
                 source = search[0]

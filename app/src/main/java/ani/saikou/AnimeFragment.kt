@@ -55,12 +55,12 @@ class AnimeFragment : Fragment() {
 
         binding.animeScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
             if(!v.canScrollVertically(1)) {
-                binding.animePopularRecyclerView.suppressLayout(false)
+                binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(false)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",0f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",0f).setDuration(200).start()
             }
             if(!v.canScrollVertically(-1)){
-                binding.animePopularRecyclerView.suppressLayout(true)
+                binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
             }
@@ -173,7 +173,7 @@ class AnimeFragment : Fragment() {
                                 else binding.animePopularProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.animePopularRecyclerView.suppressLayout(true)
+                                binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true)
                                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
                             }

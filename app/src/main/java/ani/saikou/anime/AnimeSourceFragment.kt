@@ -221,6 +221,7 @@ class AnimeSourceFragment : Fragment() {
             else -> 100
         }
         if (episode>limit) {
+            val arr = media.anime!!.episodes!!.keys.toTypedArray()
             val stored = ceil((episode).toDouble() / limit).toInt()
             println(stored)
             (1..stored).forEach {
@@ -233,7 +234,7 @@ class AnimeSourceFragment : Fragment() {
                 }
                 if (end == null) { end = limit * it - 1 }
                 if (it == stored) {
-                    chip.text = "${limit * (it - 1) + 1} - $episode"
+                    chip.text = "${arr[limit * (it - 1)]} - ${arr[episode-1]}"
                     chip.setOnClickListener { _ ->
                         selectedChip?.isChecked = false
                         selectedChip = chip
@@ -243,7 +244,7 @@ class AnimeSourceFragment : Fragment() {
                         updateRecycler(media)
                     }
                 } else {
-                    chip.text = "${limit * (it - 1) + 1} - ${limit * it}"
+                    chip.text = "${arr[limit * (it - 1)]} - ${arr[(limit * it)-1]}"
                     chip.setOnClickListener { _ ->
                         selectedChip?.isChecked = false
                         selectedChip = chip

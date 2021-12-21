@@ -13,7 +13,7 @@ class MangaBuddy: MangaParser() {
     override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val arr = mutableMapOf<String, MangaChapter>()
         Jsoup.connect("https://mangabuddy.com/api/manga${link}/chapters?source=detail").get().select("#chapter-list>li").reversed().forEach {
-            println(it.toString())
+//            println(it.toString())
             if (it.select("strong").text().contains("Chapter")) {
                 val chap = Regex("(Chapter ([A-Za-z0-9.]+))( ?: ?)?( ?(.+))?").find(it.select("strong").text())?.destructured
                 if(chap!=null) {
@@ -40,14 +40,16 @@ class MangaBuddy: MangaParser() {
             val link = "https://s1.madcdnv2.xyz/file/img-mbuddy/manga/$it"
             chapter.images!!.add(link)
         }
+//        println("${chapter.images}")
+        chapter.referer = "https://mangabuddy.com/"
         return chapter
     }
 
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangabuddy_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.name}")
-            val search = search(media.name)
+            live.postValue("Searching : ${media.getMainName()}")
+            val search = search(media.getMainName())
             if (search.isNotEmpty()) {
                 println("MangaBuddy : ${search[0]}")
                 source = search[0]

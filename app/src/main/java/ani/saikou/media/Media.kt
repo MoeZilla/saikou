@@ -46,4 +46,6 @@ data class Media(
 
     var nameMAL:String?=null,
     var selected: Selected?=null,
-) : Serializable
+) : Serializable{
+    fun getMainName() = if (name!="null") name else nameRomaji
+}

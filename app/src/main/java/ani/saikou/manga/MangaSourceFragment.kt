@@ -196,6 +196,7 @@ class MangaSourceFragment : Fragment() {
             else -> 100
         }
         if (chapter>limit) {
+            val arr = media.manga!!.chapters!!.keys.toTypedArray()
             val stored = ceil((chapter).toDouble() / limit).toInt()
             (1..stored).forEach {
                 val chip = Chip(requireContext())
@@ -207,7 +208,7 @@ class MangaSourceFragment : Fragment() {
                 }
                 if (end == null) { end = limit * it - 1 }
                 if (it == stored) {
-                    chip.text = "${limit * (it - 1) + 1} - $chapter"
+                    chip.text = "${arr[limit * (it - 1)]} - ${arr[chapter-1]}"
                     chip.setOnClickListener { _ ->
                         selectedChip?.isChecked = false
                         selectedChip = chip
@@ -217,7 +218,7 @@ class MangaSourceFragment : Fragment() {
                         updateRecycler(media)
                     }
                 } else {
-                    chip.text = "${limit * (it - 1) + 1} - ${limit * it}"
+                    chip.text = "${arr[limit * (it - 1)]} - ${arr[(limit * it)-1]}"
                     chip.setOnClickListener { _ ->
                         selectedChip?.isChecked = false
                         selectedChip = chip

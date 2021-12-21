@@ -27,8 +27,10 @@ class MangaReaderActivity : AppCompatActivity() {
             if(it!=null){
                 media=it
                 val chapImages = media.manga!!.chapters!![media.manga!!.selectedChapter]?.images
+                val referer = media.manga!!.chapters!![media.manga!!.selectedChapter]?.referer
                 if(chapImages!=null){
-                    binding.mangaReaderRecyclerView.adapter = ImageAdapter(chapImages)
+                    binding.mangaReaderRecyclerView.setHasFixedSize(true)
+                    binding.mangaReaderRecyclerView.adapter = ImageAdapter(chapImages,referer)
                     binding.mangaReaderRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
                 }
             }

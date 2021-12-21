@@ -54,8 +54,8 @@ class MangaDex:MangaParser() {
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangadex_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.name}")
-            val search = search(media.name)
+            live.postValue("Searching : ${media.getMainName()}")
+            val search = search(media.getMainName())
             if (search.isNotEmpty()) {
                 println("MangaDex : ${search[0]}")
                 source = search[0]
