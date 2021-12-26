@@ -29,7 +29,7 @@ fun executeQuery(query:String, variables:String="",force:Boolean=false): JsonObj
         }
     } catch (e:Exception){
         if(e is UnknownHostException) toastString("Network error, please Retry.")
-        else toastString(e.message)
+        else toastString("$e")
     }
     return null
 }
@@ -60,6 +60,30 @@ class AnilistQueries{
             logger(e)
             false
         }
+    }
+
+    fun getMedia(id:Int):Media?{
+        val response = executeQuery("""{Media(id:$id){id status chapters episodes nextAiringEpisode{episode}type meanScore isFavourite bannerImage coverImage{large}title{english romaji userPreferred}mediaListEntry{progress score(format:POINT_100)status}}}""", force = true)
+        val i = response?.get("data")!!.jsonObject["Media"]!!
+        if (i!=JsonNull){
+            return Media(
+                id = i.jsonObject["id"].toString().toInt(),
+                name = i.jsonObject["title"]!!.jsonObject["english"].toString().trim('"').replace("\\\"","\""),
+                nameRomaji = i.jsonObject["title"]!!.jsonObject["romaji"].toString().trim('"').replace("\\\"","\""),
+                userPreferredName = i.jsonObject["title"]!!.jsonObject["userPreferred"].toString().trim('"').replace("\\\"","\""),
+                cover = i.jsonObject["coverImage"]!!.jsonObject["large"].toString().trim('"'),
+                banner = i.jsonObject["bannerImage"].toString().trim('"'),
+                status = i.jsonObject["status"].toString().trim('"'),
+                isFav = i.jsonObject["isFavourite"].toString() == "true",
+                userProgress = if (i.jsonObject["mediaListEntry"] != JsonNull) i.jsonObject["mediaListEntry"]!!.jsonObject["progress"].toString().toInt() else null,
+                userScore = if (i.jsonObject["mediaListEntry"] != JsonNull) i.jsonObject["mediaListEntry"]!!.jsonObject["score"].toString().toInt() else 0,
+                userStatus = if (i.jsonObject["mediaListEntry"] != JsonNull) i.jsonObject["mediaListEntry"]!!.jsonObject["status"].toString().trim('"') else null,
+                meanScore = if (i.jsonObject["meanScore"].toString().trim('"') != "null") i.jsonObject["meanScore"].toString().toInt() else null,
+                anime = if (i.jsonObject["type"].toString().trim('"') == "ANIME") Anime(totalEpisodes = if (i.jsonObject["episodes"] != JsonNull) i.jsonObject["episodes"].toString().toInt() else null, nextAiringEpisode = if (i.jsonObject["nextAiringEpisode"] != JsonNull) i.jsonObject["nextAiringEpisode"]!!.jsonObject["episode"].toString().toInt() - 1 else null) else null,
+                manga = if (i.jsonObject["type"].toString().trim('"') == "MANGA") Manga(totalChapters = if (i.jsonObject["chapters"] != JsonNull) i.jsonObject["chapters"].toString().toInt() else null) else null,
+            )
+        }
+        return null
     }
 
     fun mediaDetails(media:Media): Media? {
@@ -375,7 +399,8 @@ class AnilistQueries{
         search: String? = null,
         sort: String? = null,
         genres: ArrayList<String>? = null,
-        format:String?=null
+        format:String?=null,
+        id: Int?=null
     ): SearchResults {
         val query = """
 query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult: Boolean = false, ${"$"}search: String, ${"$"}format: [MediaFormat], ${"$"}status: MediaStatus, ${"$"}countryOfOrigin: CountryCode, ${"$"}source: MediaSource, ${"$"}season: MediaSeason, ${"$"}seasonYear: Int, ${"$"}year: String, ${"$"}onList: Boolean, ${"$"}yearLesser: FuzzyDateInt, ${"$"}yearGreater: FuzzyDateInt, ${"$"}episodeLesser: Int, ${"$"}episodeGreater: Int, ${"$"}durationLesser: Int, ${"$"}durationGreater: Int, ${"$"}chapterLesser: Int, ${"$"}chapterGreater: Int, ${"$"}volumeLesser: Int, ${"$"}volumeGreater: Int, ${"$"}licensedBy: [String], ${"$"}isLicensed: Boolean, ${"$"}genres: [String], ${"$"}excludedGenres: [String], ${"$"}tags: [String], ${"$"}excludedTags: [String], ${"$"}minimumTagRank: Int, ${"$"}sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC]) {
@@ -418,6 +443,7 @@ query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult:
         """.replace("\n", " ").replace("""  """, "")
         val variables = """{\"type\":\"$type\"
             ${if (page != null) """,\"page\":\"$page\"""" else ""}
+            ${if (id != null) """,\"id\":\"$id\"""" else ""}
             ${if (search != null) """,\"search\":\"$search\"""" else ""}
             ${if (sort != null) """,\"sort\":\"$sort\"""" else ""}
             ${if (format != null) """,\"format\":\"$format\"""" else ""}

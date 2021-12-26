@@ -15,12 +15,20 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 import ani.saikou.anilist.Anilist
 import ani.saikou.databinding.ActivityMainBinding
+import ani.saikou.media.MediaDetailsActivity
 
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -54,6 +62,18 @@ class MainActivity : AppCompatActivity() {
             })
             navbar.selectTabAt(selectedOption)
             mainViewPager.post { mainViewPager.setCurrentItem(selectedOption, false) }
+        }
+        if (loadMedia!=null){
+            scope.launch {
+                val media = Anilist.query.getMedia(loadMedia!!)
+                if (media!=null){
+                    startActivity(Intent(this@MainActivity, MediaDetailsActivity::class.java).putExtra("media",media as Serializable))
+                    runOnUiThread { homeRefresh.postValue(true) }
+                }
+                else{
+                    toastString("Seems like that wasn't found on Anilist.")
+                }
+            }
         }
     }
 

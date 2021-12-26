@@ -53,7 +53,7 @@ var selectedOption = 1
 @SuppressLint("StaticFieldLeak")
 lateinit var activity: Activity
 
-var skipLogin = false
+var loadMedia:Int?=null
 
 var homeRefresh = MutableLiveData(true)
 var animeRefresh = MutableLiveData(true)

@@ -38,7 +38,7 @@
         <activity
             android:name=".anilist.Login"
             android:exported="true">
-            <intent-filter android:label="filter_view_example_gizmos">
+            <intent-filter android:label="filter_anilist_login">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -47,6 +47,21 @@
                 <data
                     android:host="anilist"
                     android:scheme="saikou" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".anilist.Media"
+            android:exported="true" >
+            <intent-filter android:label="filter_anilist_anime" android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:host="anilist.co"/>
+                <data android:pathPrefix="/anime"/>
+                <data android:pathPrefix="/manga"/>
             </intent-filter>
         </activity>
         <activity

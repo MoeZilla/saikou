@@ -92,7 +92,7 @@ class AnimeSourceFragment : Fragment() {
                     loading=true
                     binding.animeSourceProgressBar.visibility=View.VISIBLE
                     media.selected!!.source = i
-                    saveData(media.id.toString(), media.selected!!)
+                    saveData(media.id.toString()+".select", media.selected!!)
                     AnimeSources[i]!!.live.observe(viewLifecycleOwner,{ j->
                         binding.animeSourceTitle.text = j
                     })
@@ -111,12 +111,10 @@ class AnimeSourceFragment : Fragment() {
                 binding.animeSourceTop.setOnClickListener {
                     binding.animeSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
                     media.selected!!.recyclerReversed=!media.selected!!.recyclerReversed
-                    saveData(media.id.toString(), media.selected!!)
                     updateRecycler(media)
                 }
                 binding.animeSourceList.setOnClickListener {
                     media.selected!!.recyclerStyle=0
-                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceList
                     selected?.alpha = 1f
@@ -124,7 +122,6 @@ class AnimeSourceFragment : Fragment() {
                 }
                 binding.animeSourceGrid.setOnClickListener {
                     media.selected!!.recyclerStyle=1
-                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceGrid
                     selected?.alpha = 1f
@@ -132,7 +129,6 @@ class AnimeSourceFragment : Fragment() {
                 }
                 binding.animeSourceCompact.setOnClickListener {
                     media.selected!!.recyclerStyle=2
-                    saveData(media.id.toString(), media.selected!!)
                     selected?.alpha = 0.33f
                     selected = binding.animeSourceCompact
                     selected?.alpha = 1f
@@ -188,6 +184,7 @@ class AnimeSourceFragment : Fragment() {
     }
 
     private fun updateRecycler(media: Media){
+        saveData(media.id.toString()+".select", media.selected!!)
         if(media.anime?.episodes!=null) {
             binding.animeEpisodesRecycler.adapter = episodeAdapter(media, this, media.selected!!.recyclerStyle, media.selected!!.recyclerReversed, start, end)
             val gridCount = when (media.selected!!.recyclerStyle){
@@ -211,8 +208,8 @@ class AnimeSourceFragment : Fragment() {
             SelectorDialogFragment.newInstance(media,media.anime!!.episodes!![i]!!).show(requireActivity().supportFragmentManager,"dialog")
     }
 
-    private fun addPageChips(media: Media, episode: Int){
-        val divisions = episode.toDouble() / 10
+    private fun addPageChips(media: Media, total: Int){
+        val divisions = total.toDouble() / 10
         start = 0
         end = null
         val limit = when{
@@ -220,45 +217,34 @@ class AnimeSourceFragment : Fragment() {
             (divisions < 50) -> 50
             else -> 100
         }
-        if (episode>limit) {
+        if (total>limit) {
             val arr = media.anime!!.episodes!!.keys.toTypedArray()
-            val stored = ceil((episode).toDouble() / limit).toInt()
+            val stored = ceil((total).toDouble() / limit).toInt()
             println(stored)
             (1..stored).forEach {
                 val chip = Chip(requireContext())
                 chip.isCheckable = true
+                val last = if (it == stored) total else (limit * it)
 
-                if(it==1 && selectedChip==null){
+                if(it==media.selected!!.chip && selectedChip==null){
                     selectedChip=chip
                     chip.isChecked = true
+                    start = limit * (it - 1)
+                    end = last - 1
                 }
                 if (end == null) { end = limit * it - 1 }
-                if (it == stored) {
-                    chip.text = "${arr[limit * (it - 1)]} - ${arr[episode-1]}"
-                    chip.setOnClickListener { _ ->
-                        selectedChip?.isChecked = false
-                        selectedChip = chip
-                        selectedChip!!.isChecked = true
-                        start = limit * (it - 1)
-                        end = episode - 1
-                        updateRecycler(media)
-                    }
-                } else {
-                    chip.text = "${arr[limit * (it - 1)]} - ${arr[(limit * it)-1]}"
-                    chip.setOnClickListener { _ ->
-                        selectedChip?.isChecked = false
-                        selectedChip = chip
-                        selectedChip!!.isChecked = true
-                        start = limit * (it - 1)
-                        end = limit * it - 1
-                        updateRecycler(media)
-                    }
+                chip.text = "${arr[limit * (it - 1)]} - ${arr[last-1]}"
+                chip.setOnClickListener { _ ->
+                    media.selected!!.chip = it
+                    selectedChip?.isChecked = false
+                    selectedChip = chip
+                    selectedChip!!.isChecked = true
+                    start = limit * (it - 1)
+                    end = last - 1
+                    updateRecycler(media)
                 }
                 binding.animeSourceChipGroup.addView(chip)
             }
-        }
-        else{
-            updateRecycler(media)
         }
     }
 }

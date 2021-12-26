@@ -35,6 +35,9 @@ class ChapterCompactAdapter(
 
         val ep = arr[position]
         binding.itemEpisodeNumber.text = ep.number
+        if (media.userProgress!=null) {
+            if (ep.number.toIntOrNull()?:9999<=media.userProgress!!) binding.root.alpha = 0.66f
+        }
     }
 
     override fun getItemCount(): Int = arr.size
@@ -64,6 +67,9 @@ class ChapterListAdapter(
         val ep = arr[position]
         binding.itemChapterNumber.text = ep.number
         binding.itemChapterTitle.text = ep.title
+        if (media.userProgress!=null) {
+            if (ep.number.toIntOrNull()?:9999<=media.userProgress!!) binding.root.alpha = 0.66f
+        }
     }
 
     override fun getItemCount(): Int = arr.size

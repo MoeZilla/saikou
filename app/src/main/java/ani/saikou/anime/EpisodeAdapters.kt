@@ -42,6 +42,9 @@ class EpisodeCompactAdapter(
 
         val ep = arr[position]
         binding.itemEpisodeNumber.text = ep.number
+        if (media.userProgress!=null) {
+            if (ep.number.toIntOrNull()?:9999<=media.userProgress!!) binding.root.alpha = 0.66f
+        }
     }
 
     override fun getItemCount(): Int = arr.size
@@ -72,6 +75,9 @@ class EpisodeGridAdapter(
         Picasso.get().load(ep.thumb?:media.cover).into(binding.itemEpisodeImage)
         binding.itemEpisodeNumber.text = ep.number
         binding.itemEpisodeTitle.text = ep.title?:media.name
+        if (media.userProgress!=null) {
+            if (ep.number.toIntOrNull()?:9999<=media.userProgress!!) binding.root.alpha = 0.66f
+        }
     }
 
     override fun getItemCount(): Int = arr.size
@@ -103,8 +109,10 @@ class EpisodeListAdapter(
         binding.itemEpisodeNumber.text = ep.number
         if (ep.desc==null) binding.itemEpisodeDesc.visibility = View.GONE
         binding.itemEpisodeDesc.text = ep.desc?:""
-        println("${ ep.title == "null" } ${ep.title==null}" )
         binding.itemEpisodeTitle.text = ep.title?:media.userPreferredName
+        if (media.userProgress!=null) {
+            if (ep.number.toIntOrNull()?:9999<=media.userProgress!!) binding.root.alpha = 0.66f
+        }
     }
 
     override fun getItemCount(): Int = arr.size

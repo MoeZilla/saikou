@@ -68,7 +68,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
         viewPager.isUserInputEnabled = false
 
         val media: Media = intent.getSerializableExtra("media") as Media
-        media.selected = loadData<Selected>(media.id.toString())?: Selected()
+        media.selected = loadData<Selected>(media.id.toString()+".select")?: Selected()
         Picasso.get().load(media.cover).into(binding.mediaCoverImage)
         Picasso.get().load(media.banner).into(binding.mediaBanner)
         Picasso.get().load(media.banner).into(binding.mediaBannerStatus)

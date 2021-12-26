@@ -88,7 +88,7 @@ class MangaSourceFragment : Fragment() {
                         loading = true
                         binding.mangaSourceProgressBar.visibility = View.VISIBLE
                         media.selected!!.source = i
-                        saveData(media.id.toString(), media.selected!!)
+                        saveData(media.id.toString()+".select", media.selected!!)
                         MangaSources[i]!!.live.observe(viewLifecycleOwner,{ j ->
                             binding.mangaSourceTitle.text = j
                         })
@@ -104,12 +104,10 @@ class MangaSourceFragment : Fragment() {
                     binding.mangaSourceTop.setOnClickListener {
                         binding.mangaSourceTop.rotation = if (media.selected!!.recyclerReversed) 90f else -90f
                         media.selected!!.recyclerReversed = !media.selected!!.recyclerReversed
-                        saveData(media.id.toString(), media.selected!!)
                         updateRecycler(media)
                     }
                     binding.mangaSourceList.setOnClickListener {
                         media.selected!!.recyclerStyle = 0
-                        saveData(media.id.toString(), media.selected!!)
                         selected?.alpha = 0.33f
                         selected = binding.mangaSourceList
                         selected?.alpha = 1f
@@ -117,7 +115,6 @@ class MangaSourceFragment : Fragment() {
                     }
                     binding.mangaSourceCompact.setOnClickListener {
                         media.selected!!.recyclerStyle = 1
-                        saveData(media.id.toString(), media.selected!!)
                         selected?.alpha = 0.33f
                         selected = binding.mangaSourceCompact
                         selected?.alpha = 1f
@@ -161,6 +158,7 @@ class MangaSourceFragment : Fragment() {
     }
 
     private fun updateRecycler(media: Media){
+        saveData(media.id.toString()+".select", media.selected!!)
         if(media.manga?.chapters!=null) {
             binding.mangaSourceRecycler.adapter = mangaChapterAdapter(media, this, media.selected!!.recyclerStyle, media.selected!!.recyclerReversed, start, end)
             val gridCount = when (media.selected!!.recyclerStyle){
@@ -186,8 +184,8 @@ class MangaSourceFragment : Fragment() {
         }
     }
 
-    private fun addPageChips(media: Media, chapter: Int){
-        val divisions = chapter.toDouble() / 10
+    private fun addPageChips(media: Media, total: Int){
+        val divisions = total.toDouble() / 10
         start = 0
         end = null
         val limit = when{
@@ -195,44 +193,34 @@ class MangaSourceFragment : Fragment() {
             (divisions < 50) -> 50
             else -> 100
         }
-        if (chapter>limit) {
+        if (total>limit) {
             val arr = media.manga!!.chapters!!.keys.toTypedArray()
-            val stored = ceil((chapter).toDouble() / limit).toInt()
+            val stored = ceil((total).toDouble() / limit).toInt()
+            println(stored)
             (1..stored).forEach {
                 val chip = Chip(requireContext())
                 chip.isCheckable = true
+                val last = if (it == stored) total else (limit * it)
 
-                if(it==1 && selectedChip==null){
+                if(it==media.selected!!.chip && selectedChip==null){
                     selectedChip=chip
                     chip.isChecked = true
+                    start = limit * (it - 1)
+                    end = last - 1
                 }
                 if (end == null) { end = limit * it - 1 }
-                if (it == stored) {
-                    chip.text = "${arr[limit * (it - 1)]} - ${arr[chapter-1]}"
-                    chip.setOnClickListener { _ ->
-                        selectedChip?.isChecked = false
-                        selectedChip = chip
-                        selectedChip!!.isChecked = true
-                        start = limit * (it - 1)
-                        end = chapter - 1
-                        updateRecycler(media)
-                    }
-                } else {
-                    chip.text = "${arr[limit * (it - 1)]} - ${arr[(limit * it)-1]}"
-                    chip.setOnClickListener { _ ->
-                        selectedChip?.isChecked = false
-                        selectedChip = chip
-                        selectedChip!!.isChecked = true
-                        start = limit * (it - 1)
-                        end = limit * it - 1
-                        updateRecycler(media)
-                    }
+                chip.text = "${arr[limit * (it - 1)]} - ${arr[last-1]}"
+                chip.setOnClickListener { _ ->
+                    media.selected!!.chip = it
+                    selectedChip?.isChecked = false
+                    selectedChip = chip
+                    selectedChip!!.isChecked = true
+                    start = limit * (it - 1)
+                    end = last - 1
+                    updateRecycler(media)
                 }
                 binding.mangaSourceChipGroup.addView(chip)
             }
-        }
-        else{
-            updateRecycler(media)
         }
     }
 }
