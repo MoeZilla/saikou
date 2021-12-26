@@ -2,12 +2,14 @@ package ani.saikou
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources.getSystem
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
 import android.util.AttributeSet
@@ -15,6 +17,7 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.DatePicker
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -22,10 +25,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.MutableLiveData
+import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.media.Media
 import ani.saikou.media.Source
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
@@ -50,10 +57,12 @@ val Float.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
 lateinit var bottomBar: AnimatedBottomBar
 var selectedOption = 1
 
-@SuppressLint("StaticFieldLeak")
-lateinit var activity: Activity
+fun currActivity():Activity{
+    return App.currentActivity()!!
+}
 
 var loadMedia:Int?=null
+var loadIsMAL=false
 
 var homeRefresh = MutableLiveData(true)
 var animeRefresh = MutableLiveData(true)
@@ -65,7 +74,7 @@ fun logger(e:Any?,print:Boolean=true){
 }
 
 fun saveData(fileName:String,data:Any){
-    val fos: FileOutputStream = activity.openFileOutput(fileName, Context.MODE_PRIVATE)
+    val fos: FileOutputStream = currActivity().openFileOutput(fileName, Context.MODE_PRIVATE)
     val os = ObjectOutputStream(fos)
     os.writeObject(data)
     os.close()
@@ -74,8 +83,8 @@ fun saveData(fileName:String,data:Any){
 
 @Suppress("UNCHECKED_CAST")
 fun <T> loadData(fileName:String): T? {
-    if (fileName in activity.fileList()){
-        val fileIS: FileInputStream = activity.openFileInput(fileName)
+    if (fileName in currActivity().fileList()){
+        val fileIS: FileInputStream = currActivity().openFileInput(fileName)
         val objIS = ObjectInputStream(fileIS)
         val data = objIS.readObject() as T
         objIS.close()
@@ -88,7 +97,6 @@ fun <T> loadData(fileName:String): T? {
 fun initActivity(a: Activity,view:View?=null) {
     val window = a.window
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    activity = a
     if (view != null) {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -203,7 +211,7 @@ fun getMalMedia(media:Media) : Media{
 }
 
 fun toastString(s: String?){
-    activity.runOnUiThread { Toast.makeText(activity, s, Toast.LENGTH_SHORT).show() }
+    currActivity().runOnUiThread { Toast.makeText(currActivity(), s, Toast.LENGTH_SHORT).show() }
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {
@@ -289,4 +297,45 @@ fun ArrayList<Source>.sortByTitle(string: String){
     for (i in a.indices){
         this.add(temp2[a[i]])
     }
+}
+
+fun loadImage(url:String?,imageView: ImageView){
+    Glide.with(currActivity())
+    .load(url)
+    .transition(DrawableTransitionOptions.withCrossFade())
+    .into(imageView)
+}
+
+class App: MultiDexApplication() {
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
+
+    init { instance = this }
+
+    val mFTActivityLifecycleCallbacks = FTActivityLifecycleCallbacks()
+
+    override fun onCreate() {
+        super.onCreate()
+        registerActivityLifecycleCallbacks(mFTActivityLifecycleCallbacks)
+    }
+
+    companion object {
+        private var instance: App? = null
+        fun currentActivity(): Activity? {
+            return instance!!.mFTActivityLifecycleCallbacks.currentActivity
+        }
+    }
+}
+
+class FTActivityLifecycleCallbacks: Application.ActivityLifecycleCallbacks {
+    var currentActivity: Activity? = null
+    override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
+    override fun onActivityStarted(p0: Activity) {}
+    override fun onActivityResumed(p0: Activity) { currentActivity = p0 }
+    override fun onActivityPaused(p0: Activity) {}
+    override fun onActivityStopped(p0: Activity) {}
+    override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
+    override fun onActivityDestroyed(p0: Activity) {}
 }

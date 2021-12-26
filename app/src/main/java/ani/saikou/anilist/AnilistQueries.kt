@@ -62,8 +62,8 @@ class AnilistQueries{
         }
     }
 
-    fun getMedia(id:Int):Media?{
-        val response = executeQuery("""{Media(id:$id){id status chapters episodes nextAiringEpisode{episode}type meanScore isFavourite bannerImage coverImage{large}title{english romaji userPreferred}mediaListEntry{progress score(format:POINT_100)status}}}""", force = true)
+    fun getMedia(id:Int,mal:Boolean=false):Media?{
+        val response = executeQuery("""{Media(${if(!mal) "id:" else "idMal:"}$id){id status chapters episodes nextAiringEpisode{episode}type meanScore isFavourite bannerImage coverImage{large}title{english romaji userPreferred}mediaListEntry{progress score(format:POINT_100)status}}}""", force = true)
         val i = response?.get("data")!!.jsonObject["Media"]!!
         if (i!=JsonNull){
             return Media(

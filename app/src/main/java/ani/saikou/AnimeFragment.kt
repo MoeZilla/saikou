@@ -29,7 +29,7 @@ import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentAnimeBinding
 import ani.saikou.media.MediaAdaptor
 import ani.saikou.media.MediaLargeAdaptor
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Runnable
 import kotlin.math.abs
@@ -75,7 +75,7 @@ class AnimeFragment : Fragment() {
             animeRefresh.postValue(true)
         }
         if(Anilist.avatar!=null){
-            Picasso.get().load(Anilist.avatar).into(binding.animeUserAvatar)
+            Glide.with(requireActivity()).load(Anilist.avatar).into(binding.animeUserAvatar)
             binding.animeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 
@@ -90,8 +90,8 @@ class AnimeFragment : Fragment() {
             )
         }
 
-        Picasso.get().load("https://bit.ly/31bsIHq").into(binding.animeGenreImage)
-        Picasso.get().load( "https://bit.ly/2ZGfcuG").into(binding.animeTopScoreImage)
+        loadImage("https://bit.ly/31bsIHq",binding.animeGenreImage)
+        loadImage( "https://bit.ly/2ZGfcuG",binding.animeTopScoreImage)
 
         binding.animeGenre.setOnClickListener {
             ContextCompat.startActivity(

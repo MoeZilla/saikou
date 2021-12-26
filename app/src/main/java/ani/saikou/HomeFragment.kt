@@ -117,10 +117,8 @@ class HomeFragment : Fragment() {
         //List Images
         model.getListImages().observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                Glide.with(requireActivity()).load(it[0] ?: "https://bit.ly/31bsIHq")
-                    .into(binding.homeAnimeListImage)
-                Glide.with(requireActivity()).load(it[1] ?: "https://bit.ly/2ZGfcuG")
-                    .into(binding.homeMangaListImage)
+                loadImage(it[0] ?: "https://bit.ly/31bsIHq",binding.homeAnimeListImage)
+                loadImage(it[1] ?: "https://bit.ly/2ZGfcuG",binding.homeMangaListImage)
             }
         })
 

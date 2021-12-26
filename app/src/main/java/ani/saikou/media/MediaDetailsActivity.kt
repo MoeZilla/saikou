@@ -23,7 +23,6 @@ import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.manga.MangaSourceFragment
 import com.google.android.material.appbar.AppBarLayout
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
@@ -69,9 +68,9 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         val media: Media = intent.getSerializableExtra("media") as Media
         media.selected = loadData<Selected>(media.id.toString()+".select")?: Selected()
-        Picasso.get().load(media.cover).into(binding.mediaCoverImage)
-        Picasso.get().load(media.banner).into(binding.mediaBanner)
-        Picasso.get().load(media.banner).into(binding.mediaBannerStatus)
+        loadImage(media.cover,binding.mediaCoverImage)
+        loadImage(media.banner,binding.mediaBanner)
+        loadImage(media.banner,binding.mediaBannerStatus)
         binding.mediaTitle.text=media.userPreferredName
         binding.mediaTitleCollapse.text=media.userPreferredName
 

@@ -1,8 +1,6 @@
 package ani.saikou.anime.source.parsers
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.Extractor
 import ani.saikou.anime.source.AnimeParser
@@ -10,9 +8,9 @@ import ani.saikou.anime.source.extractors.*
 import ani.saikou.loadData
 import ani.saikou.logger
 import ani.saikou.media.Media
-import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.media.Source
 import ani.saikou.saveData
+import ani.saikou.toastString
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
@@ -41,6 +39,7 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
     }
 
     override fun getStream(episode: Episode): Episode {
+        try {
         episode.streamLinks = runBlocking {
             val linkForVideos = arrayListOf<Episode.StreamLinks?>()
             withContext(Dispatchers.Default) {
@@ -56,10 +55,14 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
             }
             return@runBlocking (linkForVideos)
         }
+        }catch (e:Exception){
+            toastString("$e")
+        }
         return episode
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
+        try{
         var slug:Source? = loadData("go-go${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
             val it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
@@ -76,6 +79,9 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
             live.postValue("Selected : ${slug.name}")
         }
         if (slug!=null) return getSlugEpisodes(slug.link)
+        }catch (e:Exception){
+            toastString("$e")
+        }
         return mutableMapOf()
     }
 

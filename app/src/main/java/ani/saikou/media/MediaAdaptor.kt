@@ -16,8 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 import ani.saikou.R
 import ani.saikou.databinding.ItemMediaCompactBinding
+import ani.saikou.loadImage
+import com.bumptech.glide.Glide
 
-import com.squareup.picasso.Picasso
 import java.io.Serializable
 
 class MediaAdaptor(
@@ -32,7 +33,7 @@ class MediaAdaptor(
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
         val b = holder.binding
         val media = mediaList[position]
-        Picasso.get().load(media.cover).into(b.itemCompactImage)
+        loadImage(media.cover,b.itemCompactImage)
         b.itemCompactOngoing.visibility = if (media.status=="RELEASING")  View.VISIBLE else View.GONE
         b.itemCompactTitle.text = media.userPreferredName
         b.itemCompactScore.text = ((if(media.userScore==0) (media.meanScore?:0) else media.userScore)/10.0).toString()

@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.SearchActivity
 import ani.saikou.anilist.Anilist
 import ani.saikou.databinding.ItemGenreBinding
+import ani.saikou.loadImage
 import ani.saikou.px
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 
 class GenreAdapter(
     private val genres: ArrayList<String>,
@@ -29,7 +30,7 @@ class GenreAdapter(
         val binding = holder.binding
         val genre = genres[position]
         binding.genreTitle.text = genre
-        Picasso.get().load(Anilist.genres?.get(genre)).into(binding.genreImage)
+        loadImage(Anilist.genres?.get(genre),binding.genreImage)
     }
 
     override fun getItemCount(): Int = genres.size

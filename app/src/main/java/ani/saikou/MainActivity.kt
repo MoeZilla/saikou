@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
         if (loadMedia!=null){
             scope.launch {
-                val media = Anilist.query.getMedia(loadMedia!!)
+                val media = Anilist.query.getMedia(loadMedia!!, loadIsMAL)
                 if (media!=null){
                     startActivity(Intent(this@MainActivity, MediaDetailsActivity::class.java).putExtra("media",media as Serializable))
                     runOnUiThread { homeRefresh.postValue(true) }

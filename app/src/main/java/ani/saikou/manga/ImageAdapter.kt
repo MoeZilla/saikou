@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ani.saikou.activity
+import ani.saikou.currActivity
 import ani.saikou.databinding.ItemImageBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.load.model.LazyHeaders
-import com.bumptech.glide.load.model.GlideUrl
 
 class ImageAdapter(
 private val arr: ArrayList<String>,
@@ -29,7 +29,7 @@ private val referer:String?=null
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val binding = holder.binding
 
-        Glide.with(activity)
+        Glide.with(currActivity())
             .load(GlideUrl(
                 arr[position],
                 if (referer!=null) LazyHeaders.Builder().addHeader("referer", referer).build() else LazyHeaders.Builder().build()

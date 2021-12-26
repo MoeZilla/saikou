@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.databinding.ItemCharacterBinding
-import com.squareup.picasso.Picasso
+import ani.saikou.loadImage
 
 class CharacterAdapter(
     private val characterList: ArrayList<Character>
@@ -20,7 +20,7 @@ class CharacterAdapter(
         val binding = holder.binding
         val character = characterList[position]
         binding.itemCompactRelation.text = character.role+"\t"
-        Picasso.get().load(character.image).into(binding.itemCompactImage)
+        loadImage(character.image,binding.itemCompactImage)
         binding.itemCompactTitle.text = character.name
     }
 

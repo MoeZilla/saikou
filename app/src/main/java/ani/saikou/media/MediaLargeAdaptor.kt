@@ -7,18 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-
 import ani.saikou.R
 import ani.saikou.databinding.ItemMediaLargeBinding
-import com.squareup.picasso.Picasso
-
+import ani.saikou.loadImage
+import com.bumptech.glide.Glide
 import java.io.Serializable
 
 class MediaLargeAdaptor(
@@ -34,8 +32,8 @@ class MediaLargeAdaptor(
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
         val b = holder.binding
         val media = mediaList[position]
-        Picasso.get().load(media.cover).into(b.itemCompactImage)
-        Picasso.get().load(media.banner).into(b.itemCompactBanner)
+        loadImage(media.cover,b.itemCompactImage)
+        loadImage(media.banner,b.itemCompactBanner)
         b.itemCompactOngoing.visibility = if (media.status=="RELEASING")  View.VISIBLE else View.GONE
         b.itemCompactTitle.text = media.userPreferredName
         b.itemCompactScore.text = ((if(media.userScore==0) (media.meanScore?:0) else media.userScore)/10.0).toString()

@@ -5,7 +5,6 @@ import ani.saikou.anime.source.AnimeParser
 import ani.saikou.loadData
 import ani.saikou.logger
 import ani.saikou.media.Media
-import ani.saikou.media.MediaDetailsViewModel
 import ani.saikou.media.Source
 import ani.saikou.saveData
 import ani.saikou.sortByTitle
