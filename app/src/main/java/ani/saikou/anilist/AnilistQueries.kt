@@ -87,13 +87,14 @@ class AnilistQueries{
     }
 
     fun mediaDetails(media:Media): Media? {
-        val response = executeQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite idMal nextAiringEpisode{episode airingAt}source format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""", force = true)
+        val response = executeQuery("""{Media(id:${media.id}){mediaListEntry{id status score(format:POINT_100) progress repeat updatedAt startedAt{year month day}completedAt{year month day}}isFavourite idMal nextAiringEpisode{episode airingAt}source countryOfOrigin format duration season seasonYear startDate{year month day}endDate{year month day}genres studios(isMain:true){nodes{id name siteUrl}}description characters(sort:[ROLE,FAVOURITES_DESC],perPage:25,page:1){edges{role node{id image{medium}name{userPreferred}}}}relations{edges{relationType(version:2)node{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}recommendations{nodes{mediaRecommendation{id mediaListEntry{progress score(format:POINT_100) status} chapters episodes chapters nextAiringEpisode{episode}meanScore isFavourite title{english romaji userPreferred}type status(version:2)bannerImage coverImage{large}}}}streamingEpisodes{title thumbnail}externalLinks{url}}}""", force = true)
 
         if (response!=null){
             val json = response["data"]!!
             val it = json.jsonObject["Media"]!!
 
             media.source = it.jsonObject["source"]!!.toString().trim('"')
+            media.countryOfOrigin = it.jsonObject["countryOfOrigin"].toString().trim('"')
             media.format = it.jsonObject["format"]!!.toString().trim('"')
 
             media.startDate = FuzzyDate(

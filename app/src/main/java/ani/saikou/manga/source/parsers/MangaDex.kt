@@ -40,9 +40,10 @@ class MangaDex:MangaParser() {
                     arr[chapter] = MangaChapter(chapter,title,hash)
                 }
             }
-            live.postValue("Chapter Parsing : ${100-(index.toFloat()/totalChapters * 100).roundToInt()}%...")
+            var a = (index.toFloat() / totalChapters * 100)
+            try { a = a.roundToInt().toFloat() }catch (e:Exception){}
+            live.postValue("Chapter Parsing : ${100-a}%...")
         }
-        live.postValue("Chapters Loaded!")
         return arr
     }
 
@@ -54,8 +55,8 @@ class MangaDex:MangaParser() {
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangadex_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.getMainName()}")
-            val search = search(media.getMainName())
+            live.postValue("Searching : ${media.getMangaName()}")
+            val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
                 println("MangaDex : ${search[0]}")
                 source = search[0]
@@ -64,9 +65,13 @@ class MangaDex:MangaParser() {
             }
         }
         else{
-            live.postValue("Loaded : ${source.name}")
+            live.postValue("Selected : ${source.name}")
         }
-        if (source!=null) return getLinkChapters(source.link)
+        if (source!=null) {
+            val s = getLinkChapters(source.link)
+            live.postValue("Loaded : ${source.name}")
+            return s
+        }
         return mutableMapOf()
     }
 

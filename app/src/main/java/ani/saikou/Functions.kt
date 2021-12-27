@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.res.Resources.getSystem
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
@@ -37,7 +38,6 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 
@@ -57,8 +57,8 @@ val Float.px: Int get() = (this * getSystem().displayMetrics.density).toInt()
 lateinit var bottomBar: AnimatedBottomBar
 var selectedOption = 1
 
-fun currActivity():Activity{
-    return App.currentActivity()!!
+fun currActivity():Activity?{
+    return App.currentActivity()
 }
 
 var loadMedia:Int?=null
@@ -74,17 +74,21 @@ fun logger(e:Any?,print:Boolean=true){
 }
 
 fun saveData(fileName:String,data:Any){
-    val fos: FileOutputStream = currActivity().openFileOutput(fileName, Context.MODE_PRIVATE)
-    val os = ObjectOutputStream(fos)
-    os.writeObject(data)
-    os.close()
-    fos.close()
+    val a = currActivity()
+    if (a!=null) {
+        val fos: FileOutputStream = a.openFileOutput(fileName, Context.MODE_PRIVATE)
+        val os = ObjectOutputStream(fos)
+        os.writeObject(data)
+        os.close()
+        fos.close()
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <T> loadData(fileName:String): T? {
-    if (fileName in currActivity().fileList()){
-        val fileIS: FileInputStream = currActivity().openFileInput(fileName)
+    val a = currActivity()
+    if (fileName in a?.fileList()!!){
+        val fileIS: FileInputStream = a.openFileInput(fileName)
         val objIS = ObjectInputStream(fileIS)
         val data = objIS.readObject() as T
         objIS.close()
@@ -211,7 +215,7 @@ fun getMalMedia(media:Media) : Media{
 }
 
 fun toastString(s: String?){
-    currActivity().runOnUiThread { Toast.makeText(currActivity(), s, Toast.LENGTH_SHORT).show() }
+    currActivity()?.runOnUiThread { Toast.makeText(currActivity(), s, Toast.LENGTH_SHORT).show() }
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {
@@ -300,10 +304,12 @@ fun ArrayList<Source>.sortByTitle(string: String){
 }
 
 fun loadImage(url:String?,imageView: ImageView){
-    Glide.with(currActivity())
-    .load(url)
-    .transition(DrawableTransitionOptions.withCrossFade())
-    .into(imageView)
+    val a = currActivity()
+    if (a!=null)
+        Glide.with(a)
+        .load(Uri.parse(url))
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(imageView)
 }
 
 class App: MultiDexApplication() {

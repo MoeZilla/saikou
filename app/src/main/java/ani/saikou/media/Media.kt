@@ -34,6 +34,7 @@ data class Media(
     val status : String? = null,
     var format:String?=null,
     var source:String? = null,
+    var countryOfOrigin:String?=null,
     val meanScore: Int? = null,
     var genres:ArrayList<String>?=null,
     var description: String? = null,
@@ -48,4 +49,5 @@ data class Media(
     var selected: Selected?=null,
 ) : Serializable{
     fun getMainName() = if (name!="null") name else nameRomaji
+    fun getMangaName() = if (countryOfOrigin!="JP") getMainName() else nameRomaji
 }

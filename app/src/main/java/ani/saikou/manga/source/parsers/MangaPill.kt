@@ -11,7 +11,7 @@ import org.jsoup.Jsoup
 class MangaPill:MangaParser() {
     override fun getChapter(chapter: MangaChapter): MangaChapter {
         chapter.images = arrayListOf()
-        Jsoup.connect(chapter.link!!).get().select("img.lazy.js-page").forEach {
+        Jsoup.connect(chapter.link!!).get().select("img.js-page").forEach {
             chapter.images!!.add(it.attr("data-src"))
         }
         return chapter
@@ -29,8 +29,8 @@ class MangaPill:MangaParser() {
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangapill_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.getMainName()}")
-            val search = search(media.getMainName())
+            live.postValue("Searching : ${media.getMangaName()}")
+            val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
                 println("MangaPill : ${search[0]}")
                 source = search[0]

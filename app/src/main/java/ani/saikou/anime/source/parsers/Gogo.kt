@@ -39,11 +39,12 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
     }
 
     override fun getStream(episode: Episode): Episode {
-        try {
+//        try {
         episode.streamLinks = runBlocking {
             val linkForVideos = arrayListOf<Episode.StreamLinks?>()
             withContext(Dispatchers.Default) {
                 Jsoup.connect(episode.link!!).ignoreHttpErrors(true).get().select("div.anime_muti_link > ul > li:not(li.anime)").forEach {
+                    println(it.select("a").attr("data-video"))
                     launch {
                         val directLinks = directLinkify(
                             it.select("a").text().replace("Choose this server", ""),
@@ -55,9 +56,9 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
             }
             return@runBlocking (linkForVideos)
         }
-        }catch (e:Exception){
-            toastString("$e")
-        }
+//        }catch (e:Exception){
+//            toastString("$e")
+//        }
         return episode
     }
 
@@ -65,14 +66,24 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
         try{
         var slug:Source? = loadData("go-go${if(dub) "dub" else ""}_${media.id}")
         if (slug==null) {
-            val it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
+            var it = (media.nameMAL ?: media.nameRomaji) + if (dub) " (Dub)" else ""
             live.postValue("Searching for $it")
             logger("Gogo : Searching for $it")
-            val search = search(it)
+            var search = search(it)
             if (search.isNotEmpty()) {
                 slug = search[0]
                 live.postValue("Found : ${slug.name}")
                 saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
+            } else{
+                it = media.nameRomaji+ if (dub) " (Dub)" else ""
+                search = search(it)
+                live.postValue("Searching for $it")
+                logger("Gogo : Searching for $it")
+                if (search.isNotEmpty()) {
+                    slug = search[0]
+                    live.postValue("Found : ${slug.name}")
+                    saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
+                }
             }
         }
         else{

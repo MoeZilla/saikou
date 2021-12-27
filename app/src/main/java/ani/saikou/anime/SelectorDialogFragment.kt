@@ -51,7 +51,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
             binding.selectorRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false)
             binding.selectorRecyclerView.adapter = StreamAdapter()
         }
-        if(episode.streamLinks==null) {
+        if(episode.streamLinks.isEmpty()) {
             val model : MediaDetailsViewModel by activityViewModels()
             model.getStreams().observe(this,{
                 if (it!=null){
@@ -75,7 +75,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
     }
 
     private inner class StreamAdapter : RecyclerView.Adapter<StreamAdapter.StreamViewHolder>() {
-        val links = media.anime!!.episodes!![media.anime!!.selectedEpisode!!]!!.streamLinks!!
+        val links = media.anime!!.episodes!![media.anime!!.selectedEpisode!!]!!.streamLinks
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StreamViewHolder = StreamViewHolder(ItemStreamBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         override fun onBindViewHolder(holder: StreamViewHolder, position: Int) {
             holder.binding.streamName.text=links[position]!!.server
@@ -87,7 +87,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
     }
 
     private inner class QualityAdapter(private val stream:Int) : RecyclerView.Adapter<QualityAdapter.UrlViewHolder>() {
-        val urls = media.anime!!.episodes!![media.anime!!.selectedEpisode!!]!!.streamLinks!![stream]!!.quality
+        val urls = media.anime!!.episodes!![media.anime!!.selectedEpisode!!]!!.streamLinks[stream]!!.quality
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UrlViewHolder {
             return UrlViewHolder(ItemUrlBinding.inflate(LayoutInflater.from(parent.context), parent, false))

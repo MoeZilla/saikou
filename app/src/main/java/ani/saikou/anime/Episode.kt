@@ -11,7 +11,7 @@ data class Episode (
     var link : String? = null,
     var selectedStream : Int = 0,
     var selectedQuality: Int = 0,
-    var streamLinks : ArrayList<StreamLinks?>?=null,
+    var streamLinks : ArrayList<StreamLinks?> = arrayListOf(),
 ):Serializable{
     data class Quality(
         val url: String,

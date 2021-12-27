@@ -6,12 +6,14 @@ import ani.saikou.manga.source.MangaParser
 import ani.saikou.media.Media
 import ani.saikou.media.Source
 import ani.saikou.saveData
+import ani.saikou.toastString
 import org.jsoup.Jsoup
 
 class MangaBuddy: MangaParser() {
 
     override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val arr = mutableMapOf<String, MangaChapter>()
+        try {
         Jsoup.connect("https://mangabuddy.com/api/manga${link}/chapters?source=detail").get().select("#chapter-list>li").reversed().forEach {
 //            println(it.toString())
             if (it.select("strong").text().contains("Chapter")) {
@@ -29,6 +31,9 @@ class MangaBuddy: MangaParser() {
                     )
                 }
             }
+        }
+        }catch (e:Exception){
+            toastString("$e")
         }
         return arr
     }
@@ -48,8 +53,8 @@ class MangaBuddy: MangaParser() {
     override fun getChapters(media: Media): MutableMap<String, MangaChapter> {
         var source:Source? = loadData("mangabuddy_${media.id}")
         if (source==null) {
-            live.postValue("Searching : ${media.getMainName()}")
-            val search = search(media.getMainName())
+            live.postValue("Searching : ${media.getMangaName()}")
+            val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
                 println("MangaBuddy : ${search[0]}")
                 source = search[0]

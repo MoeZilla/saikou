@@ -31,6 +31,7 @@ class MangaReaderActivity : AppCompatActivity() {
                 if(chapImages!=null){
                     binding.mangaReaderRecyclerView.adapter = ImageAdapter(chapImages,referer)
                     binding.mangaReaderRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+//                    binding.mangaReaderRecyclerView.recycledViewPool.setMaxRecycledViews(1,0)
                 }
             }
         })

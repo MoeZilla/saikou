@@ -52,12 +52,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         val episode:Episode = intent.getSerializableExtra("ep")!! as Episode
 
         @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+        window.decorView.systemUiVisibility = View.GONE
 
         playerView = findViewById(R.id.player_view)
         exoQuality = playerView.findViewById(R.id.exo_quality)
@@ -67,13 +62,13 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
             val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true).createDataSource()
             // Set a custom authentication request header.
             dataSource.setRequestProperty("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36")
-            if (episode.streamLinks!![episode.selectedStream]!!.referer!=null) dataSource.setRequestProperty("referer", episode.streamLinks!![episode.selectedStream]!!.referer!!)
+            if (episode.streamLinks[episode.selectedStream]!!.referer!=null) dataSource.setRequestProperty("referer", episode.streamLinks[episode.selectedStream]!!.referer!!)
             dataSource
         }
         println("$episode")
-        println(episode.streamLinks!![episode.selectedStream]!!.quality[episode.selectedQuality].url)
+        println(episode.streamLinks[episode.selectedStream]!!.quality[episode.selectedQuality].url)
         mediaItem = MediaItem.Builder()
-            .setUri(episode.streamLinks!![episode.selectedStream]!!.quality[episode.selectedQuality].url)
+            .setUri(episode.streamLinks[episode.selectedStream]!!.quality[episode.selectedQuality].url)
             .build()
 
         exoQuality.setOnClickListener{
@@ -134,13 +129,13 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         })
     }
 
-    private fun releasePlayer(){
-        isPlayerPlaying = exoPlayer.playWhenReady
-        playbackPosition = exoPlayer.currentPosition
-        currentWindow = exoPlayer.currentMediaItemIndex
-        println(" isPlaying : $isPlayerPlaying \nposition : $playbackPosition\nwindow : $currentWindow")
-        exoPlayer.release()
-    }
+//    private fun releasePlayer(){
+//        isPlayerPlaying = exoPlayer.playWhenReady
+//        playbackPosition = exoPlayer.currentPosition
+//        currentWindow = exoPlayer.currentMediaItemIndex
+//        println(" isPlaying : $isPlayerPlaying \n position : $playbackPosition \n window : $currentWindow")
+//        exoPlayer.release()
+//    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(STATE_RESUME_WINDOW, exoPlayer.currentMediaItemIndex)
