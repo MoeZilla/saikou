@@ -16,7 +16,7 @@ import kotlinx.serialization.json.jsonObject
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
-class NineAnime(private val dub:Boolean=false): AnimeParser() {
+class NineAnime(private val dub:Boolean=false, override val name: String = "9Anime Scraper - animekisa.in"): AnimeParser() {
 
     //WE DO A LIL TROLLIN
     private val host = listOf(
@@ -52,8 +52,7 @@ class NineAnime(private val dub:Boolean=false): AnimeParser() {
             if (search.isNotEmpty()) {
                 search.sortByTitle(it)
                 slug = search[0]
-                live.postValue("Found : ${slug.name}")
-                saveData("animekisa_in${if(dub) "dub" else ""}_${media.id}", slug)
+                saveSource(slug,media.id,false)
             }
         }
         else{
@@ -82,7 +81,7 @@ class NineAnime(private val dub:Boolean=false): AnimeParser() {
         return responseArray
     }
 
-    private fun getSlugEpisodes(slug:String): MutableMap<String, Episode>{
+    override fun getSlugEpisodes(slug:String): MutableMap<String, Episode>{
         val responseArray = mutableMapOf<String,Episode>()
         val pageBody = Jsoup.connect(slug).get().body()
         pageBody.select(".tab-pane > ul.nav").forEach{
@@ -93,5 +92,9 @@ class NineAnime(private val dub:Boolean=false): AnimeParser() {
         }
         println("Response Episodes : $responseArray")
         return responseArray
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
+        saveData("animekisa_in${if(dub) "dub" else ""}_$id", source)
     }
 }

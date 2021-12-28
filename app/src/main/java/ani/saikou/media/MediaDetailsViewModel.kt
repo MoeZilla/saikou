@@ -17,6 +17,8 @@ class MediaDetailsViewModel:ViewModel() {
     fun getMedia(): LiveData<Media> = media
     fun loadMedia(m:Media) { if (media.value==null) media.postValue(Anilist.query.mediaDetails(m)) }
 
+    val sources = MutableLiveData<ArrayList<Source>?>(null)
+
     val userScore = MutableLiveData<Double?>(null)
     val userProgress = MutableLiveData<Int?>(null)
     val userStatus = MutableLiveData<String?>(null)
@@ -35,6 +37,11 @@ class MediaDetailsViewModel:ViewModel() {
         }
         episodes.postValue(epsLoaded)
     }
+    fun overrideEpisodes(i: Int, source: Source,id:Int){
+        AnimeSources[i]!!.saveSource(source,id)
+        epsLoaded[i] = AnimeSources[i]!!.getSlugEpisodes(source.link)
+        episodes.postValue(epsLoaded)
+    }
     private var streams: MutableLiveData<Episode> = MutableLiveData<Episode>(null)
     fun getStreams() : LiveData<Episode> = streams
     fun loadStreams(episode: Episode,i:Int){
@@ -50,6 +57,11 @@ class MediaDetailsViewModel:ViewModel() {
         if(!mangaLoaded.containsKey(i)){
             mangaLoaded[i] = MangaSources[i]!!.getChapters(media)
         }
+        mangaChapters.postValue(mangaLoaded)
+    }
+    fun overrideMangaChapters(i: Int, source: Source,id:Int){
+        MangaSources[i]!!.saveSource(source,id)
+        mangaLoaded[i] = MangaSources[i]!!.getLinkChapters(source.link)
         mangaChapters.postValue(mangaLoaded)
     }
 }

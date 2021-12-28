@@ -8,7 +8,7 @@ import ani.saikou.media.Source
 import ani.saikou.saveData
 import org.jsoup.Jsoup
 
-class MangaPill:MangaParser() {
+class MangaPill(override val name: String="mangapill.com") :MangaParser() {
     override fun getChapter(chapter: MangaChapter): MangaChapter {
         chapter.images = arrayListOf()
         Jsoup.connect(chapter.link!!).get().select("img.js-page").forEach {
@@ -34,15 +34,13 @@ class MangaPill:MangaParser() {
             if (search.isNotEmpty()) {
                 println("MangaPill : ${search[0]}")
                 source = search[0]
-                live.postValue("Found : ${source.name}")
-                saveData("mangapill_${media.id}", source)
+                saveSource(source,media.id,false)
             }else{
                 val a = search(media.nameRomaji)
                 if (a.isNotEmpty()) {
                     println("MangaPill : ${a[0]}")
                     source = a[0]
-                    live.postValue("Found : ${source.name}")
-                    saveData("mangapill_${media.id}", source)
+                    saveSource(source,media.id,false)
                 }
             }
         }
@@ -65,5 +63,10 @@ class MangaPill:MangaParser() {
             ))
         }
         return response
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
+        live.postValue("${if(selected) "Selected" else "Found"} : ${source.name}")
+        saveData("mangapill_$id", source)
     }
 }

@@ -14,7 +14,7 @@ import kotlinx.serialization.json.jsonObject
 import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
-class MangaDex:MangaParser() {
+class MangaDex(override val name: String="mangadex.org") :MangaParser() {
     private val host = "https://api.mangadex.org"
     private val limit = 100
     override fun getLinkChapters(link: String): MutableMap<String, MangaChapter> {
@@ -60,8 +60,7 @@ class MangaDex:MangaParser() {
             if (search.isNotEmpty()) {
                 println("MangaDex : ${search[0]}")
                 source = search[0]
-                live.postValue("Found : ${source.name}")
-//                saveData("mangadex_${media.id}", source)
+                saveSource(source,media.id,false)
             }
         }
         else{
@@ -87,5 +86,10 @@ class MangaDex:MangaParser() {
             arr.add(Source(id,title,coverURL))
         }
         return arr
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
+        live.postValue("${if(selected) "Selected" else "Found"} : ${source.name}")
+        saveData("mangadex_$id", source)
     }
 }

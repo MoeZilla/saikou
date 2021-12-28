@@ -120,6 +120,7 @@
                     tools:text="@string/get_recommendations" />
 
                 <TextView
+                    android:id="@+id/mangaSourceSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"

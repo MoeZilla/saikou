@@ -5,6 +5,7 @@ import ani.saikou.anime.Episode
 import ani.saikou.anime.source.AnimeParser
 import ani.saikou.media.Media
 import ani.saikou.media.Source
+import ani.saikou.sortByTitle
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import org.jsoup.Jsoup
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.ArrayList
 
-class Twist:AnimeParser() {
+class Twist(override val name: String="twist.moe") :AnimeParser() {
 
     object DecodeTwistSources{
         private val secret = "267041df55ca2b36f2e322d05ee2c9cf".toByteArray()
@@ -79,26 +80,37 @@ class Twist:AnimeParser() {
     }
 
     override fun getEpisodes(media: Media): MutableMap<String, Episode> {
-        val responseList = mutableMapOf<String,Episode>()
         val animeJson = Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()
         if (media.idMAL!=null) {
             val slug = Regex(""""mal_id": ${media.idMAL},(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
-            if (slug!=null) {
-                val slugURL = "https://api.twist.moe/api/anime/$slug/sources"
-                (1..Json.decodeFromString<JsonArray>(
-                    Jsoup.connect(slugURL).ignoreContentType(true).get().body().text()
-                ).size).forEach {
-                    responseList[it.toString()] = Episode(number = it.toString(), link = slugURL)
-                }
-                println("Response Episodes : $responseList")
-                return responseList
-            }
+            println("Loaded : $slug")
+            if (slug!=null) return getSlugEpisodes(slug)
         }
         return mutableMapOf()
     }
 
     override fun search(string: String): ArrayList<Source> {
-        TODO("Not yet implemented")
+        val arr = arrayListOf<Source>()
+        Json.decodeFromString<JsonArray>(Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()).forEach {
+            arr.add(Source(it.jsonObject["slug"]!!.jsonObject["slug"].toString().trim('"'),it.jsonObject["title"].toString().trim('"'),"https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/default.jpg"))
+        }
+        arr.sortByTitle(string)
+        return  ArrayList(arr.subList(0,25))
+    }
+
+    override fun getSlugEpisodes(slug: String): MutableMap<String, Episode> {
+        val responseList = mutableMapOf<String,Episode>()
+        val slugURL = "https://api.twist.moe/api/anime/$slug/sources"
+        (1..Json.decodeFromString<JsonArray>(
+            Jsoup.connect(slugURL).ignoreContentType(true).get().body().text()
+        ).size).forEach {
+            responseList[it.toString()] = Episode(number = it.toString(), link = slugURL)
+        }
+        println("Response Episodes : $responseList")
+        return responseList
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
     }
 }
 

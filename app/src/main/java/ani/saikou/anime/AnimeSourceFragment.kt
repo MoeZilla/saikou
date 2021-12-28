@@ -19,6 +19,7 @@ import ani.saikou.anime.source.AnimeSources
 import ani.saikou.databinding.FragmentAnimeSourceBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
+import ani.saikou.media.SourceSearchDialogFragment
 import ani.saikou.navBarHeight
 import ani.saikou.saveData
 import com.google.android.material.chip.Chip
@@ -106,6 +107,11 @@ class AnimeSourceFragment : Fragment() {
                     2->binding.animeSourceCompact
                     else -> binding.animeSourceList
                 }
+
+                binding.animeSourceSearch.setOnClickListener {
+                    SourceSearchDialogFragment().show(requireActivity().supportFragmentManager,null)
+                }
+
                 selected?.alpha = 1f
                 binding.animeSourceTop.rotation = if (!media.selected!!.recyclerReversed) 90f else -90f
                 binding.animeSourceTop.setOnClickListener {
@@ -137,6 +143,10 @@ class AnimeSourceFragment : Fragment() {
 
                 model.getEpisodes().observe(viewLifecycleOwner,{loadedEpisodes->
                     if(loadedEpisodes!=null) {
+                        binding.animeEpisodesRecycler.adapter = null
+                        binding.animeSourceChipGroup.removeAllViews()
+                        loading=true
+                        binding.animeSourceProgressBar.visibility=View.VISIBLE
                         val episodes = loadedEpisodes[media.selected!!.source]
                         if (episodes != null) {
                             episodes.forEach { (i, episode) ->

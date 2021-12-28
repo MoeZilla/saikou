@@ -24,8 +24,8 @@ import kotlinx.coroutines.launch
 class SelectorDialogFragment : BottomSheetDialogFragment(){
     private var _binding: BottomSheetSelectorBinding? = null
     private val binding get() = _binding!!
-    private lateinit var media:Media
-    private lateinit var episode:Episode
+    private lateinit var media: Media
+    private lateinit var episode: Episode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +116,7 @@ class SelectorDialogFragment : BottomSheetDialogFragment(){
         }
     }
     companion object {
-        fun newInstance(media: Media,episode: Episode): SelectorDialogFragment =
+        fun newInstance(media: Media, episode: Episode): SelectorDialogFragment =
             SelectorDialogFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("media", media)

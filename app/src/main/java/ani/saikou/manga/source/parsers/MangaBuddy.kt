@@ -9,7 +9,7 @@ import ani.saikou.saveData
 import ani.saikou.toastString
 import org.jsoup.Jsoup
 
-class MangaBuddy: MangaParser() {
+class MangaBuddy(override val name: String="mangabuddy.com") : MangaParser() {
 
     override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val arr = mutableMapOf<String, MangaChapter>()
@@ -59,7 +59,7 @@ class MangaBuddy: MangaParser() {
                 println("MangaBuddy : ${search[0]}")
                 source = search[0]
                 live.postValue("Found : ${source.name}")
-                saveData("mangabuddy_${media.id}", source)
+                saveSource(source,media.id)
             }
         }
         else{
@@ -81,5 +81,10 @@ class MangaBuddy: MangaParser() {
             }
         }
         return response
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
+        live.postValue("${if(selected) "Selected" else "Found"} : ${source.name}")
+        saveData("mangabuddy_$id", source)
     }
 }

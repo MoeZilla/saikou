@@ -15,7 +15,8 @@ import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
 @SuppressLint("SetTextI18n")
-class Gogo(private val dub:Boolean=false): AnimeParser(){
+class Gogo(private val dub:Boolean=false, override val name: String = "gogoanime.cm"): AnimeParser(){
+
     private val host = listOf(
         "http://gogoanime.cm"
     )
@@ -72,8 +73,7 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
             var search = search(it)
             if (search.isNotEmpty()) {
                 slug = search[0]
-                live.postValue("Found : ${slug.name}")
-                saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
+                saveSource(slug,media.id,false)
             } else{
                 it = media.nameRomaji+ if (dub) " (Dub)" else ""
                 search = search(it)
@@ -81,8 +81,7 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
                 logger("Gogo : Searching for $it")
                 if (search.isNotEmpty()) {
                     slug = search[0]
-                    live.postValue("Found : ${slug.name}")
-                    saveData("go-go${if(dub) "dub" else ""}_${media.id}", slug)
+                    saveSource(slug,media.id,false)
                 }
             }
         }
@@ -110,7 +109,7 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
         return responseArray
     }
 
-    private fun getSlugEpisodes(slug: String): MutableMap<String, Episode> {
+    override fun getSlugEpisodes(slug: String): MutableMap<String, Episode> {
         val pageBody = Jsoup.connect("${host[0]}/category/$slug").get().body()
         val lastEpisode = pageBody.select("ul#episode_page > li:last-child > a").attr("ep_end").toString()
         val animeId = pageBody.select("input#movie_id").attr("value").toString()
@@ -123,5 +122,10 @@ class Gogo(private val dub:Boolean=false): AnimeParser(){
         }
         println("Response Episodes : $responseArray")
         return responseArray
+    }
+
+    override fun saveSource(source: Source, id: Int, selected: Boolean) {
+        live.postValue("${if(selected) "Selected" else "Found"} : ${source.name}")
+        saveData("go-go${if(dub) "dub" else ""}_$id", source)
     }
 }

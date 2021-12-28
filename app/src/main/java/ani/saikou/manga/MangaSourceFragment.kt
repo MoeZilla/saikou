@@ -18,6 +18,7 @@ import ani.saikou.databinding.FragmentMangaSourceBinding
 import ani.saikou.manga.source.MangaSources
 import ani.saikou.media.Media
 import ani.saikou.media.MediaDetailsViewModel
+import ani.saikou.media.SourceSearchDialogFragment
 import ani.saikou.navBarHeight
 import ani.saikou.saveData
 import com.google.android.material.chip.Chip
@@ -94,6 +95,11 @@ class MangaSourceFragment : Fragment() {
                         })
                         scope.launch { model.loadMangaChapters(media, i) }
                     }
+
+                    binding.mangaSourceSearch.setOnClickListener {
+                        SourceSearchDialogFragment().show(requireActivity().supportFragmentManager,null)
+                    }
+
                     selected = when (media.selected!!.recyclerStyle) {
                         0 -> binding.mangaSourceList
                         1 -> binding.mangaSourceCompact
@@ -122,6 +128,10 @@ class MangaSourceFragment : Fragment() {
                     }
 
                     model.getMangaChapters().observe(viewLifecycleOwner, { loadedChapters ->
+                        binding.mangaSourceRecycler.adapter = null
+                        binding.mangaSourceChipGroup.removeAllViews()
+                        loading=true
+                        binding.mangaSourceProgressBar.visibility=View.VISIBLE
                         if (loadedChapters != null) {
                             val chapters = loadedChapters[media.selected!!.source]
                             if (chapters != null) {
