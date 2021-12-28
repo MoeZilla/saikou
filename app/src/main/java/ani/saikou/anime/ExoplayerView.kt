@@ -113,7 +113,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
         exoPlayer = ExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory)).setTrackSelector(trackSelector).build().apply {
             playWhenReady = isPlayerPlaying
             seekTo(currentWindow, playbackPosition)
-            println(" isPlaying : $isPlayerPlaying \nposition : $playbackPosition\nwindow : $currentWindow")
+//            println(" isPlaying : $isPlayerPlaying \n position : $playbackPosition\n window : $currentWindow")
             setMediaItem(mediaItem)
             prepare()
         }

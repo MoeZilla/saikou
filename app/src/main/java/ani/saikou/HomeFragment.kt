@@ -20,7 +20,6 @@ import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor
 
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
@@ -47,7 +46,7 @@ class HomeFragment : Fragment() {
                 binding.homeUserName.text = Anilist.username
                 binding.homeUserEpisodesWatched.text = Anilist.episodesWatched.toString()
                 binding.homeUserChaptersRead.text = Anilist.chapterRead.toString()
-                Glide.with(requireActivity()).load(Anilist.avatar).into(binding.homeUserAvatar)
+                loadImage(Anilist.avatar,binding.homeUserAvatar)
                 binding.homeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
                 binding.homeUserDataProgressBar.visibility = View.GONE
                 binding.homeUserDataContainer.visibility = View.VISIBLE
@@ -59,7 +58,7 @@ class HomeFragment : Fragment() {
                 scope.launch {
                     //Get userData First
                     if (Anilist.userid == null)
-                        if (Anilist.query.getUserData()) load() else println("Error loading data")
+                        if (Anilist.query.getUserData()) load() else logger("Error loading data")
                     else load()
                     model.load.postValue(true)
                     //get Watching in new Thread

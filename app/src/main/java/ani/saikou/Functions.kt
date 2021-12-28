@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.res.Resources.getSystem
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
@@ -32,14 +31,16 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.media.Media
 import ani.saikou.media.Source
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.squareup.picasso.Picasso
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.jsoup.Jsoup
 import java.io.*
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+import com.squareup.picasso.OkHttp3Downloader
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 
 const val STATE_RESUME_WINDOW = "resumeWindow"
 const val STATE_RESUME_POSITION = "resumePosition"
@@ -303,13 +304,29 @@ fun ArrayList<Source>.sortByTitle(string: String){
     }
 }
 
-fun loadImage(url:String?,imageView: ImageView){
-    val a = currActivity()
-    if (a!=null)
-        Glide.with(a)
-        .load(Uri.parse(url))
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(imageView)
+fun loadImage(url:String?,imageView: ImageView,referer:String?=null){
+    if(referer==null) Picasso.get().load(url).into(imageView)
+    else {
+        val a = currActivity()
+        if (a!=null && !a.isDestroyed) {
+            val client = OkHttpClient.Builder()
+                .cache(Cache(
+                    File(a.cacheDir, "http_cache"),
+                    50L * 1024L * 1024L
+                ))
+                .addInterceptor { chain ->
+                    val newRequest = chain.request().newBuilder()
+                        .addHeader("referer", referer)
+                        .build()
+                    chain.proceed(newRequest)
+                }
+                .build()
+
+            Picasso.Builder(a)
+                .downloader(OkHttp3Downloader(client))
+                .build().load(url).into(imageView)
+        }
+    }
 }
 
 class App: MultiDexApplication() {

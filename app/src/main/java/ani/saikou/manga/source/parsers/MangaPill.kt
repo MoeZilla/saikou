@@ -1,6 +1,7 @@
 package ani.saikou.manga.source.parsers
 
 import ani.saikou.loadData
+import ani.saikou.logger
 import ani.saikou.manga.MangaChapter
 import ani.saikou.manga.source.MangaParser
 import ani.saikou.media.Media
@@ -32,13 +33,13 @@ class MangaPill(override val name: String="mangapill.com") :MangaParser() {
             live.postValue("Searching : ${media.getMangaName()}")
             val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
-                println("MangaPill : ${search[0]}")
+                logger("MangaPill : ${search[0]}")
                 source = search[0]
                 saveSource(source,media.id,false)
             }else{
                 val a = search(media.nameRomaji)
                 if (a.isNotEmpty()) {
-                    println("MangaPill : ${a[0]}")
+                    logger("MangaPill : ${a[0]}")
                     source = a[0]
                     saveSource(source,media.id,false)
                 }
@@ -55,7 +56,7 @@ class MangaPill(override val name: String="mangapill.com") :MangaParser() {
         val response = arrayListOf<Source>()
         Jsoup.connect("https://mangapill.com/quick-search?q=$string").get().select(".bg-card").forEach{
             val text2 = it.select(".text-sm").text()
-            println("AAA : ${it.select(".flex .flex-col").text().split("\n")[0]}")
+//            println("AAA : ${it.select(".flex .flex-col").text().split("\n")[0]}")
             response.add(Source(
                 link = it.attr("abs:href"),
                 name = it.select(".flex .flex-col").text().replace(text2,"").trim(),

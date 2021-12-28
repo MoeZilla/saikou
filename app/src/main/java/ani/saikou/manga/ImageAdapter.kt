@@ -1,28 +1,23 @@
 package ani.saikou.manga
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.currActivity
 import ani.saikou.databinding.ItemImageBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.squareup.picasso.Callback
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
+import okhttp3.Cache
+import okhttp3.OkHttpClient
+import java.io.File
 
 class ImageAdapter(
 private val arr: ArrayList<String>,
 private val referer:String?=null
 ): RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
-
-    private val sizes = mutableMapOf<Int,Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,22 +27,29 @@ private val referer:String?=null
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val binding = holder.binding
-//        if (sizes[holder.bindingAdapterPosition]!=null) binding.root.layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, sizes[holder.bindingAdapterPosition]!!)
         val a = currActivity()
-        if (a!=null) Glide.with(a)
-            .load(GlideUrl(
-                arr[position],
-                if (referer!=null) LazyHeaders.Builder().addHeader("referer", referer).build() else LazyHeaders.Builder().build()
-            )).dontTransform()
-            .listener(object:RequestListener<Drawable>{
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean = false
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    binding.imgProgProgress.visibility = View.GONE
-                    sizes[holder.bindingAdapterPosition] = binding.root.height
-                    return false
+        if (a!=null && !a.isDestroyed) {
+            val client = OkHttpClient.Builder()
+                .cache(Cache(
+                    File(a.cacheDir, "http_cache"),
+                    50L * 1024L * 1024L
+                ))
+                .addInterceptor { chain ->
+                    val newRequest = chain.request().newBuilder()
+                        .addHeader("referer", referer?:"")
+                        .build()
+                    chain.proceed(newRequest)
                 }
-            })
-            .into(binding.imgProgImage)
+                .build()
+            Picasso.Builder(a)
+                .downloader(OkHttp3Downloader(client))
+                .build()
+                .load(arr[position])
+                .into(binding.imgProgImage, object : Callback {
+                    override fun onSuccess() { binding.imgProgProgress.visibility = View.GONE }
+                    override fun onError(e: Exception) {}
+                })
+        }
     }
 
     override fun getItemCount(): Int = arr.size

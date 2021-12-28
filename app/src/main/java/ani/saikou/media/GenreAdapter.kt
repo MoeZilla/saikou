@@ -12,7 +12,6 @@ import ani.saikou.anilist.Anilist
 import ani.saikou.databinding.ItemGenreBinding
 import ani.saikou.loadImage
 import ani.saikou.px
-import com.bumptech.glide.Glide
 
 class GenreAdapter(
     private val genres: ArrayList<String>,

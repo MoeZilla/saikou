@@ -63,13 +63,12 @@ class NineAnime(private val dub:Boolean=false, override val name: String = "9Ani
     }
 
     override fun search(string: String): ArrayList<Source> {
-        //THIS IS LIKE THE WORST SEARCH ENGINE OF AN WEBSITE
+        //THIS IS LIKE THE WORST SEARCH ENGINE OF A WEBSITE
         var url = URLEncoder.encode(string, "utf-8")
         if(string.startsWith("$!")){
             val a = string.replace("$!","").split(" | ")
             url = URLEncoder.encode(a[0], "utf-8")+a[1]
         }
-        println("${host[0]}filter?keyword=$url")
         val responseArray = arrayListOf<Source>()
         Jsoup.connect("${host[0]}filter?keyword=$url").get()
             .select("#main-wrapper .film_list-wrap > .flw-item .film-poster").forEach{
@@ -90,7 +89,7 @@ class NineAnime(private val dub:Boolean=false, override val name: String = "9Ani
                 responseArray[num] = Episode(number = num,link = i.attr("href").trim())
             }
         }
-        println("Response Episodes : $responseArray")
+        logger("Response Episodes : $responseArray")
         return responseArray
     }
 

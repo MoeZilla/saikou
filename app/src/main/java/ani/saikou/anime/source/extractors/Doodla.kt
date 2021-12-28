@@ -7,12 +7,12 @@ import org.jsoup.Jsoup
 class Doodla : Extractor() {
     // works, need cloudflare bypass
     override fun getStreamLinks(name: String, url: String): Episode.StreamLinks {
-        println(name)
+//        println(name)
         val stockPage = Jsoup.connect(url.replace("/e/","/d/")).get()
         val size = stockPage.select("div.size").text().toInt()
-        println(
-            Jsoup.connect(stockPage.select(".download-content > a").attr("href")).get().select(".container a").attr("onclick").split("'")[1]
-        )
+//        println(
+//            Jsoup.connect(stockPage.select(".download-content > a").attr("href")).get().select(".container a").attr("onclick").split("'")[1]
+//        )
 
         return Episode.StreamLinks("", listOf(Episode.Quality("", "", size)), "lol")
     }

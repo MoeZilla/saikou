@@ -1,6 +1,7 @@
 package ani.saikou.manga.source.parsers
 
 import ani.saikou.loadData
+import ani.saikou.logger
 import ani.saikou.manga.MangaChapter
 import ani.saikou.manga.source.MangaParser
 import ani.saikou.media.Media
@@ -58,7 +59,7 @@ class MangaDex(override val name: String="mangadex.org") :MangaParser() {
             live.postValue("Searching : ${media.getMangaName()}")
             val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
-                println("MangaDex : ${search[0]}")
+                logger("MangaDex : ${search[0]}")
                 source = search[0]
                 saveSource(source,media.id,false)
             }

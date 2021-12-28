@@ -1,6 +1,7 @@
 package ani.saikou.manga.source.parsers
 
 import ani.saikou.loadData
+import ani.saikou.logger
 import ani.saikou.manga.MangaChapter
 import ani.saikou.manga.source.MangaParser
 import ani.saikou.media.Media
@@ -10,7 +11,9 @@ import ani.saikou.toastString
 import org.jsoup.Jsoup
 
 class MangaBuddy(override val name: String="mangabuddy.com") : MangaParser() {
-
+     init {
+         referer = "https://mangabuddy.com/"
+     }
     override fun getLinkChapters(link:String):MutableMap<String,MangaChapter>{
         val arr = mutableMapOf<String, MangaChapter>()
         try {
@@ -56,7 +59,7 @@ class MangaBuddy(override val name: String="mangabuddy.com") : MangaParser() {
             live.postValue("Searching : ${media.getMangaName()}")
             val search = search(media.getMangaName())
             if (search.isNotEmpty()) {
-                println("MangaBuddy : ${search[0]}")
+                logger("MangaBuddy : ${search[0]}")
                 source = search[0]
                 live.postValue("Found : ${source.name}")
                 saveSource(source,media.id)
@@ -76,7 +79,7 @@ class MangaBuddy(override val name: String="mangabuddy.com") : MangaParser() {
                 response.add(Source(
                     link = it.attr("href"),
                     name = it.attr("title"),
-                    cover = "https:"+it.select("img").attr("data-src"))
+                    cover = it.select("img").attr("data-src"))
                 )
             }
         }

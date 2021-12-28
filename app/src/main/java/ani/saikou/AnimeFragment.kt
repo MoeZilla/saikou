@@ -29,7 +29,6 @@ import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentAnimeBinding
 import ani.saikou.media.MediaAdaptor
 import ani.saikou.media.MediaLargeAdaptor
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Runnable
 import kotlin.math.abs
@@ -75,7 +74,7 @@ class AnimeFragment : Fragment() {
             animeRefresh.postValue(true)
         }
         if(Anilist.avatar!=null){
-            Glide.with(requireActivity()).load(Anilist.avatar).into(binding.animeUserAvatar)
+            loadImage(Anilist.avatar,binding.animeUserAvatar)
             binding.animeUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 
@@ -118,7 +117,7 @@ class AnimeFragment : Fragment() {
                 binding.animeTrendingViewPager.setPageTransformer(a)
                 trendHandler = Handler(Looper.getMainLooper())
                 trendRun = Runnable {
-                    binding.animeTrendingViewPager.currentItem = binding.animeTrendingViewPager.currentItem+1
+                    if (_binding!=null) binding.animeTrendingViewPager.currentItem = binding.animeTrendingViewPager.currentItem+1
                 }
                 binding.animeTrendingViewPager.registerOnPageChangeCallback(
                     object : ViewPager2.OnPageChangeCallback(){
@@ -173,7 +172,7 @@ class AnimeFragment : Fragment() {
                                 else binding.animePopularProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true)
+                                binding.animePopularRecyclerView.post { binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true) }
                                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
                             }
@@ -190,9 +189,9 @@ class AnimeFragment : Fragment() {
                     model.loadTrending()
                     model.loadUpdated()
                     popularModel.loadSearch("ANIME",sort="POPULARITY_DESC")
-                    requireActivity().runOnUiThread {
+                    MainScope().launch {
                         animeRefresh.postValue(false)
-                        binding.animeRefresh.isRefreshing = false
+                        _binding?.animeRefresh?.isRefreshing = false
                     }
                 }
             }

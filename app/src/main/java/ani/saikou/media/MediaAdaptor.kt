@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ani.saikou.R
 import ani.saikou.databinding.ItemMediaCompactBinding
 import ani.saikou.loadImage
-import com.bumptech.glide.Glide
 
 import java.io.Serializable
 

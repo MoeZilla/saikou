@@ -3,6 +3,7 @@ package ani.saikou.anime.source.parsers
 
 import ani.saikou.anime.Episode
 import ani.saikou.anime.source.AnimeParser
+import ani.saikou.logger
 import ani.saikou.media.Media
 import ani.saikou.media.Source
 import ani.saikou.sortByTitle
@@ -83,7 +84,7 @@ class Twist(override val name: String="twist.moe") :AnimeParser() {
         val animeJson = Jsoup.connect("https://api.twist.moe/api/anime").ignoreContentType(true).get().body().text()
         if (media.idMAL!=null) {
             val slug = Regex(""""mal_id": ${media.idMAL},(.|\n)+?"slug": "(.+?)"""").find(animeJson)?.destructured?.component2()
-            println("Loaded : $slug")
+            logger("Twist : Loaded : $slug")
             if (slug!=null) return getSlugEpisodes(slug)
         }
         return mutableMapOf()
@@ -106,7 +107,7 @@ class Twist(override val name: String="twist.moe") :AnimeParser() {
         ).size).forEach {
             responseList[it.toString()] = Episode(number = it.toString(), link = slugURL)
         }
-        println("Response Episodes : $responseList")
+        logger("Twist Response Episodes : $responseList")
         return responseList
     }
 

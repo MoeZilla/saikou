@@ -29,11 +29,8 @@ import ani.saikou.anilist.AnilistSearch
 import ani.saikou.databinding.FragmentMangaBinding
 import ani.saikou.media.MediaAdaptor
 import ani.saikou.media.MediaLargeAdaptor
-import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import kotlin.math.abs
 
 class MangaFragment : Fragment() {
@@ -77,7 +74,7 @@ class MangaFragment : Fragment() {
             animeRefresh.postValue(true)
         }
         if(Anilist.avatar!=null){
-            Glide.with(requireActivity()).load(Anilist.avatar).into(binding.mangaUserAvatar)
+            loadImage(Anilist.avatar,binding.mangaUserAvatar)
             binding.mangaUserAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 
@@ -120,7 +117,7 @@ class MangaFragment : Fragment() {
                 binding.mangaTrendingViewPager.setPageTransformer(a)
                 trendHandler = Handler(Looper.getMainLooper())
                 trendRun = Runnable {
-                    binding.mangaTrendingViewPager.currentItem = binding.mangaTrendingViewPager.currentItem+1
+                    if (_binding!=null) binding.mangaTrendingViewPager.currentItem = binding.mangaTrendingViewPager.currentItem+1
                 }
                 binding.mangaTrendingViewPager.registerOnPageChangeCallback(
                     object : ViewPager2.OnPageChangeCallback(){
@@ -175,7 +172,7 @@ class MangaFragment : Fragment() {
                                     else binding.mangaPopularProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.mangaPopularRecyclerView.suppressLayout(true)
+                                binding.mangaPopularRecyclerView.post { binding.mangaPopularRecyclerView.suppressLayout(true) }
                                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
                             }
@@ -192,9 +189,9 @@ class MangaFragment : Fragment() {
                     model.loadTrending()
                     model.loadTrendingNovel()
                     popularModel.loadSearch("MANGA",sort="POPULARITY_DESC")
-                    requireActivity().runOnUiThread {
-                        mangaRefresh.postValue(false)
-                        binding.mangaRefresh.isRefreshing = false
+                    MainScope().launch {
+                        animeRefresh.postValue(false)
+                        _binding?.mangaRefresh?.isRefreshing = false
                     }
                 }
             }

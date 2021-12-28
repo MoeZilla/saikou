@@ -83,7 +83,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment(){
                 var progressBackup : String? = null
                 binding.mediaListStatus.setOnItemClickListener { _, _, i, _ ->
                     if (i==2 && total!=null) {
-                        println("Com : ${start.date} ${end.date}")
+//                        println("Com : ${start.date} ${end.date}")
                         startBackupDate = start.date
                         endBackupDate = end.date
                         progressBackup = binding.mediaListProgress.text.toString()
@@ -96,7 +96,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment(){
                             start.date = startBackupDate!!
                         }
                         if (endBackupDate!=null) {
-                            println("back : $endBackupDate")
+//                            println("back : $endBackupDate")
                             binding.mediaListEnd.setText(endBackupDate.toString())
                             end.date = endBackupDate!!
                         }

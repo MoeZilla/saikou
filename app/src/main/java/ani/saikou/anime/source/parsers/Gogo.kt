@@ -17,6 +17,7 @@ import org.jsoup.Jsoup
 @SuppressLint("SetTextI18n")
 class Gogo(private val dub:Boolean=false, override val name: String = "gogoanime.cm"): AnimeParser(){
 
+
     private val host = listOf(
         "http://gogoanime.cm"
     )
@@ -45,7 +46,7 @@ class Gogo(private val dub:Boolean=false, override val name: String = "gogoanime
             val linkForVideos = arrayListOf<Episode.StreamLinks?>()
             withContext(Dispatchers.Default) {
                 Jsoup.connect(episode.link!!).ignoreHttpErrors(true).get().select("div.anime_muti_link > ul > li:not(li.anime)").forEach {
-                    println(it.select("a").attr("data-video"))
+//                    println(it.select("a").attr("data-video"))
                     launch {
                         val directLinks = directLinkify(
                             it.select("a").text().replace("Choose this server", ""),
@@ -97,7 +98,7 @@ class Gogo(private val dub:Boolean=false, override val name: String = "gogoanime
 
     override fun search(string: String): ArrayList<Source> {
         // make search and get all links
-        println("Searching for : $string")
+        logger("Searching for : $string")
         val responseArray = arrayListOf<Source>()
         Jsoup.connect("${host[0]}/search.html?keyword=$string").get().body()
             .select(".last_episodes > ul > li div.img > a").forEach {
@@ -120,7 +121,7 @@ class Gogo(private val dub:Boolean=false, override val name: String = "gogoanime
             val num = it.select(".name").text().replace("EP","").trim()
             responseArray[num] = Episode(number = num,link = host[0]+it.attr("href").trim())
         }
-        println("Response Episodes : $responseArray")
+        logger("Response Episodes : $responseArray")
         return responseArray
     }
 

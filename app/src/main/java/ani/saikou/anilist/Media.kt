@@ -13,7 +13,7 @@ class Media: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         val data: Uri? = intent?.data
 //        Toast.makeText(this,"data : ${data?.pathSegments}", Toast.LENGTH_SHORT).show()
-        if (data?.host!="anilist.co") loadIsMAL = true;println("AH MAL? $data")
+        if (data?.host!="anilist.co") loadIsMAL = true
         if (data?.pathSegments?.get(1)!=null) loadMedia = data.pathSegments?.get(1)!!.toIntOrNull()
         startMainActivity(this)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

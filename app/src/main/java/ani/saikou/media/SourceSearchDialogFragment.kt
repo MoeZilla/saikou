@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.math.MathUtils.clamp
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,10 +29,12 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment(){
     private val binding get() = _binding!!
     private val scope = CoroutineScope(Dispatchers.Default)
     lateinit var model : MediaDetailsViewModel
+    private var searched = false
     var anime = true
     var i : Int?=null
     var id : Int?=null
     var media : Media? = null
+    var referer: String?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomSheetSourceSearchBinding.inflate(inflater, container, false)
@@ -57,6 +60,7 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment(){
                 i = media!!.selected!!.source
                 if (media!!.anime!=null){
                     val source = AnimeSources[i!!]!!
+                    referer = source.referer
                     binding.searchSourceTitle.text = source.name
                     binding.searchBarText.setText(media!!.getMangaName())
                     fun search(){
@@ -76,10 +80,12 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment(){
                         }
                     }
                     binding.searchBar.setEndIconOnClickListener{ search() }
-                    search()
+                    if (!searched) search()
+
                 }else if(media!!.manga!=null){
                     anime = false
                     val source = MangaSources[i!!]!!
+                    referer = source.referer
                     binding.searchSourceTitle.text = source.name
                     binding.searchBarText.setText(media!!.getMangaName())
                     fun search(){
@@ -99,17 +105,17 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment(){
                         }
                     }
                     binding.searchBar.setEndIconOnClickListener{ search() }
-                    search()
+                    if (!searched) search()
                 }
-
-            }
-        })
-        model.sources.observe(viewLifecycleOwner,{
-            if (it!=null) {
-                binding.searchRecyclerView.visibility = View.VISIBLE
-                binding.searchProgress.visibility = View.GONE
-                binding.searchRecyclerView.adapter = if (anime) AnimeSourceAdapter(it,model,i!!,media!!.id,this,scope) else MangaSourceAdapter(it,model,i!!,media!!.id,this,scope)
-                binding.searchRecyclerView.layoutManager = GridLayoutManager(requireActivity(),requireActivity().resources.displayMetrics.widthPixels / 124f.px)
+                searched = true
+                model.sources.observe(viewLifecycleOwner,{ j->
+                    if (j!=null) {
+                        binding.searchRecyclerView.visibility = View.VISIBLE
+                        binding.searchProgress.visibility = View.GONE
+                        binding.searchRecyclerView.adapter = if (anime) AnimeSourceAdapter(j,model,i!!,media!!.id,this,scope,referer) else MangaSourceAdapter(j,model,i!!,media!!.id,this,scope,referer)
+                        binding.searchRecyclerView.layoutManager = GridLayoutManager(requireActivity(),clamp(requireActivity().resources.displayMetrics.widthPixels / 124f.px,1,4))
+                    }
+                })
             }
         })
     }

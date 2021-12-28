@@ -16,7 +16,6 @@ import androidx.viewpager2.widget.ViewPager2
 import ani.saikou.R
 import ani.saikou.databinding.ItemMediaLargeBinding
 import ani.saikou.loadImage
-import com.bumptech.glide.Glide
 import java.io.Serializable
 
 class MediaLargeAdaptor(
