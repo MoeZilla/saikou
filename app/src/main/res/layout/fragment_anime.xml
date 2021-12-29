@@ -258,20 +258,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <androidx.recyclerview.widget.RecyclerView
+                <ani.saikou.FadingEdgeRecyclerView
                     android:id="@+id/animePopularRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="true"
-                    android:paddingStart="8dp"
+                    android:requiresFadingEdge="vertical"
+                    android:padding="8dp"
                     tools:itemCount="4"
                     tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/item_media_large"
-                    tools:orientation="vertical"
-                    android:paddingEnd="8dp">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    tools:orientation="vertical" />
 
                 <ProgressBar
                     android:id="@+id/animePopularProgress"

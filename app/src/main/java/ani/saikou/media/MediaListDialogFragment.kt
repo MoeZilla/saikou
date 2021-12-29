@@ -11,6 +11,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import ani.saikou.*
 import ani.saikou.anilist.Anilist
+import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.databinding.BottomSheetMediaListBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -124,7 +125,8 @@ class MediaListDialogFragment : BottomSheetDialogFragment(){
                         if (end.date.year!=null) end.date.getEpoch() else null,
                         )
                         requireActivity().runOnUiThread {
-                            homeRefresh.postValue(true)
+                            val m : AnilistHomeViewModel by activityViewModels()
+                            m.homeRefresh.postValue(true)
                             if (binding.mediaListScore.text.toString()!="") model.userScore.postValue(binding.mediaListScore.text.toString().toDouble()*10)
                             if (binding.mediaListProgress.text.toString()!="") model.userProgress.postValue(binding.mediaListProgress.text.toString().toInt())
                             model.userStatus.postValue(binding.mediaListStatus.text.toString())

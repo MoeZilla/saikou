@@ -1,12 +1,14 @@
 package ani.saikou
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,6 +21,7 @@ import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.databinding.FragmentHomeBinding
 import ani.saikou.media.Media
 import ani.saikou.media.MediaAdaptor
+import ani.saikou.user.ListActivity
 
 import kotlinx.coroutines.*
 
@@ -53,7 +56,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        homeRefresh.observe(viewLifecycleOwner, {
+        model.homeRefresh.observe(viewLifecycleOwner, {
             if (it) {
                 scope.launch {
                     //Get userData First
@@ -66,15 +69,15 @@ class HomeFragment : Fragment() {
                     //get Reading in new Thread
                     val b = async { model.setMangaContinue() }
                     // get genres and respective images
-                    val c = async { Anilist.query.genreCollection() }
+                    val c = async { model.setListImages() }
                     //get List Images in current Thread(idle)
-                    model.setListImages()
+
                     //get Recommended in current Thread(idle)
                     model.setRecommendation()
 
                     awaitAll(a, b, c)
                     requireActivity().runOnUiThread {
-                        homeRefresh.postValue(false)
+                        model.homeRefresh.postValue(false)
                         binding.homeRefresh.isRefreshing = false
                     }
                 }
@@ -104,7 +107,7 @@ class HomeFragment : Fragment() {
         binding.homeRefresh.setSlingshotDistance(statusBarHeight+128)
         binding.homeRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.homeRefresh.setOnRefreshListener {
-            homeRefresh.postValue(true)
+            model.homeRefresh.postValue(true)
         }
 
         //UserData
@@ -118,6 +121,24 @@ class HomeFragment : Fragment() {
             if (it.isNotEmpty()) {
                 loadImage(it[0] ?: "https://bit.ly/31bsIHq",binding.homeAnimeListImage)
                 loadImage(it[1] ?: "https://bit.ly/2ZGfcuG",binding.homeMangaListImage)
+            }
+            binding.homeAnimeList.setOnClickListener {
+                ContextCompat.startActivity(
+                    requireActivity(), Intent(requireActivity(), ListActivity::class.java)
+                        .putExtra("anime",true)
+                        .putExtra("userId",Anilist.userid)
+                        .putExtra("username",Anilist.username)
+                    ,null
+                )
+            }
+            binding.homeMangaList.setOnClickListener {
+                ContextCompat.startActivity(
+                    requireActivity(), Intent(requireActivity(), ListActivity::class.java)
+                        .putExtra("anime",false)
+                        .putExtra("userId",Anilist.userid)
+                        .putExtra("username",Anilist.username)
+                    ,null
+                )
             }
         })
 

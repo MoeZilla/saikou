@@ -7,8 +7,7 @@ import ani.saikou.loadIsMAL
 import ani.saikou.loadMedia
 import ani.saikou.startMainActivity
 
-
-class Media: AppCompatActivity()  {
+class UrlMedia: AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val data: Uri? = intent?.data

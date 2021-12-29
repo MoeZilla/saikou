@@ -28,7 +28,9 @@ object Kitsu {
         val result = getKitsuData(query)
         logger("Kitsu : result=$result",print)
         var arr :  MutableMap<String,Episode>? = null
-        val node : JsonElement? = Json.decodeFromString<JsonObject>(result).jsonObject["data"]!!.jsonObject["searchAnimeByTitle"]!!.jsonObject["nodes"]
+        val json = Json.decodeFromString<JsonObject>(result)
+        if(json.containsKey("data")){
+            val node : JsonElement? = json.jsonObject["data"]!!.jsonObject["searchAnimeByTitle"]!!.jsonObject["nodes"]
             if (node!=null){ if (!node.jsonArray.isEmpty()){
                 logger("Kitsu : Not Empty",print)
                 val episodes : JsonElement? = node.jsonArray[0].jsonObject["episodes"]!!.jsonObject["nodes"]
@@ -54,7 +56,7 @@ object Kitsu {
                         logger("Kitsu : arr[$i] = ${arr[i]}",print)
                     }
                 }
-            }
+            } }
         }
         return arr
     }

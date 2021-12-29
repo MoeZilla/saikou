@@ -118,8 +118,9 @@
                 android:id="@+id/itemCompactTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
                 android:fontFamily="@font/poppins_bold"
+                android:maxLines="3"
                 android:transitionName="mediaTitle"
                 tools:text="@string/slogan" />
 

@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.saikou.*
 import ani.saikou.anilist.Anilist
+import ani.saikou.anilist.AnilistHomeViewModel
 import ani.saikou.anime.AnimeSourceFragment
 import ani.saikou.databinding.ActivityMediaBinding
 import ani.saikou.manga.MangaSourceFragment
@@ -215,7 +216,8 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                         media.isFav = !media.isFav
                         clicked = media.isFav
                         scope.launch { Anilist.mutation.toggleFav(media.anime!=null,media.id) }
-                        homeRefresh.postValue(true)
+                        val model : AnilistHomeViewModel by viewModels()
+                        model.homeRefresh.postValue(true)
                     }
                     else {
                         media.notify = !media.notify

@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import ani.saikou.*
 import ani.saikou.databinding.ActivityExoplayerBinding
 import com.google.android.exoplayer2.*
@@ -51,8 +54,7 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
 
         val episode:Episode = intent.getSerializableExtra("ep")!! as Episode
 
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = View.GONE
+        hideSystemBars()
 
         playerView = findViewById(R.id.player_view)
         exoQuality = playerView.findViewById(R.id.exo_quality)
@@ -100,6 +102,14 @@ class ExoplayerView : AppCompatActivity(), Player.Listener {
             isPlayerPlaying = savedInstanceState.getBoolean(STATE_PLAYER_PLAYING)
         }
         initPlayer()
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController = ViewCompat.getWindowInsetsController(window.decorView) ?: return
+        // Configure the behavior of the hidden system bars
+        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        // Hide both the status bar and the navigation bar
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun initPlayer(){

@@ -55,23 +55,25 @@ class AnimeFragment : Fragment() {
         binding.animeScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
             if(!v.canScrollVertically(1)) {
                 binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(false)
+                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.bg)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",0f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",0f).setDuration(200).start()
             }
             if(!v.canScrollVertically(-1)){
                 binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true)
+                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.status)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
             }
         })
 
-        binding.animePopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
+        binding.animePopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight-80f.px }
         binding.animePopularProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.animePopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
         binding.animeRefresh.setSlingshotDistance(statusBarHeight+128)
         binding.animeRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.animeRefresh.setOnRefreshListener {
-            animeRefresh.postValue(true)
+            model.animeRefresh.postValue(true)
         }
         if(Anilist.avatar!=null){
             loadImage(Anilist.avatar,binding.animeUserAvatar)
@@ -172,7 +174,11 @@ class AnimeFragment : Fragment() {
                                 else binding.animePopularProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.animePopularRecyclerView.post { binding.animePopularRecyclerView.requestDisallowInterceptTouchEvent(true) }
+                                _binding?.animePopularRecyclerView?.post {
+                                    val a = _binding
+                                    a?.animePopularRecyclerView?.requestDisallowInterceptTouchEvent(true)
+                                }
+                                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.status)
                                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
                             }
@@ -183,14 +189,14 @@ class AnimeFragment : Fragment() {
             }
         })
 
-        animeRefresh.observe(viewLifecycleOwner,{
+        model.animeRefresh.observe(viewLifecycleOwner,{
             if(it) {
                 scope.launch {
                     model.loadTrending()
                     model.loadUpdated()
                     popularModel.loadSearch("ANIME",sort="POPULARITY_DESC")
-                    MainScope().launch {
-                        animeRefresh.postValue(false)
+                    activity?.runOnUiThread {
+                        model.animeRefresh.postValue(false)
                         _binding?.animeRefresh?.isRefreshing = false
                     }
                 }

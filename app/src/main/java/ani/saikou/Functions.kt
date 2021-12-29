@@ -65,17 +65,15 @@ fun currActivity():Activity?{
 var loadMedia:Int?=null
 var loadIsMAL=false
 
-var homeRefresh = MutableLiveData(true)
-var animeRefresh = MutableLiveData(true)
-var mangaRefresh = MutableLiveData(true)
+
 
 fun logger(e:Any?,print:Boolean=true){
     if(buildDebug && print)
         println(e)
 }
 
-fun saveData(fileName:String,data:Any){
-    val a = currActivity()
+fun saveData(fileName:String,data:Any,activity: Activity?=null){
+    val a = activity?: currActivity()
     if (a!=null) {
         val fos: FileOutputStream = a.openFileOutput(fileName, Context.MODE_PRIVATE)
         val os = ObjectOutputStream(fos)
@@ -86,16 +84,17 @@ fun saveData(fileName:String,data:Any){
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> loadData(fileName:String): T? {
-    val a = currActivity()
-    if (fileName in a?.fileList()!!){
-        val fileIS: FileInputStream = a.openFileInput(fileName)
-        val objIS = ObjectInputStream(fileIS)
-        val data = objIS.readObject() as T
-        objIS.close()
-        fileIS.close()
-        return data
-    }
+fun <T> loadData(fileName:String,activity: Activity?=null): T? {
+    val a = activity?: currActivity()
+    if (a?.fileList() != null)
+        if (fileName in a.fileList()){
+            val fileIS: FileInputStream = a.openFileInput(fileName)
+            val objIS = ObjectInputStream(fileIS)
+            val data = objIS.readObject() as T
+            objIS.close()
+            fileIS.close()
+            return data
+        }
     return null
 }
 
@@ -103,11 +102,13 @@ fun initActivity(a: Activity,view:View?=null) {
     val window = a.window
     WindowCompat.setDecorFitsSystemWindows(window, false)
     if (view != null) {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+        println("$view")
+        val windowInsets = ViewCompat.getRootWindowInsets(window.decorView.findViewById(android.R.id.content))
+        if (windowInsets!=null) {
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             statusBarHeight = insets.top
             navBarHeight = insets.bottom
-            WindowInsetsCompat.CONSUMED
+            println("$insets")
         }
     }
 }
@@ -216,7 +217,8 @@ fun getMalMedia(media:Media) : Media{
 }
 
 fun toastString(s: String?){
-    currActivity()?.runOnUiThread { Toast.makeText(currActivity(), s, Toast.LENGTH_SHORT).show() }
+    currActivity()?.runOnUiThread { Toast.makeText(currActivity(), s, Toast.LENGTH_LONG).show() }
+//    logger(s)
 }
 
 class ZoomOutPageTransformer(private val bottom:Boolean=false) : ViewPager2.PageTransformer {

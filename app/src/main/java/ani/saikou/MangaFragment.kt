@@ -54,24 +54,26 @@ class MangaFragment : Fragment() {
 
         binding.mangaScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
             if(!v.canScrollVertically(1)) {
-                binding.mangaPopularRecyclerView.suppressLayout(false)
+                binding.mangaPopularRecyclerView.requestDisallowInterceptTouchEvent(false)
+                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.bg)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",0f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",0f).setDuration(200).start()
             }
             if(!v.canScrollVertically(-1)){
-                binding.mangaPopularRecyclerView.suppressLayout(true)
+                binding.mangaPopularRecyclerView.requestDisallowInterceptTouchEvent(true)
+                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.status)
                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
             }
         })
 
-        binding.mangaPopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
+        binding.mangaPopularRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight-80f.px }
         binding.mangaPopularProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.mangaPopularRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
         binding.mangaRefresh.setSlingshotDistance(statusBarHeight+128)
         binding.mangaRefresh.setProgressViewEndTarget(false, statusBarHeight+128)
         binding.mangaRefresh.setOnRefreshListener {
-            animeRefresh.postValue(true)
+            model.mangaRefresh.postValue(true)
         }
         if(Anilist.avatar!=null){
             loadImage(Anilist.avatar,binding.mangaUserAvatar)
@@ -172,7 +174,11 @@ class MangaFragment : Fragment() {
                                     else binding.mangaPopularProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.mangaPopularRecyclerView.post { binding.mangaPopularRecyclerView.suppressLayout(true) }
+                                _binding?.mangaPopularRecyclerView?.post {
+                                    val a = _binding
+                                    a?.mangaPopularRecyclerView?.requestDisallowInterceptTouchEvent(true)
+                                }
+                                activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.status)
                                 ObjectAnimator.ofFloat(bottomBar,"scaleX",1f).setDuration(200).start()
                                 ObjectAnimator.ofFloat(bottomBar,"scaleY",1f).setDuration(200).start()
                             }
@@ -183,14 +189,14 @@ class MangaFragment : Fragment() {
             }
         })
 
-        mangaRefresh.observe(viewLifecycleOwner,{
+        model.mangaRefresh.observe(viewLifecycleOwner,{
             if(it) {
                 scope.launch {
                     model.loadTrending()
                     model.loadTrendingNovel()
                     popularModel.loadSearch("MANGA",sort="POPULARITY_DESC")
-                    MainScope().launch {
-                        animeRefresh.postValue(false)
+                    activity?.runOnUiThread {
+                        model.mangaRefresh.postValue(false)
                         _binding?.mangaRefresh?.isRefreshing = false
                     }
                 }

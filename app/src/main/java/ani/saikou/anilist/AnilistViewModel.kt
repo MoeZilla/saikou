@@ -23,6 +23,9 @@ class AnilistHomeViewModel : ViewModel() {
     fun setRecommendation() = recommendation.postValue(Anilist.query.recommendations())
 
     val load : MutableLiveData<Boolean> = MutableLiveData(false)
+    val genres : MutableLiveData<Boolean> = MutableLiveData(false)
+
+    var homeRefresh = MutableLiveData(true)
 }
 
 class AnilistAnimeViewModel : ViewModel() {
@@ -34,6 +37,9 @@ class AnilistAnimeViewModel : ViewModel() {
     private val updated: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
     fun getUpdated(): LiveData<ArrayList<Media>> = updated
     fun loadUpdated() = updated.postValue(Anilist.query.recentlyUpdated())
+
+    var animeRefresh = MutableLiveData(true)
+
 }
 
 class AnilistMangaViewModel : ViewModel() {
@@ -45,6 +51,8 @@ class AnilistMangaViewModel : ViewModel() {
     private val updated: MutableLiveData<ArrayList<Media>> = MutableLiveData<ArrayList<Media>>(null)
     fun getTrendingNovel(): LiveData<ArrayList<Media>> = updated
     fun loadTrendingNovel() = updated.postValue(Anilist.query.search(type, perPage = 10, sort="TRENDING_DESC",format="NOVEL").results)
+
+    var mangaRefresh = MutableLiveData(true)
 }
 
 class AnilistSearch : ViewModel(){

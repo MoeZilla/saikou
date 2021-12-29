@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,8 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Saikou"
         android:usesCleartextTraffic="true"
-        android:name=".App"
         tools:ignore="AllowBackup">
+        <activity
+            android:name=".user.ListActivity"
+            android:exported="false" />
         <activity
             android:name=".manga.MangaReaderActivity"
             android:exported="false" />
@@ -39,7 +42,7 @@
         <activity
             android:name=".anilist.Login"
             android:exported="true">
-            <intent-filter android:label="filter_anilist_login">
+            <intent-filter android:label="Anilist Login for Saikou">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -51,19 +54,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".anilist.Media"
-            android:exported="true" >
-            <intent-filter android:label="filter_anilist_anime" android:autoVerify="true">
+            android:name=".anilist.UrlMedia"
+            android:exported="true">
+            <intent-filter android:label="Read on Saikou">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:host="anilist.co"/>
-                <data android:host="myanimelist.net"/>
-                <data android:pathPrefix="/anime"/>
-                <data android:pathPrefix="/manga"/>
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="anilist.co" />
+                <data android:host="myanimelist.net" />
+                <data android:pathPrefix="/manga" />
+            </intent-filter>
+            <intent-filter android:label="Watch on Saikou">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="anilist.co" />
+                <data android:host="myanimelist.net" />
+                <data android:pathPrefix="/anime" />
             </intent-filter>
         </activity>
         <activity

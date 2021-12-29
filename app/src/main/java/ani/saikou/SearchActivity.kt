@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.NestedScrollView
@@ -47,12 +48,17 @@ class SearchActivity : AppCompatActivity() {
         binding.searchRecyclerView.updateLayoutParams{ height=resources.displayMetrics.heightPixels+navBarHeight }
         binding.searchProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> { bottomMargin += navBarHeight }
         binding.searchRecyclerView.updatePaddingRelative(bottom = navBarHeight+80f.px)
+        binding.searchRecyclerView.requestDisallowInterceptTouchEvent(false)
 
         binding.searchScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
-            if(!v.canScrollVertically(1))
-                binding.searchRecyclerView.suppressLayout(false)
-            if(!v.canScrollVertically(-1))
-                binding.searchRecyclerView.suppressLayout(true)
+            if(!v.canScrollVertically(1)) {
+                binding.searchRecyclerView.requestDisallowInterceptTouchEvent(false)
+                window.statusBarColor = ContextCompat.getColor(this, R.color.bg)
+            }
+            if(!v.canScrollVertically(-1)) {
+                binding.searchRecyclerView.requestDisallowInterceptTouchEvent(true)
+                window.statusBarColor = ContextCompat.getColor(this, R.color.status)
+            }
         })
 
         binding.searchGenre.setText(intent.getStringExtra("genre")?:"")
@@ -71,7 +77,6 @@ class SearchActivity : AppCompatActivity() {
                 binding.searchProgress.visibility = View.GONE
                 binding.searchRecyclerView.visibility = View.VISIBLE
                 if (search!!.hasNextPage) {
-                    binding.searchProgress.visibility = View.VISIBLE
                     binding.searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrolled(v: RecyclerView, dx: Int, dy: Int) {
                             if (!v.canScrollVertically(1)) {
@@ -95,7 +100,8 @@ class SearchActivity : AppCompatActivity() {
                                 } else binding.searchProgress.visibility = View.GONE
                             }
                             if (!v.canScrollVertically(-1)){
-                                binding.searchRecyclerView.suppressLayout(true)
+                                binding.searchRecyclerView.requestDisallowInterceptTouchEvent(true)
+                                window.statusBarColor = ContextCompat.getColor(this@SearchActivity, R.color.status)
                             }
                             super.onScrolled(v, dx, dy)
                         }
